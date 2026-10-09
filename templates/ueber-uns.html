@@ -1,0 +1,449 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="{{ seo_beschreibung }}">
+  <title>{{ seo_title }}</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {# LCP-Bild vorziehen: ohne Preload startet der Download erst, wenn #}
+  {# der Parser das Hero-Element im Body erreicht - also nach dem CSS. #}
+  <link rel="preload" as="image" href="{% static 'images/ichfirma.webp' %}" fetchpriority="high">
+  {% include 'components/rw_seo.html' with seo_title=seo_title seo_description=seo_beschreibung seo_path="/ueber-uns/" seo_breadcrumb_name="Über uns" seo_keywords="Entrümpelungsfirma, Oliver Pohl, Rümpelwerk Team, inhabergeführte Entrümpelung, Haushaltsauflösung Firma, Entrümpelung Halle" seo_speakable="h1,.rw-antwort-text" %}
+  {% include 'components/rw_css.html' with crit_page='ueber-uns.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  {# ════════ PAGE HERO ════════ #}
+  <div class="rw-leistungen-hero rw-leistungen-hero--media">
+    <div class="rw-hero-media-bg"><img src="{% static 'images/ichfirma.webp' %}" alt="" width="999" height="871" fetchpriority="high" style="object-position:center 22%;"></div>
+    <div class="rw-hero-media-overlay"></div>
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>Über uns</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Über uns</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(2rem,4vw,3rem);margin-bottom:14px;">
+          Das Team hinter <em>Rümpelwerk</em>
+        </h1>
+        <p data-rw-readmore style="font-size:1rem;color:var(--rw-text-2);max-width:600px;line-height:1.8;margin-bottom:28px;">
+          Rümpelwerk Mitteldeutschland ist inhabergeführt: Oliver Pohl hat den Betrieb gegründet
+          und ist Ihr direkter Ansprechpartner. Hier lesen Sie, warum es uns gibt, wer in welcher
+          Region zuständig ist und mit welchen Fahrzeugen wir räumen.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {% include 'components/rw_antwort.html' with antwort_frage=antwort_frage antwort_text=antwort_text %}
+
+  {% include 'components/rw_trustbar.html' %}
+
+  {# ════════ UNSERE GESCHICHTE ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg-2);">
+    <div class="rw-container">
+      <div style="max-width:800px;margin:0 auto;">
+
+        <div class="rw-section-header" data-rw-reveal style="text-align:left;margin-bottom:40px;">
+          <div class="rw-section-badge">Unsere Geschichte</div>
+          <h2 class="rw-section-title" style="text-align:left;">
+            Warum es <em>Rümpelwerk</em> gibt
+          </h2>
+        </div>
+
+        <div data-rw-reveal style="display:flex;flex-direction:column;gap:20px;">
+
+          <p style="font-size:1rem;color:var(--rw-text-2);line-height:1.9;">
+            Die Idee zu unserem Unternehmen entstand, weil wir immer wieder erlebt haben, wie belastend eine
+            Entrümpelung für Menschen sein kann. Hinter einer Wohnungsauflösung steckt oft viel mehr als nur
+            das Räumen von Möbeln oder Gegenständen – häufig sind es <strong style="color:var(--rw-text);">Lebensabschnitte, Veränderungen,
+            Abschiede oder ein kompletter Neuanfang.</strong>
+          </p>
+
+          <p style="font-size:1rem;color:var(--rw-text-2);line-height:1.9;">
+            Gleichzeitig haben wir gesehen, wie schwierig es für viele Kunden ist, in dieser Situation einen
+            zuverlässigen Ansprechpartner zu finden. Unklare Preise, kurzfristige Absagen, Vermittler ohne
+            Verantwortung und Angebote, die am Ende deutlich teurer werden als angekündigt.
+          </p>
+
+          {# Highlight: Warum gegründet #}
+          <div style="background:var(--rw-bg-card);border-left:4px solid var(--rw-orange);border-radius:0 var(--rw-radius-lg) var(--rw-radius-lg) 0;padding:24px 28px;margin:8px 0;">
+            <p style="font-size:1.05rem;font-weight:500;color:var(--rw-text);line-height:1.8;margin:0 0 10px;">
+              Genau deshalb haben wir unser Unternehmen gegründet.
+            </p>
+            <p style="font-size:0.95rem;color:var(--rw-text-2);line-height:1.85;margin:0;">
+              Mit dem Anspruch, Entrümpelung, Haushaltsauflösung und Sanierung <strong>fair, transparent und
+              zuverlässig</strong> anzubieten – ohne komplizierte Abläufe und ohne versteckte Kosten.
+            </p>
+          </div>
+
+          <p style="font-size:1rem;color:var(--rw-text-2);line-height:1.9;">
+            Wir wollten einen Service schaffen, den wir selbst jederzeit für unsere Familie oder Freunde
+            buchen würden: <strong style="color:var(--rw-text);">ehrlich in der Beratung, verbindlich in der Planung und sauber in der Ausführung.</strong>
+            Für uns zählt nicht nur, Räume zu leeren – sondern Menschen in oft besonderen Situationen
+            wirklich zu entlasten.
+          </p>
+
+          <p style="font-size:1rem;color:var(--rw-text-2);line-height:1.9;">
+            Ob kleine Kellerentrümpelung, komplette Haushaltsauflösung oder anschließende Sanierungsarbeiten:
+            Wir behandeln jedes Objekt mit Respekt, arbeiten zuverlässig und hinterlassen es so, wie wir es
+            selbst erwarten würden – ordentlich, besenrein und professionell.
+          </p>
+
+        </div>
+
+        {# Philosophie #}
+        <div data-rw-reveal data-rw-delay="1" style="margin-top:40px;background:var(--rw-bg-card);border-radius:var(--rw-radius-xl);padding:32px 36px;border:2px solid var(--rw-border-hot);">
+          <div style="font-size:0.8125rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--rw-orange);font-weight:600;margin-bottom:16px;">Unsere Philosophie</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;">
+            <div style="display:flex;align-items:flex-start;gap:10px;">
+              <span style="color:var(--rw-orange);font-weight:600;font-size:1.1rem;flex-shrink:0;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+              <span style="font-size:0.95rem;font-weight:600;color:var(--rw-text);line-height:1.5;">Klare Kommunikation</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;">
+              <span style="color:var(--rw-orange);font-weight:600;font-size:1.1rem;flex-shrink:0;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+              <span style="font-size:0.95rem;font-weight:600;color:var(--rw-text);line-height:1.5;">Faire Preise</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;">
+              <span style="color:var(--rw-orange);font-weight:600;font-size:1.1rem;flex-shrink:0;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+              <span style="font-size:0.95rem;font-weight:600;color:var(--rw-text);line-height:1.5;">Saubere Arbeit</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;">
+              <span style="color:var(--rw-orange);font-weight:600;font-size:1.1rem;flex-shrink:0;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+              <span style="font-size:0.95rem;font-weight:600;color:var(--rw-text);line-height:1.5;">Verlässlichkeit vom ersten Kontakt bis zur Übergabe</span>
+            </div>
+          </div>
+          <p style="font-size:0.88rem;color:var(--rw-text-3);margin:16px 0 0;font-style:italic;">
+            Dafür stehen wir mit unserem Namen.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {# ════════ ÜBER UNS HAUPTTEIL ════════ #}
+  <section class="rw-about rw-section" id="ueber-uns">
+    <div class="rw-container">
+      <div class="rw-about-inner">
+
+        <div data-rw-reveal>
+          <div class="rw-about-badge-wrap">
+            <div class="rw-section-badge">Gründer & Inhaber</div>
+          </div>
+          <h2>Oliver Pohl &<br><em>das Rümpelwerk-</em><br>Team</h2>
+          <p class="rw-about-text">
+            Ich habe dieses Unternehmen gegründet, weil ich selbst erlebt habe, wie schwierig
+            es für Kunden oft ist, im Bereich Entrümpelung einen fairen und zuverlässigen Anbieter
+            zu finden. Zu oft werden Preise ohne klare Grundlage festgelegt, Angebote sind schwer
+            nachvollziehbar – und zwischen Kunde und Dienstleister stehen Vermittler, die mitverdienen,
+            ohne selbst vor Ort zu sein.
+          </p>
+          <p class="rw-about-text">
+            Mir war von Anfang an wichtig, einen anderen Weg zu gehen: <strong>transparent, direkt und fair.</strong>
+            Ohne unnötige Umwege. Ohne versteckte Kosten. Dafür mit ehrlicher Beratung,
+            festen Ansprechpartnern und sauberer Arbeit zu fairen Preisen.
+          </p>
+          <p class="rw-about-text">
+            <strong>Ich stehe mit meinem Namen hinter jedem Auftrag</strong> – und genau dieses
+            Vertrauen möchten wir unseren Kunden jeden Tag geben.
+          </p>
+
+          <blockquote style="margin:20px 0 0;border-left:4px solid var(--rw-orange);border-radius:0 var(--rw-radius-lg) var(--rw-radius-lg) 0;background:var(--rw-bg-2);padding:22px 26px;position:relative;">
+            <p style="font-size:1rem;color:var(--rw-text-2);line-height:1.85;margin:0;">
+              Für Oliver Pohl ist eine Entrümpelung Vertrauenssache. Statt eines Vermittlers zwischen Ihnen und dem ausführenden Betrieb haben Sie bei Rümpelwerk Mitteldeutschland einen festen Ansprechpartner – von der Besichtigung über das Festpreisangebot bis zur Übergabe. <strong style="color:var(--rw-text);">Der Festpreis steht verbindlich im Angebot – und was nicht enthalten ist, steht dort ebenfalls.</strong>
+            </p>
+          </blockquote>
+
+          <div style="margin:20px 0 0;border:2px solid var(--rw-orange);border-radius:var(--rw-radius-lg);padding:22px 26px;position:relative;">
+            <span style="position:absolute;top:-14px;left:20px;background:var(--rw-bg);padding:0 8px;font-size:1.6rem;color:var(--rw-orange);line-height:1;">"</span>
+            <p style="font-size:1.05rem;font-style:italic;color:var(--rw-text);line-height:1.85;margin:0 0 12px;">
+              Wenn Menschen uns beauftragen, übergeben sie uns oft mehr als nur eine Wohnung oder ein Haus. Sie vertrauen uns einen wichtigen Lebensabschnitt an. Dieses Vertrauen behandeln wir mit größtem Respekt.
+            </p>
+            <div style="font-size:0.82rem;font-weight:600;color:var(--rw-orange);">— Oliver Pohl, Gründer & Inhaber</div>
+          </div>
+
+          <div class="rw-about-highlights">
+            <div class="rw-highlight" data-rw-reveal data-rw-delay="1">
+              <span class="rw-highlight-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+              <div>
+                <div class="rw-highlight-title">{{ ZUSAGE_REAKTION }}</div>
+                <div class="rw-highlight-text">Nach Ihrer Anfrage hören Sie von uns – schnell und persönlich.</div>
+              </div>
+            </div>
+            <div class="rw-highlight" data-rw-reveal data-rw-delay="2">
+              <span class="rw-highlight-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
+              <div>
+                <div class="rw-highlight-title">Verbindliches Angebot {{ ZUSAGE_ANGEBOT }}</div>
+                <div class="rw-highlight-text">Den Festpreis erhalten Sie schriftlich im Angebot.</div>
+              </div>
+            </div>
+            <div class="rw-highlight" data-rw-reveal data-rw-delay="3">
+              <span class="rw-highlight-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+              <div>
+                <div class="rw-highlight-title">Kostenlose Besichtigung</div>
+                <div class="rw-highlight-text">Wir schauen uns Ihr Objekt an, bevor wir den Preis nennen.</div>
+              </div>
+            </div>
+            <div class="rw-highlight" data-rw-reveal data-rw-delay="4">
+              <span class="rw-highlight-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-3-3.87M9 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3"/><circle cx="16" cy="8" r="2.5"/></svg></span>
+              <div>
+                <div class="rw-highlight-title">Persönlicher Ansprechpartner</div>
+                <div class="rw-highlight-text">Oliver Pohl ist Ihr direkter Ansprechpartner – verlässlich und ohne Umwege.</div>
+              </div>
+            </div>
+            <div class="rw-highlight" data-rw-reveal data-rw-delay="5">
+              <span class="rw-highlight-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+              <div>
+                <div class="rw-highlight-title">Entsorgungsnachweis auf Wunsch</div>
+                <div class="rw-highlight-text">Auf Wunsch erhalten Sie einen Nachweis, wohin das Entsorgte gegangen ist – etwa für Vermieter, Erbengemeinschaften oder Gewerbe.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rw-about-visual" data-rw-reveal data-rw-delay="2">
+          <div class="rw-about-logo-card">
+            {# IS25: beschreibt das Motiv statt den Namen zu wiederholen, der   #}
+            {# eine Zeile tiefer als Text steht. Woertlich derselbe Satz in     #}
+            {# data/bilder.py – die Bildsitemap meldet dieses Bild an.          #}
+            <img width="560" height="565" src="{% static 'images/ruempelwerk_logo.webp' %}" srcset="{% static 'images/ruempelwerk_logo_sm.webp' %} 256w, {% static 'images/ruempelwerk_logo.webp' %} 560w" sizes="260px" alt="Firmenlogo: grünes Hausdach mit stilisiertem R über dem Schriftzug Rümpelwerk Mitteldeutschland" class="rw-about-logo-img" fetchpriority="high">
+            <div class="rw-about-logo-name">Rümpelwerk <span>Mitteldeutschland</span></div>
+          </div>
+          <div class="rw-about-photo-card">
+            <img width="500" height="490"
+              src="{% static 'images/regionalleiter_leipzig.webp' %}"
+              alt="Oliver Pohl – Gründer & Inhaber Rümpelwerk Mitteldeutschland"
+              class="rw-about-photo-img"
+              style="object-position:center 20%;"
+              loading="lazy"
+            >
+            <div class="rw-about-photo-caption">Oliver Pohl – Gründer & Inhaber · Rümpelwerk Mitteldeutschland</div>
+          </div>
+          <div class="rw-exp-card">
+            {# EIG15: hier stand eine Jahreszahl Branchenerfahrung - nirgends belegt. Keine Jahreszahl einsetzen, bevor der Inhaber sie belegt. #}
+            <div class="rw-exp-label">Ihr persönlicher Ansprechpartner – von der Besichtigung bis zur Übergabe</div>
+            <div class="rw-exp-divider"></div>
+            <div class="rw-exp-name">Oliver Pohl</div>
+            <div class="rw-exp-role">Gründer & Inhaber · Rümpelwerk Mitteldeutschland</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {# ════════ UNSER TEAM ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg-2);">
+    <div class="rw-container">
+      <div class="rw-section-header" data-rw-reveal style="margin-bottom:48px;">
+        <div class="rw-section-badge">Die Menschen dahinter</div>
+        <h2 class="rw-section-title">Unser <em>Team</em></h2>
+        <p class="rw-section-sub">Oliver Pohl führt Rümpelwerk Mitteldeutschland – unterstützt von Regionalleitern als Ansprechpartnern in den Regionen.</p>
+      </div>
+
+      {# Inhaber #}
+      <div style="max-width:320px;margin:0 auto 48px;" data-rw-reveal>
+        <div class="rw-form-card" style="padding:32px 28px;text-align:center;border:2px solid var(--rw-border-hot);">
+          <div style="width:140px;height:140px;border-radius:50%;overflow:hidden;margin:0 auto 20px;border:3px solid var(--rw-orange);background:var(--rw-bg-2);display:flex;align-items:center;justify-content:center;">
+            {# IS25: alt="" – dasselbe Foto ist weiter oben in dieser Seite      #}
+            {# bereits beschrieben, und Name und Rolle stehen als Text darunter. #}
+            <img width="500" height="490" src="{% static 'images/regionalleiter_leipzig.webp' %}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 20%;" loading="lazy">
+          </div>
+          <div style="font-family:var(--rw-font-head);font-weight:500;font-size:1.25rem;color:var(--rw-text);margin-bottom:4px;">Oliver Pohl</div>
+          <div style="font-size:0.82rem;font-weight:600;color:var(--rw-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Gründer & Inhaber</div>
+          <div style="font-size:0.88rem;color:var(--rw-text-2);line-height:1.7;">
+            Gründer von Rümpelwerk Mitteldeutschland. Oliver Pohl leitet das gesamte Unternehmen, koordiniert die Regionen und ist persönlicher Ansprechpartner für seine Kunden.
+          </div>
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--rw-border);">
+            <span style="font-size:0.8rem;font-weight:600;color:var(--rw-orange);"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Persönlich erreichbar</span>
+          </div>
+        </div>
+      </div>
+
+      {# Regionalleiter #}
+      <div style="margin-bottom:16px;text-align:center;" data-rw-reveal>
+        <div class="rw-section-badge">Regionalleiter</div>
+        <p style="font-size:0.9rem;color:var(--rw-text-3);margin-top:10px;">Feste Ansprechpartner in jeder Region – persönlich und direkt.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px;">
+
+        {# Leipzig & Halle #}
+        <div class="rw-form-card" data-rw-reveal style="padding:24px 20px;text-align:center;">
+          <div style="width:100px;height:100px;border-radius:50%;overflow:hidden;margin:0 auto 16px;border:2px solid var(--rw-orange);">
+            {# IS25: alt="" – drittes Vorkommen desselben Fotos auf dieser Seite. #}
+            <img width="500" height="490" src="{% static 'images/regionalleiter_leipzig.webp' %}" alt="" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+          </div>
+          <div style="font-family:var(--rw-font-head);font-weight:500;font-size:1rem;color:var(--rw-text);margin-bottom:3px;">Oliver Pohl</div>
+          <div style="font-size:0.78rem;font-weight:600;color:var(--rw-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Inhaber</div>
+          <div style="font-size:0.8rem;color:var(--rw-text-3);"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Leipzig & Halle</div>
+        </div>
+
+        {# Innendienst #}
+        <div class="rw-form-card" data-rw-reveal data-rw-delay="1" style="padding:24px 20px;text-align:center;">
+          <div style="width:100px;height:100px;border-radius:50%;margin:0 auto 16px;background:var(--rw-bg-2);border:2px dashed var(--rw-border);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:var(--rw-text-3);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          </div>
+          <div style="font-family:var(--rw-font-head);font-weight:500;font-size:1rem;color:var(--rw-text);margin-bottom:3px;">Kay Rechenberg</div>
+          <div style="font-size:0.78rem;font-weight:600;color:var(--rw-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Innendienst</div>
+          <div style="font-size:0.8rem;color:var(--rw-text-3);"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg> Kundenbetreuung</div>
+        </div>
+
+        {% comment %}
+          Magdeburg. Christoph Regner hat als einziger Regionalleiter noch kein
+          Foto - deshalb dieselbe Platzhalter-Silhouette wie beim Innendienst (seit dem SEO-Audit 25.09.2026 ohne den Schriftzug "Foto folgt", EIG270)
+          und kein generisches Portraetsymbol: Ein Symbolbild, das als Foto
+          einer benannten Person erscheint, ist eine falsche Aussage ueber
+          einen realen Menschen. Sobald ein Bild vorliegt, gehoert es in
+          AUTOR_META (models.py) und hier eingesetzt.
+          Er steht seit G6 im Person-Schema dieser Seite; ohne die Karte waere
+          das ein Knoten ohne sichtbare Entsprechung (Regel 12).
+        {% endcomment %}
+        {# Magdeburg #}
+        <div class="rw-form-card" data-rw-reveal data-rw-delay="2" style="padding:24px 20px;text-align:center;">
+          <div style="width:100px;height:100px;border-radius:50%;margin:0 auto 16px;background:var(--rw-bg-2);border:2px dashed var(--rw-border);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:var(--rw-text-3);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          </div>
+          <div style="font-family:var(--rw-font-head);font-weight:500;font-size:1rem;color:var(--rw-text);margin-bottom:3px;">Christoph Regner</div>
+          <div style="font-size:0.78rem;font-weight:600;color:var(--rw-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Regionalleiter</div>
+          <div style="font-size:0.8rem;color:var(--rw-text-3);"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Magdeburg</div>
+        </div>
+
+        {# Dresden & Chemnitz #}
+        <div class="rw-form-card" data-rw-reveal data-rw-delay="3" style="padding:24px 20px;text-align:center;">
+          <div style="width:100px;height:100px;border-radius:50%;overflow:hidden;margin:0 auto 16px;border:2px solid var(--rw-orange);">
+            <img width="360" height="500" src="{% static 'images/regionalleiter_dresden.webp' %}" alt="Viktor Grebe, Regionalleiter Dresden &amp; Chemnitz" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+          </div>
+          <div style="font-family:var(--rw-font-head);font-weight:500;font-size:1rem;color:var(--rw-text);margin-bottom:3px;">Viktor Grebe</div>
+          <div style="font-size:0.78rem;font-weight:600;color:var(--rw-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Regionalleiter</div>
+          <div style="font-size:0.8rem;color:var(--rw-text-3);"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Dresden & Chemnitz</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {# ════════ FIRMENFAHRZEUGE ════════ #}
+  <section class="rw-fahrzeuge rw-section" id="fahrzeuge">
+    <div class="rw-container">
+      <div class="rw-section-header" data-rw-reveal>
+        <div class="rw-section-badge">Unsere Flotte</div>
+        <h2 class="rw-section-title">Unsere <em>Firmenfahrzeuge</em></h2>
+        <p class="rw-section-sub">Zwei Fahrzeuggrößen, damit die Ladung zum Auftrag passt – vom einzelnen Keller bis zur ganzen Haushaltsauflösung.</p>
+      </div>
+      {# Sprinter #}
+      <div class="rw-fahrzeug-block" data-rw-reveal>
+        <div class="rw-fahrzeug-block-info">
+          <div class="rw-fahrzeug-block-title"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17h4V5H2v12h3"/><path d="M15 8h4l3 3v6h-3"/><circle cx="7.5" cy="17.5" r="2"/><circle cx="17.5" cy="17.5" r="2"/></svg> Unser Sprinter</div>
+          <p class="rw-fahrzeug-block-desc">Unser Mercedes-Benz Sprinter mit Hochdach ist das Fahrzeug für den Alltag: kompakt genug für enge Innenhöfe und Altstadtstraßen, groß genug für Keller- und Wohnungsräumungen.</p>
+        </div>
+        <div class="rw-fahrzeuge-grid">
+          <div class="rw-fahrzeug-card" data-rw-delay="1">
+            {# PF16: das Fahrzeugraster zeigt drei Spalten zu rund 360 px, auf   #}
+            {# dem Handy eine Spalte. 900 px waren dafuer bis zu 73 KiB je Bild; #}
+            {# die 480er-Stufe bedient jede Spaltenbreite bis 480 CSS-px.        #}
+            <img width="900" height="675" src="{% static 'images/sprinter1.webp' %}" srcset="{% static 'images/sprinter1_480.webp' %} 480w, {% static 'images/sprinter1.webp' %} 900w" sizes="(max-width:768px) calc(100vw - 48px), (max-width:1024px) 46vw, 360px" alt="Unser Sprinter mit geöffneten Hecktüren: leerer, holzverkleideter Laderaum" class="rw-fahrzeug-img" loading="lazy">
+          </div>
+          <div class="rw-fahrzeug-card" data-rw-delay="2">
+            <img width="900" height="675" src="{% static 'images/sprinter2.webp' %}" srcset="{% static 'images/sprinter2_480.webp' %} 480w, {% static 'images/sprinter2.webp' %} 900w" sizes="(max-width:768px) calc(100vw - 48px), (max-width:1024px) 46vw, 360px" alt="Unser weißer Mercedes-Benz Sprinter mit Hochdach, schräg von vorn rechts" class="rw-fahrzeug-img" loading="lazy">
+          </div>
+          <div class="rw-fahrzeug-card" data-rw-delay="3">
+            <img width="900" height="675" src="{% static 'images/sprinter3.webp' %}" srcset="{% static 'images/sprinter3_480.webp' %} 480w, {% static 'images/sprinter3.webp' %} 900w" sizes="(max-width:768px) calc(100vw - 48px), (max-width:1024px) 46vw, 360px" alt="Unser Sprinter im Seitenprofil: langer Radstand, geschlossener Kastenaufbau" class="rw-fahrzeug-img" loading="lazy">
+          </div>
+        </div>
+      </div>
+
+      {# LKW #}
+      <div class="rw-fahrzeug-block" data-rw-reveal style="margin-top:2.5rem;">
+        <div class="rw-fahrzeug-block-info">
+          <div class="rw-fahrzeug-block-title"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17h4V5H2v12h3"/><path d="M15 8h4l3 3v6h-3"/><circle cx="7.5" cy="17.5" r="2"/><circle cx="17.5" cy="17.5" r="2"/></svg> Unser LKW</div>
+          <p class="rw-fahrzeug-block-desc">Für große Entrümpelungen setzen wir auf unseren Koffer-LKW – ausreichend Ladekapazität für komplette Haushaltsauflösungen, Gewerbeobjekte und alles, was der Sprinter nicht mehr schafft.</p>
+        </div>
+        <div class="rw-fahrzeuge-grid">
+          <div class="rw-fahrzeug-card" data-rw-delay="1">
+            <img width="900" height="778" src="{% static 'images/lkw1.webp' %}" srcset="{% static 'images/lkw1_480.webp' %} 480w, {% static 'images/lkw1.webp' %} 900w" sizes="(max-width:768px) calc(100vw - 48px), (max-width:1024px) 46vw, 360px" alt="Unser Koffer-LKW von hinten links, mit hochgeklappter Ladebordwand am Heck" class="rw-fahrzeug-img" loading="lazy">
+          </div>
+          <div class="rw-fahrzeug-card" data-rw-delay="2">
+            <img width="900" height="675" src="{% static 'images/lkw2.webp' %}" srcset="{% static 'images/lkw2_480.webp' %} 480w, {% static 'images/lkw2.webp' %} 900w" sizes="(max-width:768px) calc(100vw - 48px), (max-width:1024px) 46vw, 360px" alt="Unser Koffer-LKW von vorn rechts: weißer Kofferaufbau auf Mercedes-Benz Fahrgestell" class="rw-fahrzeug-img" loading="lazy">
+          </div>
+          <div class="rw-fahrzeug-card" data-rw-delay="3">
+            <img width="900" height="790" src="{% static 'images/lkw3.webp' %}" srcset="{% static 'images/lkw3_480.webp' %} 480w, {% static 'images/lkw3.webp' %} 900w" sizes="(max-width:768px) calc(100vw - 48px), (max-width:1024px) 46vw, 360px" alt="Fahrerhaus und Kofferaufbau unseres Koffer-LKW von der Fahrerseite" class="rw-fahrzeug-img" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% include 'components/rw_trustlocal.html' %}
+
+  {# ════════ KONTAKTINFOS ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      <div class="rw-section-header" data-rw-reveal>
+        <div class="rw-section-badge">Direkt kontaktieren</div>
+        <h2 class="rw-section-title">So erreichen <em>Sie uns</em></h2>
+        <p class="rw-section-sub">Rufen Sie uns an oder schreiben Sie uns – per WhatsApp oder E-Mail. Unser Firmensitz ist in {{ FIRMA_ORT }}.</p>
+      </div>
+      <div class="rw-kontakt-info-grid" data-rw-reveal>
+        {# Regel 25: Adresse und Kartenlink aus data/firma.py, nie getippt. #}
+        <a href="https://maps.google.com/?q={{ FIRMA_STRASSE|urlencode }}+{{ FIRMA_PLZ|urlencode }}+{{ FIRMA_ORT|urlencode }}" target="_blank" rel="noopener" class="rw-kontakt-info-card">
+          <div class="rw-kontakt-info-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="rw-kontakt-info-label">Adresse</div>
+          <div class="rw-kontakt-info-main">{{ FIRMA_NAME }}</div>
+          <div class="rw-kontakt-info-sub">{{ FIRMA_STRASSE }}<br>{{ FIRMA_PLZ }} {{ FIRMA_ORT }}</div>
+        </a>
+        <a href="tel:{{ FIRMA_TELEFON }}" class="rw-kontakt-info-card">
+          <div class="rw-kontakt-info-icon"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg></div>
+          <div class="rw-kontakt-info-label">Telefon</div>
+          <div class="rw-kontakt-info-main">{{ FIRMA_TELEFON_ANZEIGE }}</div>
+          <div class="rw-kontakt-info-sub">Mobil · {{ FIRMA_ZEITEN }}</div>
+        </a>
+        <a href="{{ FIRMA_WHATSAPP_LINK }}" target="_blank" rel="noopener" class="rw-kontakt-info-card">
+          <div class="rw-kontakt-info-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/></svg></div>
+          <div class="rw-kontakt-info-label">WhatsApp</div>
+          <div class="rw-kontakt-info-main">{{ FIRMA_TELEFON_ANZEIGE }}</div>
+          <div class="rw-kontakt-info-sub">{{ ZUSAGE_ANTWORT }} per Nachricht</div>
+        </a>
+        <a href="mailto:{{ CONTACT_EMAIL }}" class="rw-kontakt-info-card">
+          <div class="rw-kontakt-info-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></div>
+          <div class="rw-kontakt-info-label">E-Mail</div>
+          <div class="rw-kontakt-info-main">{{ CONTACT_EMAIL }}</div>
+          <div class="rw-kontakt-info-sub">{{ ZUSAGE_REAKTION }}</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {# ════════ CTA ════════ #}
+  <section class="rw-cta rw-band" style="padding:72px 0;">
+    <div class="rw-container">
+      <div class="rw-cta-inner" data-rw-reveal style="text-align:center;max-width:640px;margin:0 auto;">
+        <h2 style="font-family:var(--rw-font-head);font-weight:500;font-size:clamp(1.75rem,3.2vw,2.625rem);margin-bottom:14px;">Bereit loszulegen? <em style="font-style:normal;">Melden Sie sich.</em></h2>
+        <p style="font-size:1rem;margin-bottom:28px;">Kostenlose Besichtigung & Festpreisangebot. <strong style="color:#fff;">{{ ZUSAGE_REAKTION_SATZ }}</strong></p>
+        <div class="rw-cta-actions" style="justify-content:center;">
+          <a href="/anfrage/" class="rw-btn-primary"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg> Zur Kontaktseite</a>
+          <a href="/dienstleistungen/" class="rw-btn-outline">Unsere Leistungen</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>
+

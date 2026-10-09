@@ -1,0 +1,130 @@
+{% load static %}
+<style>.rw-nav-dropdown{position:relative}.rw-nav-dropdown-toggle{display:flex;align-items:center;gap:4px;cursor:pointer}.rw-nav-dropdown-toggle svg{transition:transform 250ms ease;flex-shrink:0}.rw-nav-dropdown:hover .rw-nav-dropdown-toggle svg,.rw-nav-dropdown:focus-within .rw-nav-dropdown-toggle svg{transform:rotate(180deg)}.rw-nav-dropdown-menu{position:absolute;top:100%;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.98);border:1px solid var(--rw-border);border-radius:var(--rw-radius-lg);box-shadow:0 8px 32px rgba(0,0,0,0.12);padding:18px 8px 8px;min-width:210px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 200ms ease}.rw-nav-dropdown:hover .rw-nav-dropdown-menu,.rw-nav-dropdown:focus-within .rw-nav-dropdown-menu,.rw-nav-dropdown-toggle[aria-expanded="true"] + .rw-nav-dropdown-menu{opacity:1;visibility:visible;pointer-events:auto}button.rw-nav-dropdown-toggle{background:none;border:0;margin:0;line-height:inherit}.rw-nav-dropdown[data-zu] .rw-nav-dropdown-menu{opacity:0;visibility:hidden;pointer-events:none}.rw-nav-dropdown-item{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:var(--rw-radius);color:var(--rw-text);font-size:0.9rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background var(--rw-transition),color var(--rw-transition)}.rw-nav-dropdown-item:hover{background:var(--rw-bg-2);color:var(--rw-orange)}.rw-nav-dropdown-item.active{color:var(--rw-orange)}.rw-nav-dropdown-item:hover .rw-mobile-menu .rw-mobile-divider{height:1px;background:var(--rw-border);margin:6px 0}.rw-mobile-menu .rw-nav-link--sub{padding-left:18px;font-size:0.92rem;color:var(--rw-text-2);position:relative}.rw-mobile-menu .rw-nav-link--sub::before{content:"";position:absolute;left:4px;top:50%;width:6px;height:1px;background:var(--rw-border)}.rw-mobile-menu .rw-mobile-section-label{font-size:0.72rem;font-weight:700;color:var(--rw-text-3);text-transform:uppercase;letter-spacing:1px;padding:10px 4px 4px}.rw-skip{position:fixed;top:10px;left:10px;z-index:10000;transform:translateY(-200%);background:var(--rw-orange);color:#fff;padding:12px 22px;border-radius:var(--rw-radius);font-family:var(--rw-font-head);font-weight:700;font-size:0.95rem;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,0.25);transition:transform var(--rw-transition)}.rw-skip:focus{transform:translateY(0)}</style>
+
+<a class="rw-skip" href="#inhalt">Zum Inhalt springen</a>
+
+<nav class="rw-nav" id="rw-nav">
+  <div class="rw-nav-inner">
+    <a href="/" class="rw-nav-brand" aria-label="Rümpelwerk Mitteldeutschland, zur Startseite">
+      {# 01.10.2026: Logomarke aus dem neuen Logo als Creme-Kachel, alt="" - der Name steht als Text daneben (IS25). #}
+      <img class="rw-nav-logo-mark" src="{% static 'images/ruempelwerk_marke_88.webp' %}" srcset="{% static 'images/ruempelwerk_marke_88.webp' %} 88w, {% static 'images/ruempelwerk_marke_132.webp' %} 132w" sizes="44px" width="88" height="88" alt="" decoding="async">
+      <span class="rw-nav-name">RÜMPEL<b>WERK</b><span>mitteldeutschland</span></span>
+    </a>
+    <div class="rw-nav-links">
+      <a href="/" class="rw-nav-link{% if request.resolver_match.url_name == 'home' %} rw-nav-link--active{% endif %}">Home</a>
+      {% comment %}
+        Dienstleistungen ist seit Block 2 ein Dropdown: Der Toggle bleibt ein
+        echter Link auf die Übersicht (wer klickt, landet dort), darunter
+        stehen die einzelnen Leistungsseiten. Die Liste kommt aus
+        _SERVICE_DATA über den Context-Processor leistungen_nav – eine neue
+        Leistung erscheint hier also von selbst.
+      {% endcomment %}
+      <div class="rw-nav-dropdown">
+        <a href="/dienstleistungen/" class="rw-nav-link rw-nav-dropdown-toggle{% if request.resolver_match.url_name == 'dienstleistungen' or request.resolver_match.url_name|slice:':8' == 'service_' or request.resolver_match.url_name|slice:':7' == 'matrix_' %} rw-nav-link--active{% endif %}">
+          Dienstleistungen
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+        </a>
+        <div class="rw-nav-dropdown-menu">
+          <a href="/dienstleistungen/" class="rw-nav-dropdown-item{% if request.resolver_match.url_name == 'dienstleistungen' %} active{% endif %}">
+            Alle Leistungen
+          </a>
+          {% for le in LEISTUNGEN_NAV %}
+          <a href="{{ le.url }}" class="rw-nav-dropdown-item{% if seo_path == le.url %} active{% endif %}">
+            {{ le.name }}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      <a href="/standorte/" class="rw-nav-link{% if request.resolver_match.url_name == 'standorte' %} rw-nav-link--active{% endif %}">Standorte</a>
+
+      {# Unternehmen Dropdown #}
+      <div class="rw-nav-dropdown">
+        <button type="button" class="rw-nav-link rw-nav-dropdown-toggle{% if request.resolver_match.url_name in 'ueber_uns,kooperation,jobs,aktuelles,galerie,ratgeber' %} rw-nav-link--active{% endif %}" aria-expanded="false" aria-controls="rw-nav-unternehmen" data-rw-menue>
+          Unternehmen
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+        </button>
+        <div class="rw-nav-dropdown-menu" id="rw-nav-unternehmen">
+          <a href="/ueber-uns/" class="rw-nav-dropdown-item{% if request.resolver_match.url_name == 'ueber_uns' %} active{% endif %}">
+            Über uns
+          </a>
+          <a href="/jobs/" class="rw-nav-dropdown-item{% if request.resolver_match.url_name == 'jobs' %} active{% endif %}">
+            Jobs & Karriere
+          </a>
+          <a href="/kooperationspartner/" class="rw-nav-dropdown-item{% if request.resolver_match.url_name == 'kooperation' %} active{% endif %}">
+            Kooperationspartner
+          </a>
+          <a href="/aktuelles/" class="rw-nav-dropdown-item{% if request.resolver_match.url_name == 'aktuelles' %} active{% endif %}">
+            Aktuelles
+          </a>
+          <a href="/ratgeber/" class="rw-nav-dropdown-item{% if request.resolver_match.url_name == 'ratgeber' %} active{% endif %}">
+            Ratgeber
+          </a>
+        </div>
+      </div>
+
+      <a href="/preisangebot/" class="rw-nav-link{% if request.resolver_match.url_name == 'preisangebot' %} rw-nav-link--active{% endif %}">Preisrechner</a>
+    </div>
+    {% comment %}
+      Upgrade Stufe 2 (Bauplan §3 Zeile 1): Kopf traegt nur noch EINEN Knopf
+      ("Termin buchen" -> /termin/, seit 02.10.2026 eigene Seite) statt
+      des frueheren Zweitknopfs "Kostenlos anfragen". Der Rechner-Link bleibt
+      als normaler Menuepunkt oben stehen, ohne Pillen-Optik. Das Anfrage-
+      Formular ist weiterhin ueber Fuss und Mobilmenue erreichbar.
+      03.10.2026: Der Knopf heisst wieder "Kostenlos anfragen" (-> /anfrage/);
+      die normale Anfrage steht vorn, die Terminbuchung nebenbei (Mobilmenue, Fuss).
+    {% endcomment %}
+    <div class="rw-nav-aktion">
+      <a class="rw-nav-tel" href="tel:{{ FIRMA_TELEFON }}" aria-label="{{ FIRMA_TELEFON_ANZEIGE }} anrufen">
+        <span class="rw-nav-tel-klein">Telefon &amp; WhatsApp</span>{{ FIRMA_TELEFON_ANZEIGE }}
+      </a>
+      <a href="/anfrage/" class="rw-nav-book-btn">Kostenlos anfragen</a>
+    </div>
+    <button class="rw-burger" id="rw-burger" aria-label="Menü öffnen" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="rw-mobile-menu" id="rw-mobile-menu" role="navigation" aria-label="Mobilmenü">
+  <a href="/" class="rw-nav-link">Home</a>
+  <a href="/dienstleistungen/" class="rw-nav-link">Dienstleistungen</a>
+  {% for le in LEISTUNGEN_NAV %}
+  <a href="{{ le.url }}" class="rw-nav-link rw-nav-link--sub">{{ le.name }}</a>
+  {% endfor %}
+  <a href="/standorte/" class="rw-nav-link">Standorte</a>
+  <div class="rw-mobile-divider"></div>
+  <div class="rw-mobile-section-label">Unternehmen</div>
+  <a href="/ueber-uns/" class="rw-nav-link">Über uns</a>
+  <a href="/jobs/" class="rw-nav-link">Jobs & Karriere</a>
+  <a href="/kooperationspartner/" class="rw-nav-link">Kooperationspartner</a>
+  <a href="/aktuelles/" class="rw-nav-link">Aktuelles</a>
+  <a href="/ratgeber/" class="rw-nav-link">Ratgeber</a>
+  <div class="rw-mobile-divider"></div>
+  <a href="/preisangebot/" class="rw-nav-link" style="color:var(--gruen);">Preisrechner</a>
+  <a href="/termin/" class="rw-nav-link">Besichtigung online buchen</a>
+  <a href="/anfrage/" class="rw-btn-primary" style="margin-top:12px;justify-content:center;">
+    <svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>Kostenlos anfragen</a>
+</div>
+
+{# ── Bottom Navigation (Mobile) ──────────────── #}
+{% comment %}
+  Upgrade Stufe 2 (Bauplan §3 Zeile 1, §10 Stufe 2): Die Handy-Leiste zeigt
+  nur noch die zwei Sofort-Aktionen der Vorlage ("Anrufen" · "Termin
+  buchen") statt sechs Navigationspunkten - ruhiger und ohne Ueberlagerung
+  mit dem WhatsApp-FAB. Klassen rw-bottom-nav-item/-cta bleiben (JS in
+  rw_basis.js setzt .active anhand data-path, das ist rein kosmetisch).
+  03.10.2026: rechts "Anfrage senden" statt "Termin buchen" -
+  auf der Startseite Sprung zum Hero-Formular, sonst /anfrage/.
+{% endcomment %}
+<nav class="rw-bottom-nav rw-bottom-nav--simple" aria-label="Mobile Navigation">
+  <div class="rw-bottom-nav-inner">
+    <a href="tel:{{ FIRMA_TELEFON }}" class="rw-bottom-nav-item" data-path="__anrufen__" aria-label="{{ FIRMA_TELEFON_ANZEIGE }} anrufen">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>
+      <span>Anrufen</span>
+    </a>
+    <a href="{% if request.path == '/' %}#hero-anfrage{% else %}/anfrage/{% endif %}" class="rw-bottom-nav-item rw-bottom-nav-cta" data-path="__anfrage__">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 2v.5l8 5 8-5V6H4zm16 2.85-8 5-8-5V18h16V8.85z"/></svg>
+      <span>Anfrage senden</span>
+    </a>
+  </div>
+</nav>

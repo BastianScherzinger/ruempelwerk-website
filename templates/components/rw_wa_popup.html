@@ -1,0 +1,45 @@
+{% load static %}
+{# ════════ WHATSAPP CHAT-POPUP (erscheint nach 10s, 1× pro Sitzung) ════════ #}
+<div class="rw-wa-popup" id="rw-wa-popup" role="dialog" aria-modal="false" aria-labelledby="rw-wa-popup-title" hidden>
+  <div class="rw-wa-popup-bar">
+    <span class="rw-wa-popup-ava" aria-hidden="true">
+      <img src="{% static 'images/ruempelwerk_logo_xs.webp' %}" srcset="{% static 'images/ruempelwerk_logo_88.webp' %} 88w, {% static 'images/ruempelwerk_logo_xs.webp' %} 132w" sizes="40px" alt="" width="132" height="133" loading="lazy">
+    </span>
+    <div class="rw-wa-popup-id">
+      <div class="rw-wa-popup-name" id="rw-wa-popup-title">Rümpelwerk Mitteldeutschland</div>
+      {# Antwort in 2 Stunden, rund um die Uhr (zusagen.ANTWORT/ANTWORT_GILT, EIG394, 02.10.2026). #}
+      {# Das ist NICHT der Termin vor Ort - der steht je Stadt in cities.py. #}
+      <div class="rw-wa-popup-status"><span class="rw-wa-popup-dot"></span>Antwort in {{ ZUSAGE_ANTWORT_SPANNE }}, {{ ZUSAGE_ANTWORT_GILT }}</div>
+    </div>
+    <button type="button" class="rw-wa-popup-min" id="rw-wa-popup-min" aria-label="Chat minimieren">
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 12h12"/></svg>
+    </button>
+    <button type="button" class="rw-wa-popup-close" id="rw-wa-popup-close" aria-label="Chat schließen">
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <div class="rw-wa-popup-body">
+    <div class="rw-wa-popup-bubble">
+      <span class="rw-wa-popup-eyebrow">Angebot per WhatsApp</span>
+      <p>
+        Lieber schnell &amp; ohne Termin? Schicken Sie uns einfach ein paar <strong>Fotos</strong>
+        Ihres Objekts – wir melden uns mit einem <strong>unverbindlichen Angebot</strong>.
+      </p>
+      <span class="rw-wa-popup-time">jetzt</span>
+    </div>
+    <a href="{{ FIRMA_WHATSAPP_LINK_POPUP }}"
+       target="_blank" rel="noopener" class="rw-wa-popup-btn" id="rw-wa-popup-cta">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><use href="#rw-wa-ik"/></svg>
+      Fotos per WhatsApp senden
+    </a>
+  </div>
+</div>
+
+{# Launcher-Blase (erscheint, wenn der Chat minimiert wurde) #}
+<button type="button" class="rw-wa-launcher" id="rw-wa-launcher" aria-label="WhatsApp-Chat öffnen" hidden>
+  <svg viewBox="0 0 24 24" width="30" height="30" fill="#fff" aria-hidden="true"><use href="#rw-wa-ik"/></svg>
+  <span class="rw-wa-launcher-pulse" aria-hidden="true"></span>
+</button>
+
+<script src="{% static 'js/rw_wa_popup.js' %}" defer></script>

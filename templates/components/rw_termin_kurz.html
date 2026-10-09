@@ -1,0 +1,15 @@
+{# audit-ok V06: eingebunden als Tag rw_termin_kurz (templatetags/rw_termin.py, inclusion_tag) in city.html #}
+{# Kurzblock fuer Stadtseiten (Bauplan §4): nur ein Verweis auf /termin/, #}
+{# nicht das ganze Wochenraster - siehe IS21/IS22 "zu gleich" in 40-BAUPLAN.md. #}
+<section class="rw-termin-kurz" aria-labelledby="rwtk-h">
+  <div class="rw-container rw-termin-kurz-inner">
+    <div>
+      <h2 id="rwtk-h">Besichtigung buchen – vor Ort oder per Video</h2>
+      <p>{{ ZUSAGE_BESICHTIGUNG_DAUER }} vor Ort oder per WhatsApp-Video mit Oliver Pohl – kostenlos und unverbindlich, Termine {{ ZUSAGE_TERMIN_FRUEHESTENS }} buchbar.</p>
+    </div>
+    <div class="rw-termin-kurz-aktion">
+      <a class="knopf knopf-voll" href="/termin/">Termin buchen</a>
+      <a class="knopf knopf-rand" href="/termin/#online-besichtigung">Per Video besichtigen</a>
+    </div>
+  </div>
+</section>

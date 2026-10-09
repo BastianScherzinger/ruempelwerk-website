@@ -1,0 +1,48 @@
+{% load static rw_schema %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{{ seo_title }}</title>
+  <meta name="description" content="{{ seo_description }}">
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% comment %}
+    Einzelseite eines importierten GBP-Beitrags (Bauplan §7). seo_noindex
+    kommt aus der View: ein Beitrag unter GBP_MINDESTWORTE_FUER_INDEX Woertern
+    (duenner Inhalt) bekommt keinen Index-Eintrag und - Regel 21 sinngemaess -
+    auch keine Bewerbung in der Sitemap (siehe sitemaps.py::AktuellesSitemap).
+  {% endcomment %}
+  {% include 'components/rw_seo.html' with seo_title=seo_title seo_description=seo_description seo_path=seo_path seo_noindex=seo_noindex seo_breadcrumb_name=post.titel seo_breadcrumb_zwischen="Aktuelles|/aktuelles/" seo_type="article" %}
+  {% include 'components/rw_css.html' with crit_page='aktuelles_beitrag.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+    <section class="rw-section rw-hub-kopf">
+      <div class="rw-container">
+        <nav class="rw-brotkrumen" aria-label="Brotkrumen">
+          <a href="/">Startseite</a> <span aria-hidden="true">›</span>
+          <a href="/aktuelles/">Aktuelles</a> <span aria-hidden="true">›</span>
+          {{ post.titel }}
+        </nav>
+        <h1 class="rw-hub-titel">{{ post.titel }}</h1>
+        <p class="rw-rg-kategorie">{{ post.datum|date:"d.m.Y" }}</p>
+        <div class="rw-fliesstext">
+          {{ post.inhalt|linebreaks }}
+        </div>
+        <p><a href="/aktuelles/">← Zurück zu allen Beiträgen</a></p>
+      </div>
+    </section>
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>

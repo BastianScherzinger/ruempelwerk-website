@@ -1,0 +1,96 @@
+{% load static %}
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="rw-wa-ik" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.541 5.877L.057 23.386a.5.5 0 0 0 .611.601l5.647-1.525A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></symbol></svg>
+<footer class="rw-footer">
+  <div class="rw-container">
+    <div class="rw-footer-inner">
+      <div>
+        <div class="rw-footer-brand-logo">
+          {# 01.10.2026: dieselbe Logomarke wie im Kopf (rw_nav.html), alt="" - der Name steht als Text daneben. #}
+          <img class="rw-footer-logo-mark" src="{% static 'images/ruempelwerk_marke_88.webp' %}" srcset="{% static 'images/ruempelwerk_marke_88.webp' %} 88w, {% static 'images/ruempelwerk_marke_132.webp' %} 132w" sizes="40px" width="88" height="88" alt="" loading="lazy" decoding="async">
+          <span class="rw-footer-brand-name">Rümpel<b>werk</b> <span>Mitteldeutschland</span></span>
+        </div>
+        <p class="rw-footer-desc">Professionelle Entrümpelung & Sanierung.</p>
+        <p class="rw-footer-desc" style="margin-top:10px;display:flex;flex-direction:column;gap:7px;">
+          <span style="display:inline-flex;align-items:center;gap:8px;">
+            <svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true" style="font-size:1rem;color:var(--rw-orange);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Cansteinstraße 14, 06110 Halle
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:8px;">
+            <svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true" style="font-size:1rem;color:var(--rw-orange);"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>
+            <span><a href="tel:{{ FIRMA_TELEFON }}" aria-label="{{ FIRMA_TELEFON_ANZEIGE }} anrufen" style="color:var(--rw-text-2);text-decoration:none;white-space:nowrap;">{{ FIRMA_TELEFON_ANZEIGE }}</a> (Telefon · {{ FIRMA_ZEITEN }})</span>
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:8px;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="#25D366" aria-hidden="true" style="flex-shrink:0;"><use href="#rw-wa-ik"/></svg>
+            <span><a href="{{ FIRMA_WHATSAPP_LINK }}" target="_blank" rel="noopener" aria-label="{{ FIRMA_TELEFON_ANZEIGE }} per WhatsApp kontaktieren" style="color:var(--rw-text-2);text-decoration:none;white-space:nowrap;">{{ FIRMA_TELEFON_ANZEIGE }}</a> (WhatsApp)</span>
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:8px;">
+            <svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true" style="font-size:1rem;color:var(--rw-orange);"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+            <a href="mailto:{{ CONTACT_EMAIL }}" style="color:var(--rw-text-2);text-decoration:none;">{{ CONTACT_EMAIL }}</a>
+          </span>
+        </p>
+      </div>
+      <div>
+        <p class="rw-footer-col-title">Dienstleistungen</p>
+        <div class="rw-footer-links">
+          {# Leistungen mit eigener Seite zuerst – aus _SERVICE_DATA, nicht von Hand. #}
+          {% for le in LEISTUNGEN_NAV %}
+          <a href="{{ le.url }}" class="rw-footer-link">{{ le.name }}</a>
+          {% endfor %}
+          {% comment %}
+            Der Anker auf #sanierung ist mit A11 entfallen: Dafuer gibt es jetzt
+            /sanierung-renovierung/, und das steht bereits oben in
+            LEISTUNGEN_NAV. Zwei Links auf dieselbe Sache mit unterschiedlicher
+            Staerke sind ein Signal zu viel. Und: {# ... #} ist einzeilig -
+            mehrzeilig landet der Kommentar woertlich im HTML, auf jeder Seite.
+          {% endcomment %}
+          <a href="/dienstleistungen/" class="rw-footer-link">Alle Dienstleistungen</a>
+          <a href="/dienstleistungen/#sonstige" class="rw-footer-link">Sonstige Leistungen</a>
+          <a href="/preisangebot/" class="rw-footer-link">Preisrechner</a>
+          <a href="/termin/" class="rw-footer-link">Besichtigung online buchen</a>
+        </div>
+      </div>
+      <div>
+        {% comment %}
+          Upgrade Stufe 2 (Bauplan §3 Zeile 15): vierte Spalte "Orte" wie in
+          der Vorlage - dieselben sechs Staedte aus cities.STANDORTE_NAV, die
+          vorher als Streifen unter dem Raster lagen. Die Begruendung fuer
+          "kurz statt vollstaendig" (Boilerplate/Klicktiefe, siehe unten)
+          gilt unveraendert weiter.
+        {% endcomment %}
+        <p class="rw-footer-col-title">Orte</p>
+        <div class="rw-footer-links">
+          {% for st in STANDORTE_NAV %}<a href="/entrumpelung/{{ st.slug }}/" class="rw-footer-link">{{ st.name }}</a>
+          {% endfor %}<a href="/entrumpelung/" class="rw-footer-link">Alle {{ STADTSEITEN_ANZAHL }} Städte →</a>
+        </div>
+      </div>
+      <div>
+        <p class="rw-footer-col-title">Unternehmen</p>
+        <div class="rw-footer-links">
+          <a href="/" class="rw-footer-link">Home</a>
+          <a href="/ueber-uns/" class="rw-footer-link">Über uns</a>
+          {# /aktuelles/ und /galerie/ hatten null eingehende interne Links (F18). #}
+          <a href="/aktuelles/" class="rw-footer-link">Aktuelles</a>
+          <a href="/galerie/" class="rw-footer-link">Galerie</a>
+          <a href="/ratgeber/" class="rw-footer-link">Ratgeber</a>
+          <a href="/anfrage/" class="rw-footer-link">Kostenlos anfragen</a>
+          <a href="/kooperationspartner/" class="rw-footer-link">Kooperationspartner</a>
+          <a href="/jobs/" class="rw-footer-link">Jobs & Karriere</a>
+          <a href="/impressum/" class="rw-footer-link">Impressum</a>
+          <a href="/datenschutz/" class="rw-footer-link">Datenschutz</a>
+          <a href="/agb/" class="rw-footer-link">AGB</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="rw-footer-bottom">
+      <p class="rw-footer-copy">© 2026 Rümpelwerk Mitteldeutschland · Inh. Oliver Pohl. Alle Rechte vorbehalten.</p>
+      <div class="rw-footer-legal">
+        <a href="/impressum/">Impressum</a>
+        <a href="/datenschutz/">Datenschutz</a>
+        <a href="/agb/">AGB</a>
+        <a href="/barrierefreiheit/">Barrierefreiheit</a>
+        <a href="#" role="button" data-rw-click="rwCookieReopen" data-rw-prevent>Cookie-Einstellungen</a>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,12 @@
+{% comment %}
+  Tabelle der Formularfelder. ``felder`` ist eine Liste von dicts mit
+  ``label``, ``wert`` und ``art`` ('' | 'mail' | 'tel' | 'lang' | 'stark');
+  bei 'tel' traegt ``href`` die gewaehlte Nummer. Leere Werte zeigen einen Strich.
+{% endcomment %}<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="rw-feld" style="border-collapse:collapse;">
+  {% for f in felder %}
+  <tr>
+    <td class="rw-label rw-leise rw-linie" style="width:34%;padding:11px 12px 11px 0;border-bottom:1px solid #e4ebe7;vertical-align:top;font-size:13px;line-height:20px;color:#5b697e;">{{ f.label }}</td>
+    <td class="rw-text rw-linie" style="padding:11px 0;border-bottom:1px solid #e4ebe7;vertical-align:top;font-size:15px;line-height:22px;color:#0f172a;word-break:break-word;">{% if not f.wert %}<span class="rw-leise" style="color:#5b697e;">&ndash;</span>{% elif f.art == 'mail' %}<a href="mailto:{{ f.wert }}" class="rw-akzent" style="color:#157a39;font-weight:600;text-decoration:none;">{{ f.wert }}</a>{% elif f.art == 'tel' and f.href %}<a href="tel:{{ f.href }}" class="rw-akzent" style="color:#157a39;font-weight:600;text-decoration:none;">{{ f.wert }}</a>{% elif f.art == 'lang' %}{{ f.wert|linebreaksbr }}{% elif f.art == 'stark' %}<strong>{{ f.wert }}</strong>{% else %}{{ f.wert }}{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>

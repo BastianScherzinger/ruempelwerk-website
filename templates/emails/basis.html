@@ -1,0 +1,82 @@
+{% comment %}
+  Gemeinsame Basis aller HTML-Mails (seit 26.09.2026) - Kunde, Betrieb.
+  Tabellenlayout, max. 600 px, nur Inline-Styles; der <style>-Block im Kopf traegt
+  ausschliesslich Handy- und Dunkelmodus-Ergaenzungen. Keine externen Schriften,
+  keine Bilder, kein Tracking. Farben aus static/css/ruempelwerk.css:
+  --rw-orange #157a39 (ist Gruen), --rw-green-900 #0f3d24, --rw-text #0f172a,
+  --rw-text-3 #5b697e, --rw-bg-2 #eef3f0, --rw-bg-3 #e4ebe7, --rw-bg-card-2 #f0fdf4.
+  Jede Nutzereingabe laeuft durch den Autoescape - hier steht kein safe-Filter.
+{% endcomment %}<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>{% block titel %}{{ marke.firma }}{% endblock %}</title>
+<style>
+  @media only screen and (max-width:620px) {
+    .rw-rand { padding-left:20px !important; padding-right:20px !important; }
+    .rw-feld td { display:block !important; width:100% !important; }
+    .rw-feld td.rw-label { padding-bottom:0 !important; border-bottom:0 !important; }
+    .rw-knopf a { display:block !important; }
+  }
+  @media (prefers-color-scheme: dark) {
+    .rw-seite { background:#0b1410 !important; }
+    .rw-karte { background:#121d18 !important; border-color:#24362d !important; }
+    .rw-text { color:#e6ede9 !important; }
+    .rw-leise { color:#a7b5ae !important; }
+    .rw-akzent { color:#4ade80 !important; }
+    .rw-linie { border-color:#24362d !important; }
+    .rw-flaeche { background:#172720 !important; border-color:#24362d !important; }
+  }
+</style>
+</head>
+<body class="rw-seite" style="margin:0;padding:0;background:#eef3f0;-webkit-text-size-adjust:100%;">
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#eef3f0;opacity:0;">{% block preheader %}{{ preheader }}{% endblock %}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="rw-seite" style="background:#eef3f0;">
+  <tr>
+    <td align="center" style="padding:28px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="rw-karte" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #dde6e1;border-radius:12px;border-collapse:separate;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+        {% block kopf %}
+        <tr>
+          <td style="height:4px;line-height:4px;font-size:0;background:#157a39;">&nbsp;</td>
+        </tr>
+        <tr>
+          <td class="rw-rand" style="padding:24px 36px 0;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="vertical-align:bottom;">
+                  <div class="rw-text" style="font-size:20px;line-height:24px;font-weight:800;color:#0f3d24;letter-spacing:-0.2px;">R&uuml;mpelwerk</div>
+                  <div class="rw-akzent" style="font-size:11px;line-height:16px;font-weight:700;color:#157a39;letter-spacing:2px;text-transform:uppercase;">Mitteldeutschland</div>
+                </td>
+                <td align="right" class="rw-leise" style="vertical-align:bottom;font-size:12px;line-height:16px;color:#5b697e;">{% block kennung %}{{ kennung }}{% endblock %}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        {% endblock %}
+        <tr>
+          <td class="rw-rand" style="padding:28px 36px 8px;">
+            {% block inhalt %}{% endblock %}
+          </td>
+        </tr>
+        <tr>
+          <td class="rw-rand rw-linie" style="padding:20px 36px 26px;border-top:1px solid #e4ebe7;">
+            {% block fuss %}
+            <p class="rw-leise" style="margin:0;font-size:12px;line-height:18px;color:#5b697e;">
+              {{ marke.firma }} &ndash; Inh. {{ marke.inhaber }} &middot; {{ marke.strasse }} &middot; {{ marke.plz }} {{ marke.ort }}<br>
+              <a href="tel:{{ marke.telefon }}" class="rw-leise" style="color:#5b697e;text-decoration:none;">{{ marke.telefon_anzeige }}</a> &middot;
+              <a href="mailto:{{ marke.kontakt }}" class="rw-leise" style="color:#5b697e;text-decoration:none;">{{ marke.kontakt }}</a> &middot;
+              <a href="{{ marke.site }}/" class="rw-leise" style="color:#5b697e;text-decoration:none;">{{ marke.domain }}</a><br>
+              &copy; {{ marke.jahr }} {{ marke.firma }} &middot; <a href="{{ marke.site }}/impressum/" class="rw-leise" style="color:#5b697e;">Impressum</a> &middot; <a href="{{ marke.site }}/datenschutz/" class="rw-leise" style="color:#5b697e;">Datenschutz</a>
+            </p>
+            {% endblock %}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

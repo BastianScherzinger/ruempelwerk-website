@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!-- data-rw-no-consent: interne Seite, nie ein Cookie-Banner (siehe components/rw_cookie_banner.html) -->
+<html lang="de" data-rw-no-consent>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>// FEHLERWACHE · RÜMPELWERK</title>
+  {% comment %}
+    Fehlerwache (VL19, 16.09.2026). Dieselbe Bildsprache wie Dashboard und CMS,
+    aber ohne Webfonts: Eine Seite, die man oeffnet, wenn etwas kaputt ist,
+    soll nicht von einem dritten Server abhaengen.
+  {% endcomment %}
+  <style>
+    :root {
+      --g: #00ff88; --red: #f87171; --amber: #fbbf24;
+      --bg: #030712; --card: rgba(255,255,255,0.025);
+      --bdr: rgba(0,255,136,0.12); --bdr2: rgba(255,255,255,0.06);
+      --text: #e2e8f0; --muted: #94a3b8;
+      --mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+      --sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 0 24px; height: 56px; border-bottom: 1px solid var(--bdr); }
+    .titel { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 2px; color: var(--g); text-transform: uppercase; }
+    .logout-form button { background: transparent; border: 1px solid var(--bdr2); border-radius: 2px;
+      color: var(--muted); font-family: var(--mono); font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 1.5px; padding: 6px 14px; cursor: pointer; }
+    .logout-form button:hover, .logout-form button:focus-visible { border-color: var(--red); color: var(--red); }
+    .subnav { border-bottom: 1px solid var(--bdr2); padding: 0 24px; display: flex; gap: 4px; overflow-x: auto; }
+    .subnav-link { padding: 10px 16px; font-family: var(--mono); font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase; color: var(--muted); text-decoration: none;
+      border-bottom: 2px solid transparent; white-space: nowrap; }
+    .subnav-link:hover { color: var(--text); }
+    .subnav-link.active { color: var(--g); border-bottom-color: var(--g); }
+    main { max-width: 1040px; margin: 0 auto; padding: 32px 24px 64px; }
+    h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+    .hinweis { color: var(--muted); font-size: 0.9rem; line-height: 1.6; max-width: 70ch; margin-bottom: 32px; }
+    h2 { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted); margin: 32px 0 12px; }
+    .leer { padding: 24px; border: 1px dashed var(--bdr); border-radius: 6px; color: var(--g);
+      font-family: var(--mono); font-size: 0.8rem; }
+    .fehler { background: var(--card); border: 1px solid var(--bdr2); border-left: 3px solid var(--red);
+      border-radius: 6px; padding: 16px 18px; margin-bottom: 12px; }
+    .fehler.erledigt { border-left-color: var(--bdr); opacity: 0.7; }
+    .kopf { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+    .art { font-family: var(--mono); font-weight: 700; color: var(--red); }
+    .erledigt .art { color: var(--muted); }
+    .ort { font-family: var(--mono); font-size: 0.8rem; color: var(--text); }
+    .zahl { font-family: var(--mono); font-size: 0.75rem; color: var(--amber); white-space: nowrap; }
+    .meldung { margin: 8px 0 4px; font-size: 0.9rem; line-height: 1.5; word-break: break-word; }
+    .meta { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); line-height: 1.7; }
+    details { margin-top: 8px; }
+    summary { cursor: pointer; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+    pre { margin-top: 8px; padding: 12px; background: rgba(0,0,0,0.4); border-radius: 4px;
+      overflow-x: auto; font-size: 0.72rem; line-height: 1.5; color: var(--muted); }
+    .erledigt-form { margin-top: 10px; }
+    .erledigt-form button { background: transparent; border: 1px solid var(--bdr); border-radius: 3px;
+      color: var(--g); font-family: var(--mono); font-size: 0.68rem; font-weight: 700;
+      padding: 6px 12px; cursor: pointer; }
+    .erledigt-form button:hover, .erledigt-form button:focus-visible { background: rgba(0,255,136,0.08); }
+    :focus-visible { outline: 2px solid var(--g); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <span class="titel">Fehlerwache</span>
+    <form class="logout-form" method="post" action="/{{ stats_path }}/logout/">
+      {% csrf_token %}
+      <button type="submit">DISCONNECT</button>
+    </form>
+  </header>
+
+  <nav class="subnav" aria-label="Dashboard">
+    <a href="/{{ stats_path }}/data/" class="subnav-link">📊 Statistiken</a>
+    <a href="/{{ stats_path }}/anfragen/" class="subnav-link">📥 Anfragen</a>
+    <a href="/{{ stats_path }}/aktuelles/" class="subnav-link">📰 Aktuelles verwalten</a>
+    <a href="/{{ stats_path }}/fehler/" class="subnav-link active" aria-current="page">🚨 Fehler</a>
+    <a href="/{{ stats_path }}/termine/" class="subnav-link">📅 Termine</a>
+  </nav>
+
+  <main>
+    <h1>Fehler der Website</h1>
+    <p class="hinweis">
+      Jeder Serverfehler und jede Fehlerzeile im Log landet hier – gleiche Fehler
+      zählen hoch. Neues kommt stündlich als eine Sammelmail. Gespeichert werden
+      keine Formulardaten und keine IP-Adressen; Einträge verschwinden
+      {{ aufbewahrung }} Tage nach dem letzten Auftreten. „Erledigt“ blendet einen
+      Fehler aus, bis er wiederkommt.
+    </p>
+
+    <h2>Offen ({{ offen|length }})</h2>
+    {% for e in offen %}
+      {% include 'stats/_fehler_eintrag.html' %}
+    {% empty %}
+      <p class="leer">Keine offenen Fehler.</p>
+    {% endfor %}
+
+    {% if erledigt %}
+    <h2>Erledigt ({{ erledigt|length }})</h2>
+    {% for e in erledigt %}
+      {% include 'stats/_fehler_eintrag.html' %}
+    {% endfor %}
+    {% endif %}
+  </main>
+</body>
+</html>

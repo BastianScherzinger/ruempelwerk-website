@@ -1,0 +1,65 @@
+{% comment %}
+  Antwort-zuerst-Block (G2) — die wirksamste einzelne GEO-Maßnahme.
+
+  Generative Systeme zitieren Passagen, keine Seiten. Dieser Block steht direkt
+  unter dem Hero, beantwortet die Suchanfrage im ersten Satz vollständig und
+  trägt Firmenname, Zahl und Preisstand — die Merkmale, an denen ein Extraktor
+  eine zitierfähige Antwort erkennt. Dasselbe Format gewinnt in der klassischen
+  Suche Featured Snippets.
+
+  Aufrufen mit zwei Pflichtvariablen, beide aus einem Datenmodul und nie im
+  Template getippt (Regel 1, 12 und 24):
+
+      {% include 'components/rw_antwort.html' with antwort_frage=l.answer_frage antwort_text=l.answer %}
+
+  Quellen: services.py und matrix.py (`answer`, `answer_frage`),
+  data/antworten.py (54 Städte, beide Hubs, Startseite).
+
+  Optional `antwort_cta_url` — dann bekommt der Block die Fußzeile, die die
+  Leistungs- und Matrixseiten schon vor G2 hatten. Ihre beiden Zeitangaben
+  stehen bewusst HIER und nicht als Include-Argument: `{{ }}` in einem
+  `{% include … with x="…" %}`-Argument wird nicht interpoliert (Regel 14),
+  und die Werte kommen ohnehin global aus dem Context-Processor `zusagen`.
+
+  Die Klasse `rw-antwort-text` ist zugleich das `speakable`-Ziel (G9) und steht
+  als `_ANTWORTBLOCK` in check_seo.py. Wer sie umbenennt, benennt sie dort mit —
+  sonst prüft die zweite Richtung der speakable-Prüfung ins Leere und meldet
+  nichts, was wie ein grüner Lauf aussieht.
+
+  Genau eine `id` auf 71 Seiten: `antwort` auf der Sektion. Vor dem Ergänzen
+  einer zweiten nachsehen, was die Nachbarkomponenten mitbringen (Regel 10).
+
+  Seit G11 (27.08.2026) steht der Block auch **über jeder Vergleichstabelle** —
+  das Fazit ist der Teil, den generative Systeme aus einem Vergleich zitieren.
+  Dafür zwei optionale Argumente, beide mit dem bisherigen Verhalten als
+  Vorgabewert:
+
+    `antwort_id`     — Anker der Sektion, Standard `antwort`. **Pflicht, sobald
+                       eine Seite einen zweiten Block bekommt**: Zwei Sektionen
+                       mit `id="antwort"` sind eine doppelte id, und ein
+                       doppeltes Sprungziel springt an die falsche Stelle
+                       (Regel 10). `check_seo` fängt das ab.
+    `antwort_stufe`  — `h2` (Standard) oder `h3`. Über einer Tabelle, die schon
+                       eine Überschrift trägt, wäre ein zweites h2 eine
+                       Gliederungsebene zu hoch.
+
+  Die Klasse bleibt in beiden Fällen `rw-antwort-text` — sie ist das
+  speakable-Ziel, und ein Tabellen-Fazit ist genau die Sorte Passage, die
+  vorgelesen werden soll.
+{% endcomment %}
+{% if antwort_text %}
+<section class="rw-section rw-antwort-wrap" id="{{ antwort_id|default:"antwort" }}" aria-labelledby="{{ antwort_id|default:"antwort" }}-frage">
+  <div class="rw-container">
+    <div class="rw-antwort">
+      {% if antwort_stufe == "h3" %}<h3 class="rw-antwort-frage" id="{{ antwort_id|default:"antwort" }}-frage">{{ antwort_frage }}</h3>{% else %}<h2 class="rw-antwort-frage" id="{{ antwort_id|default:"antwort" }}-frage">{{ antwort_frage }}</h2>{% endif %}
+      <p class="rw-antwort-text">{{ antwort_text }}</p>
+      {% if antwort_cta_url %}
+      <div class="rw-antwort-fuss">
+        <a href="{{ antwort_cta_url }}" class="rw-btn-primary">Preis in {{ ZUSAGE_RECHNER }} berechnen</a>
+        <span class="rw-antwort-hinweis">Kostenlose Besichtigung · Angebot {{ ZUSAGE_ANGEBOT }}</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}

@@ -1,0 +1,204 @@
+{% load static rw_schema %}
+{# Google tag (gtag.js) – Consent Mode v2, lädt erst nach Einwilligung #}
+{% comment %}
+SI09 (08.09.2026): Die beiden Kennungen stehen als data-Attribute AM Tag und
+nicht mehr im Skriptkoerper. Der Grund ist die CSP: script-src traegt seitdem
+den SHA-256 dieses Blocks statt 'unsafe-inline', und ein Hash wird ueber den
+**Inhalt** des Elements gebildet, nie ueber seine Attribute. Damit bleibt der
+Hash derselbe, egal was GOOGLE_ADS_ID und OPENAI_PIXEL_ID in der Umgebung
+sagen – stuenden die Werte weiter im Koerper, haette jede Umgebung einen
+eigenen Hash, und die Richtlinie blockierte den Consent-Bootstrap auf allen
+85 Seiten. Wer hier eine Zeile aendert, laesst den Hash in
+apps/core/middleware.py nachziehen; test_middleware.py rechnet ihn nach.
+{% endcomment %}
+<script data-ads-id="{{ GOOGLE_ADS_ID }}" data-oai-pixel="{{ OPENAI_PIXEL_ID }}">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+{% comment %}
+  // Standard: alles abgelehnt, bis der Nutzer im Cookie-Banner zustimmt
+{% endcomment %}
+  gtag('consent', 'default', {
+    'ad_storage':'denied','analytics_storage':'denied',
+    'ad_user_data':'denied','ad_personalization':'denied',
+    'wait_for_update': 500
+  });
+  gtag('js', new Date());
+  window.rwGtagId = 'G-TGXHYF94T7';
+{% comment %}
+  // Die beiden Kennungen aus den data-Attributen dieses Tags (siehe den
+  // Kommentar darueber). document.currentScript zeigt waehrend der
+  // synchronen Ausfuehrung auf genau dieses Element.
+{% endcomment %}
+  var rwKonf = (document.currentScript || {}).dataset || {};
+{% comment %}
+  // Google-Ads-Conversion-Ziel. Leer, solange GOOGLE_ADS_CONVERSION_ID nicht
+  // gesetzt ist – dann bleibt unten alles beim reinen GA4-Betrieb.
+{% endcomment %}
+  window.rwAdsId = rwKonf.adsId || '';
+{% comment %}
+  // Lädt das eigentliche gtag.js-Skript (nur einmal, nur bei Einwilligung)
+{% endcomment %}
+  window.rwLoadGtag = function(){
+    if (window.__rwGtagLoaded) return; window.__rwGtagLoaded = true;
+    var s = document.createElement('script'); s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + window.rwGtagId;
+    document.head.appendChild(s);
+    gtag('config', window.rwGtagId, {'anonymize_ip': true});
+{% comment %}
+    // Zweites Ziel auf derselben gtag.js-Instanz: Ads braucht kein eigenes
+    // Skript, nur eine eigene config-Zeile. Sie steht bewusst *hier* und nicht
+    // in rw_js.html – der Consent-Bootstrap ist die einzige Stelle, die auf
+    // jeder der ~85 Seiten läuft. Genau daran scheiterte bis zum 19.08.2026
+    // Analytics auf allen Stadtseiten: Der Kopf war dort von Hand gebaut.
+{% endcomment %}
+    if (window.rwAdsId) gtag('config', window.rwAdsId);
+  };
+{% comment %}
+  // ── ChatGPT Ads: OpenAI Measurement Pixel ────────────────────────────────
+  // Derselbe Weg wie oben, und aus demselben Grund an derselben Stelle: Der
+  // Consent-Bootstrap ist der einzige Block, der auf allen ~85 Seiten laeuft.
+  //
+  // ⚠ Zwei Abweichungen von OpenAIs Anleitung, beide bewusst:
+  //
+  // 1. Der Pixel initialisiert seine Einwilligung laut Doku mit `true`, wenn
+  //    man nichts sagt. Fuer eine deutsche Seite ist das die falsche Vorgabe –
+  //    deshalb steht `oaiq('consent', false)` *vor* jedem `init`, wie es die
+  //    Doku im Abschnitt "Control measurement consent" selbst vorsieht.
+  // 2. OpenAI schlaegt vor, das SDK trotzdem sofort zu laden und nur die
+  //    Ereignisse zurueckzuhalten. Das taten wir bei Google auch nicht: Ein
+  //    Skript von bzrcdn.openai.com uebertraegt die IP des Besuchers in die
+  //    USA, bevor er zugestimmt hat. Das SDK wird deshalb **erst nach der
+  //    Einwilligung** nachgeladen – am 04.09.2026 ist fuer Google live
+  //    gemessen worden, dass vorher keine Anfrage rausgeht; fuer diesen Pixel
+  //    gilt derselbe Massstab.
+  //
+  // Der Stub unten ist reines JavaScript ohne Netzwerkverkehr. Er sammelt
+  // Aufrufe in einer Warteschlange, damit ein `oaiq('measure', …)` aus
+  // rw_basis.js nicht verlorengeht, falls es vor dem Nachladen feuert.
+{% endcomment %}
+  window.rwOaiPixelId = rwKonf.oaiPixel || '';
+  (function(w){
+    if (w.oaiq) return;
+    var q = function(){ q.q.push(arguments); };
+    q.q = []; w.oaiq = q;
+  })(window);
+  oaiq('consent', false);
+  window.rwLoadOaiq = function(){
+    if (!window.rwOaiPixelId || window.__rwOaiqLoaded) return;
+    window.__rwOaiqLoaded = true;
+    var js = document.createElement('script'); js.async = true;
+    js.src = 'https://bzrcdn.openai.com/sdk/oaiq.min.js';
+    document.head.appendChild(js);
+    oaiq('init', { pixelId: window.rwOaiPixelId });
+    oaiq('consent', true);
+  };
+{% comment %}
+  // Bereits erteilte Einwilligung beim Seitenaufruf sofort anwenden
+{% endcomment %}
+  (function(){
+    try {
+      if (/(?:^|;\s*)rw_consent=all/.test(document.cookie)) {
+        gtag('consent','update',{
+          'ad_storage':'granted','analytics_storage':'granted',
+          'ad_user_data':'granted','ad_personalization':'granted'
+        });
+        window.rwLoadGtag();
+        window.rwLoadOaiq();
+      }
+    } catch(e){}
+  })();
+</script>
+{% if seo_noindex %}
+<meta name="robots" content="noindex, follow">
+{% else %}
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+{% endif %}
+<link rel="canonical" href="{{ SITE_URL }}{{ seo_path }}">
+<link rel="alternate" hreflang="de" href="{{ SITE_URL }}{{ seo_path }}">
+<link rel="alternate" hreflang="x-default" href="{{ SITE_URL }}{{ seo_path }}">
+{# GE32: RSS der Aktuelles-Beitraege, auf jeder Seite auffindbar - apps/core/feeds.py. #}
+<link rel="alternate" type="application/rss+xml" title="Aktuelles – Rümpelwerk Mitteldeutschland" href="{{ SITE_URL }}{% url 'core:aktuelles_feed' %}">
+<link rel="alternate" type="application/rss+xml" title="Ratgeber – Rümpelwerk Mitteldeutschland" href="{{ SITE_URL }}{% url 'core:ratgeber_feed' %}">
+{% if seo_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endif %}
+<meta name="author" content="Rümpelwerk Mitteldeutschland – Inh. Oliver Pohl">
+
+{% comment %}
+  theme-color faerbt die Adressleiste auf Android und die Statusleiste einer
+  vom Homescreen gestarteten Seite. Ohne die Angabe steht die Marke dort grau.
+
+  Der Wert ist --nacht (seit 01.10.2026: #2C4432, Salbei-Waldgruen), also die
+  Farbe der Navigation, die auf allen Seiten dunkel ist. Dunkel heisst: Chrome
+  zeichnet helle Symbole in der Statusleiste. Ausdruecklich NICHT eine helle
+  Dekorfarbe wie --rw-orange-2 (Mint #B4D7BF): Chrome leitet aus der Helligkeit
+  ab, ob es weisse oder schwarze Symbole zeichnet, und bei Mint faellt die
+  Entscheidung falsch herum.
+
+  Hart notiert statt aus dem Token: In einem <meta content=""> gibt es kein
+  var(). Wer --nacht in ruempelwerk.css aendert, muss diese Zeile
+  mitziehen.
+
+  Bewusst ohne prefers-color-scheme-Variante - die Seite hat nur ein helles
+  Theme.
+{% endcomment %}
+<meta name="theme-color" content="#2C4432">
+
+{# Open Graph #}
+<meta property="og:type" content="{% if seo_type %}{{ seo_type }}{% else %}website{% endif %}">
+<meta property="og:locale" content="de_DE">
+<meta property="og:site_name" content="Rümpelwerk Mitteldeutschland">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ SITE_URL }}{{ seo_path }}">
+{% comment %}
+  Das Vorschaubild (D3, 06.09.2026). Bis dahin stand hier das quadratische
+  800x800-Logo - neben einem twitter:card="summary_large_image", das ein
+  breites Bild im Verhaeltnis 1,91:1 erwartet. Facebook, LinkedIn, X und
+  WhatsApp haben es deshalb oben und unten beschnitten oder klein neben den
+  Text gestellt, und zwar auf allen 85 Seiten. Das ist kein Schoenheitsfehler:
+  WhatsApp ist laut ADS.md der Hauptkontaktweg dieses Betriebs, jeder geteilte
+  Link zeigt dort diese Vorschau.
+
+  seo_image ist optional und nennt einen Pfad *relativ zum static-Ordner*
+  (also "images/og-leistung.jpg"), nicht die fertige URL. Grund ist Regel 14:
+  Ein Variablen-Ausdruck in einem include-Argument wird nicht interpoliert,
+  der Aufrufer koennte den static-Pfad also gar nicht selbst bauen. Faellt der
+  Parameter weg, gilt das Standardbild - so ist es fuer 85 Seiten richtig, und
+  die Startseite oder eine einzelne Leistungsseite kann spaeter ihr eigenes
+  bekommen, ohne dass hier etwas umgebaut werden muss.
+
+  ACHTUNG, zwei Fallen:
+  1. Jedes Bild, das hier eingesetzt wird, muss **1200x630** sein. Die Masse
+     stehen fest im Markup und werden von check_seo gegen die echte Datei
+     gehalten - dieselbe Pruefung, die es fuer img-Tags schon gibt. Ein Bild
+     mit anderen Massen macht den Lauf rot, und zwar zu Recht: Ein falsch
+     angegebenes Verhaeltnis ist genau der Fehler, den D3 behebt.
+  2. Der Pfad laeuft ueber den static-Tag und damit ueber das Manifest-Storage
+     mit Hash im Dateinamen. Eine Datei, die nicht durch collectstatic
+     gegangen ist, wirft in Produktion beim Rendern **jeder** Seite. Lokal
+     faellt das nicht auf, weil config/test_runner.py das Manifest-Storage
+     fuer den Testlauf zuruecknimmt.
+{% endcomment %}
+{% comment %}
+  SEO-Audit 25.09.2026 (K2): Das Standardbild steht unter der festen Adresse
+  /og-image.jpg (data/feste_dateien.py) statt unter /static/ mit Hash - die
+  Vorschau eines geteilten Links wird gecacht, und die gehashte Adresse
+  stirbt beim naechsten Bildwechsel. Ein seitenspezifisches seo_image laeuft
+  weiter ueber den static-Tag.
+{% endcomment %}
+{% firstof '/og-image.jpg' as rw_og_url %}{% if seo_image %}{% static seo_image as rw_og_url %}{% endif %}
+<meta property="og:image" content="{{ SITE_URL }}{{ rw_og_url }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{% firstof seo_image_alt 'Rümpelwerk Mitteldeutschland – Entrümpelung und Haushaltsauflösung zum Festpreis' %}">
+
+{# Twitter Card #}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ SITE_URL }}{{ rw_og_url }}">
+<meta name="twitter:image:alt" content="{% firstof seo_image_alt 'Rümpelwerk Mitteldeutschland – Entrümpelung und Haushaltsauflösung zum Festpreis' %}">
+
+{# Strukturierte Daten kommen seit F5 aus apps/core/schema.py. #}
+{% rw_head_schema %}

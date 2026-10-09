@@ -1,0 +1,118 @@
+{% load static rw_schema %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="{{ seo_description }}">
+  <title>{{ seo_title }}</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% include 'components/rw_seo.html' with seo_title=seo_title seo_description=seo_description seo_path="/ratgeber/" seo_breadcrumb_name="Ratgeber" seo_speakable="h1,.rw-antwort-text" %}
+  {% include 'components/rw_css.html' with crit_page='ratgeber.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  <section class="rw-section rw-hub-kopf rw-rg-kopf">
+    <div class="rw-container">
+      <nav class="rw-brotkrumen" aria-label="Brotkrumen">
+        <a href="/">Startseite</a> <span aria-hidden="true">›</span> Ratgeber
+      </nav>
+      <h1 class="rw-hub-titel">Ratgeber <em>Entrümpelung und Haushaltsauflösung</em></h1>
+      <p class="rw-rg-teaser">
+        Antworten auf die Fragen, die vor jeder Räumung kommen – mit echten Preisen,
+        Fundstellen und den Regeln der kommunalen Entsorger.
+      </p>
+      <p class="rw-rg-meta">
+        Von {{ FIRMA_NAME }} · Stand <time datetime="{{ h.stand_iso }}">{{ h.stand }}</time>
+      </p>
+    </div>
+  </section>
+
+  {% include 'components/rw_antwort.html' with antwort_frage=h.answer_frage antwort_text=h.answer %}
+
+  <section class="rw-section rw-svc-text-sec">
+    <div class="rw-container rw-svc-text">
+      <article class="rw-svc-block" id="grundlagen">
+        <h2>{{ h.einleitung_titel }}</h2>
+        {# audit-ok V02: Absaetze aus data/ratgeber.py (Python-Konstante), in hub() maskiert; nur der Quellensatz traegt Links #}
+        {% for p in h.einleitung %}<p>{{ p|safe }}</p>{% endfor %}
+      </article>
+    </div>
+  </section>
+
+  {% for g in h.gruppen %}
+  <section class="rw-section{% cycle ' rw-svc-band' '' %}" id="gruppe-{{ forloop.counter }}">
+    <div class="rw-container">
+      <div class="rw-section-header rw-rg-sechead">
+        <h2 class="rw-section-title">{{ g.titel }}</h2>
+      </div>
+      <ul class="rw-svc-related">
+        {% for e in g.eintraege %}
+        <li>
+          <a href="{{ e.url }}" class="rw-svc-related-karte">
+            <span class="rw-svc-related-name">{{ e.titel }}</span>
+            <span class="rw-svc-related-text">{{ e.teaser }}</span>
+            <span class="rw-svc-related-mehr" aria-hidden="true">Artikel lesen →</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+  {% endfor %}
+
+  {% comment %}
+    Das Glossar: sichtbar als <dl>, im Schema als DefinedTermSet – beides aus
+    ratgeber.GLOSSAR (Regel 12). Die id der Einträge ist das Sprungziel, auf
+    das die DefinedTerm-Knoten per url zeigen.
+  {% endcomment %}
+  <section class="rw-section" id="glossar">
+    <div class="rw-container">
+      <div class="rw-section-header rw-rg-sechead">
+        <h2 class="rw-section-title">Glossar: <em>Begriffe rund um die Räumung</em></h2>
+        <p class="rw-section-sub">Die Wörter, die in Angeboten und Mietverträgen immer wieder auftauchen – jeweils in einem Satz.</p>
+      </div>
+      <dl class="rw-rg-glossar">
+        {% for g in h.glossar %}
+        <div class="rw-rg-glossar-eintrag" id="{{ g.anker }}">
+          <dt>{{ g.begriff }}</dt>
+          <dd>{{ g.text }}</dd>
+        </div>
+        {% endfor %}
+      </dl>
+    </div>
+  </section>
+
+  <section class="rw-cta rw-svc-cta">
+    <div class="rw-container">
+      <div class="rw-cta-inner">
+        <h2>Lieber gleich den Preis wissen? <em>In {{ ZUSAGE_RECHNER }} berechnet.</em></h2>
+        <p>
+          Der Preisrechner rechnet mit denselben Sätzen wie unser Angebot. Verbindlich
+          wird der Preis nach der kostenlosen Besichtigung.
+        </p>
+        <div class="rw-cta-actions">
+          <a href="/preisangebot/" class="rw-btn-primary">Preis berechnen</a>
+          <a href="/anfrage/" class="rw-btn-outline">Kostenlos anfragen</a>
+        </div>
+        <p class="rw-svc-cta-belege">
+          Alle Leistungen stehen unter <a href="/dienstleistungen/">Dienstleistungen</a>,
+          alle Städte unter <a href="/entrumpelung/">Entrümpelung nach Städten</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+</body>
+</html>

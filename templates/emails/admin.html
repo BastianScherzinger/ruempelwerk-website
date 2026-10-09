@@ -1,0 +1,37 @@
+{% extends "emails/basis.html" %}
+{# audit-ok V06: geladen in emails._render als f'emails/{vorlage}' - absichtlich kein Literal (EIG337) #}
+{% comment %}
+  Benachrichtigung an ADMIN_EMAILS (den Betrieb) - fuer alle vier Formulare.
+  Knoepfe: Antworten (mailto an den Anfragenden), Anrufen (tel:), Eintrag in
+  der Verwaltung. Der Hinweis unten sagt, ob der Kunde selbst eine Mail bekam.
+{% endcomment %}
+{% block titel %}{{ titel }}{% endblock %}
+{% block inhalt %}
+            <p class="rw-akzent" style="margin:0 0 6px;font-size:12px;line-height:16px;font-weight:700;color:#157a39;letter-spacing:1.5px;text-transform:uppercase;">{{ art }}</p>
+            <h1 class="rw-text" style="margin:0 0 6px;font-size:22px;line-height:29px;font-weight:800;color:#0f172a;">{{ titel }}</h1>
+            <p class="rw-leise" style="margin:0 0 20px;font-size:14px;line-height:21px;color:#5b697e;">{{ zeitpunkt }} &middot; &uuml;ber {{ marke.domain }}</p>
+
+            {% include "emails/_felder.html" %}
+
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 4px;">
+              <tr>
+                {% if antwort_an %}
+                <td class="rw-knopf" style="padding:0 8px 8px 0;">
+                  <a href="mailto:{{ antwort_an }}?subject={{ antwort_betreff|urlencode }}" style="display:inline-block;background:#157a39;color:#ffffff;font-size:15px;line-height:20px;font-weight:700;padding:12px 22px;border-radius:8px;text-decoration:none;">Antworten</a>
+                </td>
+                {% endif %}
+                {% if telefon_href %}
+                <td class="rw-knopf" style="padding:0 8px 8px 0;">
+                  <a href="tel:{{ telefon_href }}" class="rw-akzent" style="display:inline-block;background:#ffffff;color:#157a39;font-size:15px;line-height:20px;font-weight:700;padding:11px 20px;border:1px solid #157a39;border-radius:8px;text-decoration:none;">Anrufen</a>
+                </td>
+                {% endif %}
+              </tr>
+            </table>
+
+            {% if hinweis %}
+            <p class="rw-text rw-flaeche" style="margin:12px 0 0;padding:12px 14px;background:#f0fdf4;border:1px solid #cfe9d8;border-radius:8px;font-size:14px;line-height:21px;color:#0f172a;">{{ hinweis }}</p>
+            {% endif %}
+            {% if admin_url %}
+            <p class="rw-leise" style="margin:16px 0 0;font-size:13px;line-height:19px;color:#5b697e;">In der Verwaltung: <a href="{{ admin_url }}" class="rw-akzent" style="color:#157a39;">Eintrag &ouml;ffnen</a></p>
+            {% endif %}
+{% endblock %}

@@ -1,0 +1,102 @@
+{% load static %}{% comment %}
+  TrustLocal-Bewertungswidget (eingebaut 27.08.2026, auf Wunsch des Inhabers).
+
+  Vier Dinge, die man wissen muss, bevor man diese Komponente verschiebt:
+
+  1. **Sie steht auf /ueber-uns/ und NICHT auf der Startseite — mit Absicht.**
+     Das Skript enthält Code für ein eigenes `application/ld+json` mit
+     `aggregateRating`. **Im Test am 27.08.2026 hat es keines eingefügt** —
+     gemessen, nicht angenommen: ein einziger JSON-LD-Block auf der Seite, und
+     das ist unser `@graph`. Aber die Startseite trägt ein `aggregateRating`
+     aus `reviews.stand()`, und zwei Bewertungszahlen für denselben Betrieb im
+     selben Dokument wären ein Widerspruch, den Google ignoriert oder als
+     Manipulation liest. `/ueber-uns/` hat kein `aggregateRating`. Wer das
+     Widget doch auf die Startseite legt, prüft **vorher** im Browser, ob das
+     noch so ist.
+
+     ⚠ **Die Zahlen laufen ohnehin auseinander.** Am 27.08.2026 zeigte das
+     Widget **5,0 bei 23**, `reviews.stand()` lokal **4,9 bei 18** (die
+     Rückfall-Liste in `reviews.py`; in der Produktion kommt der Wert aus der
+     Datenbank, die `sync_google_reviews` nächtlich abgleicht). Das Widget ist
+     eine **zweite Quelle für dieselbe Aussage**, und `check_seo` kann sie
+     nicht prüfen: Es rendert ohne JavaScript und sieht die Widget-Zahl nie.
+     Solange beide auf verschiedenen Seiten stehen, ist das erträglich —
+     nebeneinander wäre es ein sichtbarer Widerspruch.
+
+  2. **Es ist ein Drittanbieter-Skript.** Es lädt von `static.trustlocal.de`
+     und holt die Bewertungen von `trustlocal.de` — dabei wird die IP-Adresse
+     des Besuchers dorthin übertragen. Das steht deshalb in der
+     Datenschutzerklärung (Abschnitt „Bewertungswidget"). Cookies oder
+     localStorage setzt es nach Prüfung des Skripts **nicht**.
+     **Seit dem 26.09.2026 lädt es erst auf Klick** (Rechtsprüfung, Befund 5):
+     Der Knopf unten trägt die Skript-Adresse, static/js/rw_trustlocal.js
+     hängt das Skript erst nach dem Klick ein.
+
+  3. **Die CSP musste dafür erweitert werden** (`apps/core/middleware.py`).
+     Ohne die Hosts dort lädt das Widget still nicht — dieselbe Fehlerklasse
+     wie die 54 Stadtseiten, die monatelang ohne Analytics liefen.
+
+  4. **Regel 11 gilt weiter: Der Inhalt ist nicht rankingrelevant.** GPTBot,
+     PerplexityBot und ClaudeBot führen kein JavaScript aus und sehen hier
+     nichts. Die zitierfähigen Bewertungszahlen stehen server-gerendert auf der
+     Startseite, aus `reviews.stand()` — daran ändert dieses Widget nichts, und
+     es darf sie auch nicht ersetzen.
+
+  Die `data-id` ist die Widget-Kennung des Betriebs; sie kam vom Inhaber.
+{% endcomment %}
+<section class="rw-section" id="trustlocal" style="background:var(--rw-bg-2);">
+  <div class="rw-container">
+    <div class="rw-section-header" data-rw-reveal>
+      <div class="rw-section-badge">Unabhängige Bewertungen</div>
+      <h2 class="rw-section-title">Was Kundinnen und Kunden <em>schreiben</em></h2>
+      <p class="rw-section-sub">
+        Gesammelt und geprüft von TrustLocal – unabhängig von dieser Website.
+        Unsere Google-Bewertungen stehen auf der <a href="/#bewertungen">Startseite</a>.
+      </p>
+    </div>
+    <div class="rw-trustlocal" data-rw-reveal>
+      <div class="trustlocal-review-widget"
+           data-id="x8i9Hrg9NOj6W-21xS3an6VRlRnhZPvk8XIa6EH28wN66w"
+           data-language-code="de"
+           data-country-code="DE"></div>
+      <div data-rw-trustlocal-rahmen style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;">
+        <button type="button" class="rw-btn-outline" hidden
+                data-rw-trustlocal="https://static.trustlocal.de/widget/widget_review.js"
+                aria-describedby="rw-tl-hinweis-bewertungen">TrustLocal-Bewertungen anzeigen</button>
+        <p id="rw-tl-hinweis-bewertungen" style="margin:0;font-size:0.8rem;color:var(--rw-text-3);max-width:44ch;">
+          Dabei werden Daten, darunter Ihre IP-Adresse, an TrustLocal übertragen.
+        </p>
+      </div>
+      <noscript>
+        <p class="rw-trustlocal-fallback">
+          Für die Anzeige der TrustLocal-Bewertungen wird JavaScript benötigt.
+          Unsere Google-Bewertungen finden Sie auf der
+          <a href="/#bewertungen">Startseite</a>.
+        </p>
+      </noscript>
+    </div>
+  </div>
+</section>
+{% comment %}
+  Das Anbieter-Skript (`async`, wie vom Anbieter vorgegeben) hängt seit dem
+  26.09.2026 static/js/rw_trustlocal.js erst nach dem Klick ein; hier steht
+  nur noch dieses eigene Skript. Es steht am Ende der Sektion und
+  nicht in rw_js.html: Es gehört zu genau dieser einen Seite, und ein global
+  eingebundenes Drittanbieter-Skript liefe auf 85 Seiten, von denen 84 kein
+  Widget zeigen.
+
+  **Kein `integrity`-Attribut, und das ist eine bewusste Abwägung.**
+  Subresource Integrity bindet den Tag an einen Hash der Datei. TrustLocal
+  liefert das Widget unter einer festen URL aus und aktualisiert es dort; ein
+  fester Hash würde das Widget beim nächsten Anbieter-Update **still
+  abschalten** — und ein stiller Ausfall ist in diesem Projekt die
+  Fehlerklasse, die am meisten gekostet hat.
+
+  Was bleibt, ist das Restrisiko: Wer `static.trustlocal.de` kompromittiert,
+  führt Code auf `/ueber-uns/` aus. Begrenzt wird es durch die CSP — der Host
+  steht dort nur bei `script-src`, `connect-src` und `img-src`, nicht bei
+  `frame-src`, und `form-action` bleibt auf `'self'`. Wer das Widget einmal
+  gegen eine versionierte URL tauschen kann (`…/widget_review.v3.js` o. ä.),
+  soll `integrity` nachtragen.
+{% endcomment %}
+<script src="{% static 'js/rw_trustlocal.js' %}" defer></script>

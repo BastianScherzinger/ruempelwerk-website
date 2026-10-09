@@ -1,0 +1,296 @@
+{% load static rw_antispam %}{# audit-ok V07: JSON-LD kommt über components/rw_seo.html (Tag rw_head_schema) - die Seite liefert genau einen ld+json-Block, check_seo prüft ihn #}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Unverbindlich anfragen: kostenlose Besichtigung vor Ort, danach ein Festpreis, verbindlich im Angebot. Ohne Vorkasse.">
+  <title>Entrümpelung anfragen: kostenlose Besichtigung | Rümpelwerk</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {# LCP-Bild vorziehen: ohne Preload startet der Download erst, wenn #}
+  {# der Parser das Hero-Element im Body erreicht - also nach dem CSS. #}
+  <link rel="preload" as="image" media="(max-width:640px)" href="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif" fetchpriority="high">
+  <link rel="preload" as="image" media="(min-width:641px)" href="{% static 'images/hero-banner.avif' %}" type="image/avif" fetchpriority="high">
+  {% include 'components/rw_seo.html' with seo_title="Entrümpelung anfragen: kostenlose Besichtigung | Rümpelwerk" seo_description="Unverbindlich anfragen: kostenlose Besichtigung vor Ort, danach ein Festpreis, verbindlich im Angebot. Ohne Vorkasse." seo_path="/anfrage/" seo_breadcrumb_name="Kostenlose Anfrage" seo_keywords="Entrümpelung anfragen, Haushaltsauflösung anfragen, kostenlose Besichtigung Entrümpelung, Entrümpelung Angebot, Festpreisangebot Entrümpelung, Wohnungsauflösung anfragen" seo_speakable="h1,.rw-lead-antwort" %}
+  {% include 'components/rw_css.html' with crit_page='anfrage.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt" class="rw-formseite">
+
+  {# ════════ PAGE HERO ════════ #}
+  <div class="rw-leistungen-hero rw-leistungen-hero--media">
+    <div class="rw-hero-media-bg"><picture>
+      {# AVIF auf DERSELBEN Zeile wie WebP: eine eigene Zeile kostet 762 Byte kritisches CSS (Regel 26/28). #}
+      <source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif"><source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.webp' %}" type="image/webp">
+      <source srcset="{% static 'images/hero-banner.avif' %}" type="image/avif"><source srcset="{% static 'images/hero-banner.webp' %}" type="image/webp">
+      <img src="{% static 'images/hero-banner.jpg' %}" alt="" width="1915" height="821" fetchpriority="high">
+    </picture></div>
+    <div class="rw-hero-media-overlay"></div>
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>Kostenlose Anfrage</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Kostenlos & unverbindlich</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(2rem,4vw,3rem);margin-bottom:14px;">
+          Entrümpelung <em>anfragen</em>
+        </h1>
+        <p class="rw-lead-antwort" data-rw-readmore style="font-size:1rem;color:var(--rw-text-2);max-width:600px;line-height:1.8;margin-bottom:28px;">
+          Kurzes Formular ausfüllen – unser Team meldet sich
+          <strong style="color:var(--rw-text);">in {{ ZUSAGE_ANTWORT_SPANNE }}</strong> bei Ihnen – {{ ZUSAGE_ANTWORT_GILT }}, auch abends und am Wochenende. Telefonisch sind wir {{ FIRMA_ZEITEN }} erreichbar.
+        </p>
+        <div class="rw-promise-strip">
+          <span class="rw-promise-badge"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> {{ ZUSAGE_REAKTION }}</span>
+          <span class="rw-promise-badge"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Besichtigung {{ ZUSAGE_TERMIN_FRUEHESTENS }} möglich</span>
+          <span class="rw-promise-badge green"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg> Angebot {{ ZUSAGE_ANGEBOT }}</span>
+          <span class="rw-promise-badge"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg> Festpreis nach Besichtigung</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ════════ FORMULAR ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      <div class="rw-anfrage-wrap">
+
+        <div class="rw-form-card" data-rw-reveal>
+
+          {% if messages %}
+            {% for message in messages %}
+              <div class="{% if message.level_tag == 'error' %}rw-alert-error{% else %}rw-alert-success{% endif %}"{% if message.level_tag == 'error' %} role="alert"{% endif %}>
+                <span>{% if message.level_tag == 'error' %}<svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg>{% else %}<svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>{% endif %}</span>
+                <span>{{ message }}</span>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <h2 class="rw-form-headline">Ihre Anfrage</h2>
+          <p class="rw-form-subline">Alle mit <span style="color:var(--rw-orange);">*</span> markierten Felder sind Pflichtfelder.</p>
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+            {# Honeypot: für Menschen unsichtbar, Bots füllen es aus #}
+            {# Honeypot, Zeitmessung und JavaScript-Nachweis - s. apps/core/antispam.py #}
+            {% rw_antispam %}
+
+            {# Leistungsauswahl #}
+            <p class="rw-form-section-title" id="gruppe-leistung">Leistungsart <span style="color:var(--rw-orange);">*</span></p>
+            {# BF24: Der Fehlertext bekommt eine Kennung und haengt per aria-describedby an der Gruppe - sonst liest ein Screenreader beim Feld nur "Leistungsart, Pflichtfeld" vor und nie, was falsch war. #}
+            {% if form.leistung.errors %}
+              <p class="rw-form-error" id="gruppe-leistung-fehler" role="alert">{{ form.leistung.errors|join:", " }}</p>
+            {% endif %}
+            <div class="rw-radio-grid" role="radiogroup" aria-labelledby="gruppe-leistung" aria-required="true"{% if form.leistung.errors %} aria-invalid="true" aria-describedby="gruppe-leistung-fehler"{% endif %} style="margin-bottom:32px;">
+              <div class="rw-radio-card">
+                <input type="radio" name="leistung" id="l-entruempelung" value="entruempelung"
+                  {% if form.leistung.value == 'entruempelung' %}checked{% endif %} required>
+                <label for="l-entruempelung" class="rw-radio-label">
+                  <span class="rw-radio-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span>
+                  <div>
+                    <div class="rw-radio-text-title">Entrümpelung</div>
+                    <div class="rw-radio-text-sub">Haushalt, Wohnung, Keller, Nachlass, Gewerbe, Messie-Wohnung</div>
+                  </div>
+                </label>
+              </div>
+              <div class="rw-radio-card">
+                <input type="radio" name="leistung" id="l-sanierung" value="sanierung"
+                  {% if form.leistung.value == 'sanierung' %}checked{% endif %}>
+                <label for="l-sanierung" class="rw-radio-label">
+                  <span class="rw-radio-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-2.4 2.6-2.6z"/></svg></span>
+                  <div>
+                    <div class="rw-radio-text-title">Sanierung</div>
+                    <div class="rw-radio-text-sub">Malerarbeiten, Böden, Reparaturen</div>
+                  </div>
+                </label>
+              </div>
+              <div class="rw-radio-card">
+                <input type="radio" name="leistung" id="l-komplett" value="komplett"
+                  {% if form.leistung.value == 'komplett' %}checked{% endif %}>
+                <label for="l-komplett" class="rw-radio-label">
+                  <span class="rw-radio-icon"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01z"/></svg></span>
+                  <div>
+                    <div class="rw-radio-text-title">Komplett-Paket</div>
+                    <div class="rw-radio-text-sub">Entrümpelung + Sanierung</div>
+                  </div>
+                </label>
+              </div>
+              <div class="rw-radio-card">
+                <input type="radio" name="leistung" id="l-sonstiges" value="sonstiges"
+                  {% if form.leistung.value == 'sonstiges' %}checked{% endif %}>
+                <label for="l-sonstiges" class="rw-radio-label">
+                  <span class="rw-radio-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/></svg></span>
+                  <div>
+                    <div class="rw-radio-text-title">Sonstiges</div>
+                    <div class="rw-radio-text-sub">Übergabe, Entsorgung, etc.</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="rw-form-divider"></div>
+
+            {# Kontaktdaten #}
+            <p class="rw-form-section-title" style="margin-bottom:20px;">Ihre Kontaktdaten</p>
+
+            <div class="rw-form-grid">
+              <div class="rw-form-group">
+                <label for="f-name" class="rw-form-label">Name <span style="color:var(--rw-orange);">*</span></label>
+                {% if form.name.errors %}<p class="rw-form-error" id="f-name-fehler" role="alert">{{ form.name.errors|join:", " }}</p>{% endif %}
+                <input type="text" id="f-name" name="name" maxlength="200" autocomplete="name"
+                  class="rw-form-input {% if form.name.errors %}rw-form-input--error{% endif %}"{% if form.name.errors %} aria-invalid="true" aria-describedby="f-name-fehler"{% endif %} placeholder="Vor- und Nachname" value="{{ form.name.value|default:'' }}" required>
+              </div>
+              <div class="rw-form-group">
+                <label for="f-adresse" class="rw-form-label">Adresse des Objekts</label>
+                {# BF24: Auch die drei optionalen Felder koennen scheitern (Laengengrenze aus forms.py und models.py). Bis zum 17.09.2026 kam das Formular dann ohne einen einzigen sichtbaren Hinweis zurueck. #}
+                {% if form.adresse.errors %}<p class="rw-form-error" id="f-adresse-fehler" role="alert">{{ form.adresse.errors|join:", " }}</p>{% endif %}
+                <input type="text" id="f-adresse" name="adresse" maxlength="500" autocomplete="street-address"
+                  class="rw-form-input {% if form.adresse.errors %}rw-form-input--error{% endif %}"{% if form.adresse.errors %} aria-invalid="true" aria-describedby="f-adresse-fehler"{% endif %} placeholder="Straße, PLZ, Ort" value="{{ form.adresse.value|default:'' }}">
+              </div>
+              <div class="rw-form-group">
+                <label for="f-email" class="rw-form-label">E-Mail <span style="color:var(--rw-orange);">*</span></label>
+                {% if form.email.errors %}<p class="rw-form-error" id="f-email-fehler" role="alert">{{ form.email.errors|join:", " }}</p>{% endif %}
+                <input type="email" id="f-email" name="email" maxlength="254" autocomplete="email"
+                  class="rw-form-input {% if form.email.errors %}rw-form-input--error{% endif %}"{% if form.email.errors %} aria-invalid="true" aria-describedby="f-email-fehler"{% endif %} placeholder="ihre@email.de" value="{{ form.email.value|default:'' }}" required>
+              </div>
+              <div class="rw-form-group">
+                <label for="f-telefon" class="rw-form-label">Telefonnummer</label>
+                {% if form.telefon.errors %}<p class="rw-form-error" id="f-telefon-fehler" role="alert">{{ form.telefon.errors|join:", " }}</p>{% endif %}
+                <input type="tel" id="f-telefon" name="telefon" maxlength="50" autocomplete="tel"
+                  class="rw-form-input {% if form.telefon.errors %}rw-form-input--error{% endif %}"{% if form.telefon.errors %} aria-invalid="true" aria-describedby="f-telefon-fehler"{% endif %} placeholder="+49 ..." value="{{ form.telefon.value|default:'' }}">
+              </div>
+            </div>
+
+            {# Zusatzinfo #}
+            <div class="rw-form-group" style="margin-bottom:32px;">
+              <label for="f-info" class="rw-form-label">Zusätzliche Informationen (optional)</label>
+              {% if form.zusatz_info.errors %}<p class="rw-form-error" id="f-info-fehler" role="alert">{{ form.zusatz_info.errors|join:", " }}</p>{% endif %}
+              <textarea id="f-info" name="zusatz_info" maxlength="2000"
+                class="rw-form-textarea {% if form.zusatz_info.errors %}rw-form-input--error{% endif %}"{% if form.zusatz_info.errors %} aria-invalid="true" aria-describedby="f-info-fehler"{% endif %} placeholder="z.B. Größe der Immobilie, besondere Gegebenheiten, Wunschtermin ...">{{ form.zusatz_info.value|default:'' }}</textarea>
+            </div>
+
+            <button type="submit" class="rw-btn-primary rw-form-submit">Anfrage absenden →</button>
+
+            <div class="rw-anfrage-promise">
+              <span class="rw-anfrage-promise-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+              <span>Sie erhalten <strong>in {{ ZUSAGE_ANTWORT_SPANNE }}</strong> eine Antwort von unserem Team – {{ ZUSAGE_ANTWORT_GILT }}.</span>
+            </div>
+
+            <p style="font-size:0.78rem;color:var(--rw-text-3);text-align:center;margin-top:12px;">
+              Wir verwenden Ihre Angaben, um Ihre Anfrage zu bearbeiten, und geben sie nur an die in der Datenschutzerklärung genannten Dienstleister weiter.
+              <a href="/datenschutz/" style="color:var(--rw-text-3);">Datenschutz</a> · Es gelten unsere <a href="/agb/" style="color:var(--rw-text-3);">AGB</a>.
+            </p>
+          </form>
+        </div>
+
+        {# Sidebar: Kontaktinfos #}
+        <div class="rw-anfrage-sidebar">
+          <div class="rw-anfrage-info-card" data-rw-reveal>
+            {# IS25: alt="" – der Name steht als Text direkt darunter. #}
+            <img width="256" height="258" src="{% static 'images/ruempelwerk_logo_sm.webp' %}" srcset="{% static 'images/ruempelwerk_logo_xs.webp' %} 132w, {% static 'images/ruempelwerk_logo_sm.webp' %} 256w" sizes="110px" alt="" class="rw-anfrage-logo" loading="lazy">
+            <div class="rw-anfrage-info-name">Rümpelwerk Mitteldeutschland</div>
+            <div class="rw-anfrage-info-role">Inh. Oliver Pohl · Teamleiter</div>
+            <div class="rw-anfrage-info-promise"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> {{ ZUSAGE_REAKTION }}</div>
+          </div>
+          <div class="rw-anfrage-contact-links" data-rw-reveal data-rw-delay="1">
+            <a href="mailto:{{ CONTACT_EMAIL }}" class="rw-kontakt-card">
+              <div class="rw-kontakt-card-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></div>
+              <div>
+                <div class="rw-kontakt-card-label">Direkt per E-Mail</div>
+                <div class="rw-kontakt-card-value">{{ CONTACT_EMAIL }}</div>
+              </div>
+            </a>
+            <a href="tel:{{ FIRMA_TELEFON }}" class="rw-kontakt-card">
+              <div class="rw-kontakt-card-icon"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg></div>
+              <div>
+                <div class="rw-kontakt-card-label">Telefon</div>
+                <div class="rw-kontakt-card-value">{{ FIRMA_TELEFON_ANZEIGE }}</div>
+              </div>
+            </a>
+            <a href="{{ FIRMA_WHATSAPP_LINK }}" target="_blank" rel="noopener" class="rw-kontakt-card">
+              <div class="rw-kontakt-card-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/></svg></div>
+              <div>
+                <div class="rw-kontakt-card-label">WhatsApp</div>
+                <div class="rw-kontakt-card-value">{{ FIRMA_TELEFON_ANZEIGE }}</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="rw-prozess rw-section" id="nach-der-anfrage" style="background:var(--rw-bg-2);" aria-labelledby="nach-der-anfrage-titel">
+    <div class="rw-container">
+      <div class="rw-section-header" data-rw-reveal>
+        <div class="rw-section-badge">Nach dem Absenden</div>
+        <h2 class="rw-section-title" id="nach-der-anfrage-titel">Wie geht es nach Ihrer Anfrage <em>weiter?</em></h2>
+        <p class="rw-section-sub">{{ nach_anfrage_antwort }}</p>
+      </div>
+      <div class="rw-prozess-steps" role="region" aria-label="Die vier Schritte nach Ihrer Anfrage" tabindex="0">
+        <div class="rw-prozess-step" data-rw-reveal data-rw-delay="1">
+          <div class="rw-prozess-num">1</div>
+          <div class="rw-prozess-title">Rückmeldung</div>
+          <p class="rw-prozess-desc">Wir melden uns binnen {{ ZUSAGE_ANTWORT_SPANNE }}, {{ ZUSAGE_ANTWORT_GILT }}, und klären offene Fragen zum Objekt.</p>
+        </div>
+        <div class="rw-prozess-step" data-rw-reveal data-rw-delay="2">
+          <div class="rw-prozess-num">2</div>
+          <div class="rw-prozess-title">Besichtigung vor Ort</div>
+          <p class="rw-prozess-desc">Den Termin stimmen wir mit Ihnen ab, Besichtigungstermine sind {{ ZUSAGE_TERMIN_FRUEHESTENS }} möglich. Die Besichtigung kostet nichts.</p>
+        </div>
+        <div class="rw-prozess-step" data-rw-reveal data-rw-delay="3">
+          <div class="rw-prozess-num">3</div>
+          <div class="rw-prozess-title">Festpreis schriftlich</div>
+          <p class="rw-prozess-desc">Das Angebot liegt {{ ZUSAGE_ANGEBOT }} vor – mit Transport, Entsorgung und besenreiner Übergabe.</p>
+        </div>
+        <div class="rw-prozess-step" data-rw-reveal data-rw-delay="4">
+          <div class="rw-prozess-num">4</div>
+          <div class="rw-prozess-title">Räumung zum Termin</div>
+          <p class="rw-prozess-desc">Erst mit Ihrer Zusage planen wir den Einsatz. Der Preis steht im verbindlichen Festpreisangebot.</p>
+        </div>
+      </div>
+      <div class="rw-form-card" data-rw-reveal style="margin:40px auto 0;max-width:760px;padding:28px 32px;">
+        <h3 style="font-family:var(--rw-font-head);font-weight:800;font-size:1.05rem;color:var(--rw-text);margin:0 0 10px;">Was uns bei der Einschätzung hilft</h3>
+        <ul style="margin:0;padding-left:1.2em;list-style:disc;color:var(--rw-text-2);line-height:1.8;font-size:0.95rem;">
+          <li>die Art des Objekts (Wohnung, Haus, Keller, Gewerbe) und die ungefähre Fläche,</li>
+          <li>Stockwerk und ob es einen Aufzug gibt,</li>
+          <li>ob Möbel, Wertgegenstände oder Dokumente bleiben sollen,</li>
+          <li>Ihr Wunschtermin, etwa wegen einer Wohnungsübergabe,</li>
+          <li>ein paar Fotos – am einfachsten per <a href="https://wa.me/{{ FIRMA_WHATSAPP }}" target="_blank" rel="noopener" style="color:var(--rw-orange);font-weight:600;">WhatsApp</a>.</li>
+        </ul>
+        <p style="margin:12px 0 0;font-size:0.9rem;color:var(--rw-text-3);">Je genauer die Angaben, desto verlässlicher ist schon die erste Einschätzung am Telefon. Einen ersten Richtpreis ohne Kontaktaufnahme liefert der <a href="/preisangebot/" style="color:var(--rw-orange);font-weight:600;">Preisrechner</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  {% comment %}
+    Die Lead-Kennung fuer die Conversion. Sie steht nur da, wenn wirklich ein
+    Lead gespeichert wurde - nicht bei verworfenem Spam und nicht beim
+    Duplikat, obwohl beide dieselbe Erfolgsmeldung zeigen. rw_basis.js haengt
+    `anfrage_submit` an genau dieses Element, nicht mehr an `.rw-alert-success`.
+
+    ⚠ Sie steht **hier unten** und nicht oben bei der Erfolgsmeldung, obwohl
+    sie dort inhaltlich hingehoert. Grund ist Regel 28: `build_critical_css`
+    nimmt die ersten 160 Zeilen nach `<body`. Eine Zeile weiter oben schiebt
+    eine Zeile echtes Markup aus dem Fenster - beim ersten Versuch fiel genau
+    so `.rw-kontakt-card-value` aus dem kritischen CSS von /anfrage/ (105 Byte
+    weniger, die Rufnummer ueber der Falz kurz unformatiert). Fuer das Skript
+    ist die Stelle im DOM egal.
+  {% endcomment %}
+  {% if lead_kennung %}{{ lead_kennung|json_script:"rw-lead-kennung" }}{% endif %}
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>
+

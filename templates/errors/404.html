@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  {# Antwort ist HTTP 404. Bewusst KEIN rw_seo.html: eine Seite ohne eigene    #}
+  {# URL hat keinen canonical, den man setzen koennte, und `seo_path` waere    #}
+  {# eine Erfindung. Dieselbe Begruendung wie in gone.html (410).              #}
+  <title>Seite nicht gefunden – Rümpelwerk Mitteldeutschland</title>
+  <meta name="robots" content="noindex, follow">
+  <meta name="description" content="Diese Seite gibt es nicht. Servicegebiet, Preisrechner und Leistungen finden Sie hier.">
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% include 'components/rw_head_fonts.html' %}
+  {% comment %}
+    Umgestellt am 06.09.2026 (Befund A1). Vorher erweiterte diese Seite
+    base.html, und base.html holte ueber static/css/base.css Inter per
+    @import von Google Fonts. **Jeder Aufruf einer 404-Seite hat damit
+    die IP des Besuchers an Google in die USA uebertragen** – ohne
+    Einwilligung, vor jeder Interaktion, und im direkten Widerspruch zu
+    Abschnitt 5 der Datenschutzerklaerung ("von unserem eigenen Server
+    ausgeliefert"). Die 410-Seite (gone.html) war bereits umgestellt; diese
+    hier ist die einzige der beiden, die echte Besucher zu sehen bekommen.
+
+    KEIN `crit_page`: `build_critical_css` durchsucht ausschliesslich
+    templates/*.html (glob, ohne Unterordner) – fuer templates/errors/ kann
+    es also gar keinen eigenen Block erzeugen. Der gemeinsame Rueckfall
+    rw_critical_css.html greift deshalb bewusst: groesser, aber niemals
+    unvollstaendig. Ein `crit_page='404.html'` waere hier eine Zusage, die
+    das Werkzeug nicht einloest.
+  {% endcomment %}
+  {% include 'components/rw_css.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  {% comment %}
+    Die Seite bot bisher genau einen Ausweg: die Startseite (F16). Wer über einen
+    veralteten Link kommt — und davon gibt es viele, seit die 131 Landingpages
+    entfernt wurden — landete in einer Sackgasse. Jetzt führen die Wege dorthin,
+    wo die Absicht vermutlich lag: Servicegebiet, Preis, Kontakt.
+
+    Bewusst keine Suchfunktion: Es gibt keine, und eine Attrappe wäre schlimmer
+    als keine.
+  {% endcomment %}
+  <section class="rw-section rw-fehler">
+    <div class="rw-container">
+      <div class="rw-fehler-inner">
+
+        <div class="rw-fehler-kopf">
+          <div class="rw-fehler-code">404</div>
+
+          <h1 class="rw-section-title rw-fehler-titel">
+            Diese Seite gibt es <em>nicht</em>
+          </h1>
+
+          <p class="rw-section-sub rw-fehler-sub">
+            Vielleicht wurde sie verschoben oder der Link ist veraltet.
+            Das hier führt weiter:
+          </p>
+        </div>
+
+        {# Vier Auswege, links buendig: eine Liste liest sich am Rand entlang, #}
+        {# zentriert muss das Auge fuer jede Zeile neu ansetzen.               #}
+        {% comment %}
+          STADTSEITEN_ANZAHL kommt aus views.error_404 (Befund G1, 06.09.2026)
+          und wird aus cities.alle_stadtseiten() gerechnet. Hier stand bis
+          dahin eine getippte 53, waehrend cities.py 54 Staedte kennt - Regel 1
+          fuer eine Bestandszahl. Diese Seite laeuft ueber handler404 und hat
+          keinen View-Context aus einer normalen View; wer den Wert hier
+          verwendet, sorgt dafuer, dass error_404 ihn mitgibt.
+        {% endcomment %}
+        <ul class="rw-fehler-wege">
+          <li><a href="/entrumpelung/">Alle Städte im Servicegebiet</a>
+            <span> — {{ STADTSEITEN_ANZAHL }} Orte mit eigener Seite</span></li>
+          <li><a href="/preisangebot/">Preis berechnen</a>
+            <span> — Richtpreis in {{ ZUSAGE_RECHNER }}</span></li>
+          <li><a href="/dienstleistungen/">Leistungen</a>
+            <span> — Entrümpelung, Räumung, Sanierung</span></li>
+          <li><a href="/anfrage/">Kostenlose Besichtigung anfragen</a></li>
+        </ul>
+
+        <div class="rw-fehler-aktionen">
+          <a href="/" class="rw-btn-primary">
+            <svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Zur Startseite
+          </a>
+          <a href="/standorte/" class="rw-btn-outline">
+            <svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Unser Einsatzgebiet
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>

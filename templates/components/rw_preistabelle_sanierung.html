@@ -1,0 +1,67 @@
+{% comment %}
+  Preistabelle für die Sanierungs-/Renovierungsseite (A11).
+
+  Warum eine eigene Datei und nicht eine Zeile mehr in rw_preistabelle.html:
+  Dort stehen die Objektarten der Entrümpelung (Keller, Wohnung, Haus …) mit
+  €/m² und Mindestpreis. Die Renovierung rechnet nach einer anderen Größe —
+  Wand- und Deckenfläche statt Wohnfläche — und ihre Reparaturen sind
+  Festpreise je Position, keine Staffel. Beides in eine Tabelle zu mischen
+  hieße, zwei Preislogiken in dieselbe Spalte zu schreiben.
+
+  Alle Zahlen kommen aus PREIS_SANIERUNG, also aus apps/core/data/pricing.py
+  (_MALER_PER_QM, _KLEIN_SAN_ITEMS, _KLEIN_SONSTIGES_AUFPREIS). Hier steht
+  bewusst keine einzige — auch die Beschriftungen der Positionen nicht, die
+  hängen im Datenmodell an ihrem Preis.
+
+  Optionale Variable: ueberschrift
+{% endcomment %}
+<div class="rw-preistabelle">
+  <h2 class="rw-preistabelle-titel">
+    {% if ueberschrift %}{{ ueberschrift }}{% else %}Was kostet eine Renovierung?{% endif %}
+  </h2>
+  <p class="rw-preistabelle-intro">
+    Malerarbeiten rechnen wir nach Wand- und Deckenfläche ab, Reparaturen zum
+    Festpreis je Position. Bodenbeläge und Bad nach Aufmaß, Material getrennt
+    ausgewiesen. Preisstand: {{ PREISSTAND }}.
+  </p>
+
+  <div class="rw-preistabelle-scroll" tabindex="0" role="region"
+       aria-label="Preise für Malerarbeiten und Kleinreparaturen">
+    <table>
+      <caption>Renovierung und Kleinreparaturen — Stand {{ PREISSTAND }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">Leistung</th>
+          <th scope="col">Preis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Wände und Decken streichen</th>
+          <td class="rw-preistabelle-zahl rw-preistabelle-beispiel">
+            {{ PREIS_SANIERUNG.maler_rate }}&nbsp;€/m², mindestens {{ PREIS_SANIERUNG.maler_min_txt }}&nbsp;€
+          </td>
+        </tr>
+        {% for it in PREIS_SANIERUNG.items %}
+        <tr>
+          <th scope="row">{{ it.label }}</th>
+          <td class="rw-preistabelle-zahl">{{ it.preis_txt }}&nbsp;€</td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <th scope="row">Weitere Reparatur nach Beschreibung</th>
+          <td class="rw-preistabelle-zahl">{{ PREIS_SANIERUNG.sonstiges_txt }}&nbsp;€</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="rw-preistabelle-fuss">
+    Die Reparaturpositionen lassen sich einzeln dazubuchen — auch im
+    Preisrechner auf dieser Seite. <strong>Bodenbeläge, Tapezieren und Bad</strong>
+    stehen bewusst ohne Zahl: Ihr Preis hängt am Material und am Untergrund, den
+    wir erst nach dem Aufmaß kennen. Sie bekommen dafür einen Festpreis mit
+    getrennt ausgewiesenem Material.
+    <a href="/entruempelung-kosten/">Preise der Räumung ansehen →</a>
+  </p>
+</div>

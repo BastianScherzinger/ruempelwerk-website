@@ -1,0 +1,58 @@
+<nav class="navbar" role="navigation" aria-label="Hauptnavigation">
+  <div class="navbar-inner">
+
+    <!-- Brand -->
+    <a href="{% url 'core:home' %}" class="navbar-brand" aria-label="{{ SITE_NAME }} Startseite">
+      <div class="navbar-logo-mark" aria-hidden="true">{{ SITE_NAME|first|upper }}</div>
+      <span class="navbar-brand-name">{{ SITE_NAME }}</span>
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="navbar-nav" aria-label="Desktop Navigation">
+      <a href="{% url 'core:home' %}" class="nav-link">Home</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'dashboard:index' %}" class="nav-link">Dashboard</a>
+      {% endif %}
+    </nav>
+
+    <!-- Actions -->
+    <div class="navbar-actions">
+      {% if user.is_authenticated %}
+        <a href="{% url 'accounts:profile' %}" class="nav-avatar" title="{{ user.username }}">
+          {{ user.username|first|upper }}
+        </a>
+        <form action="{% url 'accounts:logout' %}" method="post" style="display:inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-ghost btn-sm">Abmelden</button>
+        </form>
+      {% else %}
+        <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm">Anmelden</a>
+      {% endif %}
+
+      <!-- Mobile Burger -->
+      <button
+        id="navbar-burger"
+        class="navbar-burger"
+        aria-controls="navbar-mobile"
+        aria-expanded="false"
+        aria-label="Menü öffnen"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="navbar-mobile" class="navbar-mobile" role="navigation" aria-label="Mobile Navigation">
+  <a href="{% url 'core:home' %}" class="nav-link">Home</a>
+  {% if user.is_authenticated %}
+    <a href="{% url 'dashboard:index' %}" class="nav-link">Dashboard</a>
+    <a href="{% url 'accounts:profile' %}" class="nav-link">Profil</a>
+  {% else %}
+    <a href="{% url 'accounts:login' %}" class="nav-link">Anmelden</a>
+  {% endif %}
+</div>

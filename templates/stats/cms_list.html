@@ -1,0 +1,507 @@
+{% load static %}<!DOCTYPE html>
+<!-- data-rw-no-consent: interne Seite, nie ein Cookie-Banner (siehe components/rw_cookie_banner.html) -->
+<html lang="de" data-rw-no-consent>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>// CMS · AKTUELLES · RÜMPELWERK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --g:    #00ff88;
+      --g2:   #16a34a;
+      --g3:   rgba(0,255,136,0.08);
+      --blue: #38bdf8;
+      --amber:#fbbf24;
+      --purple:#c084fc;
+      --red:  #f87171;
+      --bg:   #030712;
+      --bg2:  #080f1f;
+      --card: rgba(255,255,255,0.025);
+      --bdr:  rgba(0,255,136,0.12);
+      --bdr2: rgba(255,255,255,0.06);
+      --text: #e2e8f0;
+      --muted:#475569;
+      --font: 'JetBrains Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,255,136,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,136,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .bg-glow {
+      position: fixed; z-index: 0; pointer-events: none;
+      width: 800px; height: 800px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,255,136,0.04) 0%, transparent 65%);
+      top: -200px; right: -200px;
+      animation: glow-drift 8s ease-in-out infinite;
+    }
+    @keyframes glow-drift {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50% { transform: translate(-30px,40px) scale(1.05); }
+    }
+    .scanlines {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px
+      );
+    }
+
+    /* Topbar */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      height: 56px;
+      background: rgba(3,7,18,0.85);
+      border-bottom: 1px solid var(--bdr);
+      backdrop-filter: blur(20px);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .status-indicator {
+      display: flex; align-items: center; gap: 7px;
+      font-family: var(--font);
+      font-size: 0.65rem;
+      color: var(--g);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .pulse-dot {
+      width: 7px; height: 7px;
+      background: var(--g);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--g);
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { box-shadow: 0 0 4px var(--g); }
+      50% { box-shadow: 0 0 14px var(--g), 0 0 28px rgba(0,255,136,0.3); }
+    }
+    .divider { width: 1px; height: 20px; background: var(--bdr2); }
+    .topbar-date {
+      font-family: var(--font);
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .logout-form button {
+      background: transparent;
+      border: 1px solid var(--bdr2);
+      border-radius: 2px;
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: border-color 150ms, color 150ms;
+    }
+    .logout-form button:hover { border-color: var(--red); color: var(--red); }
+
+    .subnav {
+      background: rgba(3,7,18,0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 24px;
+      display: flex;
+      gap: 4px;
+    }
+    .subnav-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 16px;
+      font-family: var(--font);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(71,85,105,1);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color 150ms, border-color 150ms;
+    }
+    .subnav-link:hover { color: #e2e8f0; }
+    .subnav-link.active { color: #00ff88; border-bottom-color: #00ff88; }
+
+    /* Main */
+    .main {
+      position: relative; z-index: 10;
+      max-width: 1140px; margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    .page-header { margin-bottom: 32px; }
+    .breadcrumb {
+      font-family: var(--font);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .breadcrumb a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 150ms;
+    }
+    .breadcrumb a:hover { color: var(--g); }
+    .breadcrumb span { color: var(--g); }
+    h1 {
+      font-family: var(--font);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+    h1 em { color: var(--g); font-style: normal; }
+    .page-sub {
+      font-family: var(--font);
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn-create {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--g);
+      border: none;
+      border-radius: 2px;
+      padding: 9px 18px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 150ms, box-shadow 150ms;
+      box-shadow: 0 0 16px rgba(0,255,136,0.25);
+    }
+    .btn-create:hover {
+      opacity: 0.88;
+      box-shadow: 0 0 24px rgba(0,255,136,0.4);
+    }
+
+    /* Section */
+    .section {
+      background: var(--card);
+      border: 1px solid var(--bdr2);
+      border-radius: 4px;
+      padding: 22px;
+      animation: card-in 0.5s ease 0.1s both;
+    }
+    @keyframes card-in {
+      from { opacity:0; transform: translateY(12px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .sec-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .sec-title {
+      font-family: var(--font);
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .sec-badge {
+      font-family: var(--font);
+      font-size: 0.58rem;
+      letter-spacing: 1px;
+      color: var(--g);
+      background: rgba(0,255,136,0.07);
+      border: 1px solid rgba(0,255,136,0.15);
+      padding: 3px 10px;
+      border-radius: 2px;
+    }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    th {
+      text-align: left;
+      padding: 8px 14px;
+      font-family: var(--font);
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      font-weight: 700;
+      border-bottom: 1px solid var(--bdr2);
+      white-space: nowrap;
+    }
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      color: #94a3b8;
+      font-family: var(--font);
+      font-size: 0.72rem;
+      transition: color 150ms;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { color: #e2e8f0; background: rgba(255,255,255,0.02); }
+
+    .status-live {
+      display: inline-flex; align-items: center; gap: 5px;
+      color: var(--g);
+      font-weight: 700;
+    }
+    .status-draft {
+      display: inline-flex; align-items: center; gap: 5px;
+      color: var(--muted);
+    }
+
+    .typ-badge {
+      display: inline-block;
+      font-family: var(--font);
+      font-size: 0.58rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+    .typ-bericht       { color: var(--blue); background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.2); }
+    .typ-zitat         { color: var(--purple); background: rgba(192,132,252,0.08); border: 1px solid rgba(192,132,252,0.2); }
+    .typ-vorher_nachher{ color: var(--amber); background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); }
+
+    .actions { display: flex; align-items: center; gap: 8px; }
+    .btn-edit {
+      font-family: var(--font);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--g);
+      background: transparent;
+      border: 1px solid rgba(0,255,136,0.25);
+      border-radius: 2px;
+      padding: 5px 12px;
+      text-decoration: none;
+      transition: background 150ms, border-color 150ms;
+    }
+    .btn-edit:hover { background: rgba(0,255,136,0.08); border-color: var(--g); }
+    .btn-del {
+      font-family: var(--font);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--bdr2);
+      border-radius: 2px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: border-color 150ms, color 150ms;
+    }
+    .btn-del:hover { border-color: var(--red); color: var(--red); }
+
+    .titel-cell {
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #cbd5e1;
+    }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      font-family: var(--font);
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 2;
+      letter-spacing: 0.5px;
+    }
+    .empty-state::before {
+      content: '// ';
+      color: var(--g);
+    }
+
+    @media (max-width: 640px) {
+      .topbar { padding: 0 12px; }
+      .main { padding: 16px 10px 80px; }
+      /* Auf Mobile: nur Datum, Titel, Status, Aktionen sichtbar */
+      th:nth-child(2), td:nth-child(2),
+      th:nth-child(4), td:nth-child(4) { display: none; }
+      .subnav-link { padding: 8px 10px; font-size: 0.58rem; white-space: nowrap; }
+      .topbar .divider, .topbar-date { display: none; }
+      .subnav { padding: 0 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .subnav::-webkit-scrollbar { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Bewusst OHNE components/rw_nav.html, components/rw_js.html und
+       static/css/ruempelwerk.css: Das ist der interne Bereich mit eigenem
+       Design. Die oeffentlichen Bausteine legten eine fixe Navbar (72px),
+       die Mobile-Bottom-Nav, den Cookie-Banner und das WhatsApp-Popup
+       ueber diese Seite und machten sie unbedienbar. Nicht wieder einfuegen. -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <div class="scanlines"></div>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="status-indicator">
+        <div class="pulse-dot"></div>
+        <span>RÜMPELWERK</span>
+      </div>
+      <div class="divider"></div>
+      <span class="topbar-date">CMS · AKTUELLES</span>
+    </div>
+    <div class="topbar-right">
+      <form class="logout-form" method="post" action="../logout/">
+        {% csrf_token %}
+        <button type="submit">DISCONNECT</button>
+      </form>
+    </div>
+  </header>
+
+  <nav class="subnav">
+    <a href="/{{ stats_path }}/data/" class="subnav-link">📊 Statistiken</a>
+    <a href="/{{ stats_path }}/anfragen/" class="subnav-link">📥 Anfragen</a>
+    <a href="/{{ stats_path }}/aktuelles/" class="subnav-link active">📰 Aktuelles verwalten</a>
+    <a href="/{{ stats_path }}/fehler/" class="subnav-link">🚨 Fehler</a>
+    <a href="/{{ stats_path }}/termine/" class="subnav-link">📅 Termine</a>
+  </nav>
+
+  <main class="main">
+
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="/{{ stats_path }}/data/">ANALYTICS</a> / <span>CMS · AKTUELLES</span>
+      </div>
+      <h1>// Aktuelles <em>CMS</em></h1>
+      <p class="page-sub">Beiträge verwalten — Berichte, Zitate, Vorher-Nachher</p>
+    </div>
+
+    <!-- Cloudinary-Status -->
+    {% if cloudinary_ok %}
+    <div style="display:flex;align-items:center;gap:8px;background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.2);border-radius:4px;padding:10px 16px;margin-bottom:16px;font-family:var(--font);font-size:0.65rem;color:#00ff88;">
+      ✓ Cloudinary aktiv — Bilder werden dauerhaft in der Cloud gespeichert
+    </div>
+    {% else %}
+    <div style="display:flex;align-items:center;gap:8px;background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.25);border-radius:4px;padding:10px 16px;margin-bottom:16px;font-family:var(--font);font-size:0.65rem;color:#fbbf24;">
+      ⚠ Cloudinary nicht konfiguriert — CLOUDINARY_URL in Railway setzen, danst Bilder neu hochladen
+    </div>
+    {% endif %}
+
+    <div class="toolbar">
+      <span style="font-family:var(--font);font-size:0.65rem;color:var(--muted);">
+        {{ posts|length }} Beitrag{{ posts|length|pluralize:",e" }} gesamt
+      </span>
+      <a href="neu/" class="btn-create">+ Neuen Post erstellen</a>
+    </div>
+
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-title">» Alle Beiträge</span>
+        <span class="sec-badge">{{ posts|length }} TOTAL</span>
+      </div>
+
+      {% if posts %}
+      <div class="table-wrap"><table>
+        <thead>
+          <tr>
+            <th>Datum</th>
+            <th>Typ</th>
+            <th>Titel</th>
+            <th>Bilder</th>
+            <th>Status</th>
+            <th>Aktionen</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for post in posts %}
+          <tr>
+            <td>{{ post.datum|date:"d.m.Y" }}</td>
+            <td>
+              <span class="typ-badge typ-{{ post.typ }}">{{ post.typ }}</span>
+            </td>
+            <td class="titel-cell" title="{{ post.titel }}">{{ post.titel }}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px;">
+                {% if post.thumb_url %}
+                <img src="{{ post.thumb_url }}" alt="" width="48" height="36" loading="lazy" decoding="async"
+                     style="width:48px;height:36px;object-fit:cover;border-radius:4px;flex-shrink:0;"
+                     data-rw-fehlerstil="background:#1e293b;outline:1px solid #f87171">
+                {% endif %}
+                {% if post.gallery_count %}
+                  <span style="font-size:0.62rem;color:#94a3b8;white-space:nowrap;">
+                    {% if post.typ == 'vorher_nachher' %}{{ post.n_vor }} vorher · {{ post.n_nach }} nachher{% else %}{{ post.gallery_count }} Bild{{ post.gallery_count|pluralize:"er" }}{% endif %}{% if post.n_ohne_bildtext %}<span title="Ohne Bildbeschreibung findet die Bildersuche nichts – im Beitrag nachtragen." style="margin-left:6px;color:#fbbf24;font-weight:700;">· {{ post.n_ohne_bildtext }} ohne Text</span>{% endif %}
+                  </span>
+                {% else %}
+                  <span style="color:#f87171;font-size:0.62rem;white-space:nowrap;">✗ kein Bild</span>
+                {% endif %}
+              </div>
+            </td>
+            <td>
+              {% if post.veroeffentlicht %}
+                <span class="status-live">✓ live</span>
+              {% else %}
+                <span class="status-draft">○ Entwurf</span>
+              {% endif %}
+            </td>
+            <td>
+              <div class="actions">
+                <a href="{{ post.pk }}/" class="btn-edit">Bearbeiten</a>
+                <form method="post" action="{{ post.pk }}/del/" style="display:inline;" data-rw-confirm="Beitrag wirklich löschen?">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-del">Löschen</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table></div>
+      {% else %}
+      <div class="empty-state">
+        KEINE BEITRÄGE VORHANDEN<br>
+        Erstelle deinen ersten Post mit dem Button oben.
+      </div>
+      {% endif %}
+    </div>
+
+  </main>
+
+  {% comment %}
+  SI32: Die Ereignisbindung dieser Seite (Loeschabfrage, Markierung fehlender
+  Bilder) steht seit dem 08.09.2026 in static/js/rw_handler.js statt in
+  onsubmit=/onerror=. Ohne diese Datei bliebe das Formular ohne Rueckfrage.
+  {% endcomment %}
+  <script src="{% static 'js/rw_handler.js' %}" defer></script>
+</body>
+</html>

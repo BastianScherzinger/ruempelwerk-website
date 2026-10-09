@@ -1,0 +1,37 @@
+{# audit-ok V06: eingebunden als Tag rw_nachweise (templatetags/rw_auszeichnungen.py, inclusion_tag) in home.html #}
+{% load static %}{% comment %}
+  Nachweise-Block (Bauplan §6): Trustlocal-Karte + WKDB-Zeile, beide aus
+  ``data/auszeichnungen.py`` - NIE die Google-Zahl aus ``reviews.stand()`` in
+  diesem Block (test_auszeichnungen.py haelt das fest). Der Grund ist derselbe
+  wie bei ``rw_trustlocal_score.html data-google="hidden"``: Google, Trustlocal
+  und WKDB haben verschiedene Skalen und verschiedene Stichproben - zwei oder
+  drei Zahlen fuer "die Bewertung" nebeneinander sind ein Widerspruch, keine
+  Ergaenzung, wenn sie ununterschieden im selben Block stehen.
+
+  Seit Stufe 4b in der Startseite eingebunden (templates/home.html, Abschnitt
+  "Über uns", per ``{% rw_nachweise %}``) - siehe
+  ``apps/core/templatetags/rw_auszeichnungen.py``. Styling in
+  ``ruempelwerk.css`` (Klassen ``rw-nachweise``/``rw-nachweis-*``), keine
+  ``style="…"``-Attribute mehr.
+{% endcomment %}
+<div class="rw-nachweise">
+  <div class="rw-nachweis-trustlocal">
+    <img src="{% static trustlocal.rang_badge_pfad %}" alt="Trustlocal-Abzeichen {{ trustlocal.rang }} {{ trustlocal.rang_zeitraum }}"
+         width="67" height="90" loading="lazy" class="rw-nachweis-badge">
+    <img src="{% static trustlocal.badge_pfad %}" alt="Trustlocal-Abzeichen {{ trustlocal.name }}"
+         width="85" height="75" loading="lazy" class="rw-nachweis-badge">
+    <p class="rw-nachweis-text">
+      <strong>{{ trustlocal.rang }}</strong> und <strong>{{ trustlocal.name }}</strong> bei Trustlocal –
+      {{ trustlocal.wert }} von {{ trustlocal.skala }}
+      ({{ trustlocal.anzahl }} Bewertungen).
+      <a href="{{ trustlocal.profil_url }}" target="_blank" rel="noopener">Profil ansehen</a>.
+    </p>
+  </div>
+  <div class="rw-nachweis-wkdb">
+    <p class="rw-nachweis-text">
+      Bei {{ wkdb.anbieter }} Platz {{ wkdb.platz }} unter „{{ wkdb.kategorie }}“ –
+      {{ wkdb.wert }} von {{ wkdb.skala }} ({{ wkdb.anzahl }} Bewertungen).
+      <a href="{{ wkdb.profil_url }}" target="_blank" rel="noopener">Profil ansehen</a>.
+    </p>
+  </div>
+</div>

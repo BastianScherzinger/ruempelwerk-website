@@ -1,0 +1,186 @@
+{% load rw_antispam %}
+{# audit-ok V06: eingebunden als Tag rw_termin (templatetags/rw_termin.py, inclusion_tag) in termin.html (seit 02.10.2026 nicht mehr auf der Startseite) #}
+{% comment %}
+  Terminbuchung „Besichtigung vor Ort oder per WhatsApp-Video, 25 Minuten“ (Bauplan §5, Umbau 01.10.2026).
+  Freie Slots rendert der Server aus apps/core/termine.py. Alle drei <fieldset data-rwt-stufe> stehen
+  OHNE `hidden` im Markup: ohne JavaScript ist das Formular eine lange Seite, alle Tage und Felder
+  stehen untereinander (Regel 11). Erst rw_termin.js blendet Stufe 2 und 3 aus, zeigt die Tagesleiste,
+  wählt den ersten freien Tag vor und füllt die Zusammenfassung. Die Auswahl Vor Ort / Video wirkt
+  per CSS (:has) auf die Texte mit .rwt-nur-video / .rwt-nur-vor-ort. #online-besichtigung ist das
+  Sprungziel für den Banner (Hash wird in rw_termin.js ausgewertet).
+{% endcomment %}
+<section class="rw-termin" id="termin" aria-labelledby="rwt-h">
+  <span id="online-besichtigung" class="rw-termin-sprungziel" aria-hidden="true"></span>
+  <div class="rw-container">
+    <div class="rw-termin-kopf">
+      {% with ebene=als_h1|yesno:"1,2" %}
+        <h{{ ebene }} id="rwt-h">Besichtigung buchen – vor Ort oder per Video</h{{ ebene }}>
+      {% endwith %}
+      <p>Vor Ort oder per WhatsApp-Video, {{ ZUSAGE_BESICHTIGUNG_DAUER }}. Kostenlos und unverbindlich, Termine {{ ZUSAGE_TERMIN_FRUEHESTENS }} buchbar.</p>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="{% if message.level_tag == 'error' %}rw-alert-error{% else %}rw-alert-success{% endif %}"{% if message.level_tag == 'error' %} role="alert"{% endif %}>{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="rw-termin-blatt">
+      <aside class="rw-termin-person">
+        <p class="rw-termin-person-name">Oliver Pohl</p>
+        <p class="rw-termin-person-rolle"><span class="rwt-nur-vor-ort">Inhaber · Wir rufen Sie zur Bestätigung an</span><span class="rwt-nur-video">Inhaber · besichtigt per WhatsApp-Video mit Ihnen</span></p>
+        <dl class="rw-termin-person-daten">
+          <div><dt>Dauer</dt><dd>{{ ZUSAGE_BESICHTIGUNG_DAUER }}</dd></div>
+          <div><dt>Antwort</dt><dd>in {{ ZUSAGE_ANTWORT_SPANNE }}, {{ ZUSAGE_ANTWORT_GILT }}</dd></div>
+          <div class="rwt-nur-vor-ort"><dt>Angebot</dt><dd>{{ ZUSAGE_ANGEBOT }}</dd></div>
+          <div class="rwt-nur-video"><dt>Angebot</dt><dd>{{ ZUSAGE_ANGEBOT_VIDEO }}, wenn alle Räume gezeigt</dd></div>
+        </dl>
+        <p class="rw-termin-person-bedingung rwt-nur-video">Das Festpreisangebot gibt es {{ ZUSAGE_ANGEBOT_VIDEO }}, wenn Sie uns alle Räume gezeigt haben.</p>
+        <p class="rw-termin-person-tel">Lieber anrufen? <a href="tel:{{ FIRMA_TELEFON }}">{{ FIRMA_TELEFON_ANZEIGE }}</a></p>
+      </aside>
+
+      <form class="rw-termin-form" method="post" action="/termin/" data-rwt-dauer="{{ slot_dauer }}" novalidate>
+        {% csrf_token %}
+        {% rw_antispam %}
+
+        {% if form.non_field_errors %}
+          <p class="rw-form-error" role="alert" id="rwt-form-fehler">{{ form.non_field_errors|join:", " }}</p>
+        {% endif %}
+
+        <p class="rw-termin-schritt" data-rwt-schritttext aria-live="polite" hidden>Schritt 1 von 3 · Termin</p>
+        <ol class="rw-termin-stufen" aria-hidden="true">
+          <li data-rwt-stufenmarker="1">1 Termin</li>
+          <li data-rwt-stufenmarker="2">2 Kontakt</li>
+          <li data-rwt-stufenmarker="3">3 Prüfen</li>
+        </ol>
+
+        <fieldset class="rw-termin-stufe" data-rwt-stufe="1" data-rwt-titel="Termin">
+          <legend>Wann passt es Ihnen?</legend>
+
+          {% if form.besichtigungsart.errors %}
+            <p class="rw-form-error" role="alert" id="rwt-art-fehler">{{ form.besichtigungsart.errors|join:", " }}</p>
+          {% endif %}
+          {% with art=form.besichtigungsart.value|default:"vor_ort" %}
+          <div class="rw-termin-art" role="radiogroup" aria-label="Art der Besichtigung">
+            <label class="rw-termin-artkarte">
+              <input type="radio" id="termin-art-vor-ort" name="besichtigungsart" value="vor_ort"{% if art != "video" %} checked{% endif %}>
+              <span class="rw-termin-art-titel">Vor Ort</span>
+              <span class="rw-termin-art-sub">Oliver kommt zu Ihnen</span>
+            </label>
+            <label class="rw-termin-artkarte">
+              <input type="radio" id="termin-art-video" name="besichtigungsart" value="video"{% if art == "video" %} checked{% endif %}>
+              <span class="rw-termin-art-titel">Per WhatsApp-Video</span>
+              <span class="rw-termin-art-sub">Sie zeigen die Räume per Handy</span>
+            </label>
+          </div>
+          {% endwith %}
+          <p class="rw-termin-art-hinweis rwt-nur-video">Wir rufen Sie zum Termin per WhatsApp-Video an – Sie zeigen uns die Räume mit dem Handy, keine Aufzeichnung.</p>
+
+          {% if form.slot.errors %}
+            <p class="rw-form-error" role="alert" id="rwt-slot-fehler">{{ form.slot.errors|join:", " }}</p>
+          {% endif %}
+
+          <div class="rw-termin-tagleiste" role="group" aria-label="Tag wählen" data-rwt-erster="{{ erster_frei }}" hidden>
+            {% spaceless %}{% for tag in wochen %}<button type="button" class="rw-termin-tagtab{% if not tag.frei_anzahl %} rw-termin-tagtab--voll{% endif %}" data-rw-click="rwTerminTag" data-rw-arg="{{ forloop.counter0 }}" aria-pressed="false"><span>{{ tag.datum|date:"D" }}</span><span>{{ tag.datum|date:"j." }}</span><span>{{ tag.datum|date:"M" }}</span>{% if not tag.frei_anzahl %}<span class="rwt-sr"> – nicht frei</span>{% endif %}</button>{% endfor %}{% endspaceless %}
+          </div>
+
+          <div class="rw-termin-woche" role="radiogroup" aria-label="Freie Uhrzeiten der nächsten offenen Tage"{% if form.slot.errors %} aria-invalid="true" aria-describedby="rwt-slot-fehler"{% endif %}>
+            {% spaceless %}{% for tag in wochen %}<fieldset class="rw-termin-tag" data-rwt-tagindex="{{ forloop.counter0 }}" data-rwt-datum="{{ tag.datum|date:'l, d.m.' }}"><legend>{{ tag.datum|date:"l, j. F" }}</legend><div class="rw-termin-slots">{% for slot in tag.slots %}<label{% if not slot.frei %} class="rw-termin-slot--weg"{% endif %}><input type="radio" name="slot" value="{{ slot.wert }}"{% if not slot.frei %} disabled{% endif %}{% if slot.frei and form.slot.value == slot.wert %} checked{% endif %}>{{ slot.zeit }}{% if not slot.frei %}<span class="rw-termin-slot-weg">nicht frei</span>{% endif %}</label>{% endfor %}</div></fieldset>{% endfor %}{% endspaceless %}
+          </div>
+
+          <p class="rw-termin-gewaehlt" data-rwt-gewaehlt aria-live="polite" hidden><span>Gewählt</span> <strong data-rwt-gewaehlt-text></strong></p>
+
+          <p class="rw-termin-legende">
+            {% if hat_nicht_frei %}<span class="rw-termin-leg-weg">durchgestrichen = nicht frei</span>{% endif %}
+            <span>Besichtigung Montag bis Samstag · an Sonn- und Feiertagen keine Termine{% if feiertage_zu %} ({% for g in feiertage_zu %}{{ g.datum|date:"D d.m." }} {{ g.grund }}{% if not forloop.last %}, {% endif %}{% endfor %}){% endif %}</span>
+          </p>
+
+          <div class="rw-termin-fuss">
+            <button type="button" class="knopf knopf-voll" data-rwt-weiter aria-disabled="false" data-rw-click="rwTerminGeh" data-rw-arg="2">Weiter</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="rw-termin-stufe" data-rwt-stufe="2" data-rwt-titel="Objekt und Kontakt">
+          <legend>Was soll geräumt werden, und wie erreichen wir Sie?</legend>
+
+          {% if form.objektart.errors %}
+            <p class="rw-form-error" role="alert" id="rwt-objektart-fehler">{{ form.objektart.errors|join:", " }}</p>
+          {% endif %}
+          <div class="rw-termin-objekte" role="radiogroup" aria-label="Objektart"{% if form.objektart.errors %} aria-invalid="true" aria-describedby="rwt-objektart-fehler"{% endif %}>
+            {% for wert, label in form.objektart.field.choices %}
+              <label class="rw-termin-objekt">
+                <input type="radio" name="objektart" value="{{ wert }}" {% if form.objektart.value == wert %}checked{% endif %}>
+                <span>{{ label }}</span>
+              </label>
+            {% endfor %}
+          </div>
+
+          <div class="rw-termin-felder">
+            <div class="rw-form-group">
+              <label for="rwt-name" class="rw-form-label">Name <span class="rw-pflicht">*</span></label>
+              {% if form.name.errors %}<p class="rw-form-error" id="rwt-name-fehler" role="alert">{{ form.name.errors|join:", " }}</p>{% endif %}
+              <input type="text" id="rwt-name" name="name" maxlength="200" autocomplete="name"
+                class="rw-form-input"{% if form.name.errors %} aria-invalid="true" aria-describedby="rwt-name-fehler"{% endif %}
+                placeholder="Vor- und Nachname" value="{{ form.name.value|default:'' }}" required>
+            </div>
+            <div class="rw-form-group">
+              <label for="rwt-telefon" class="rw-form-label">Telefon <span class="rw-pflicht rwt-nur-video">*</span></label>
+              {% if form.telefon.errors %}<p class="rw-form-error" id="rwt-telefon-fehler" role="alert">{{ form.telefon.errors|join:", " }}</p>{% endif %}
+              <input type="tel" id="rwt-telefon" name="telefon" maxlength="50" autocomplete="tel"
+                class="rw-form-input"{% if form.telefon.errors %} aria-invalid="true" aria-describedby="rwt-telefon-fehler"{% endif %}
+                placeholder="für die Bestätigung" value="{{ form.telefon.value|default:'' }}">
+              <small class="rw-termin-feldhinweis rwt-nur-video">Auf diese Nummer rufen wir Sie per WhatsApp-Video an.</small>
+            </div>
+            <div class="rw-form-group rw-form-group--breit">
+              <label for="rwt-adresse" class="rw-form-label">Adresse des Objekts <span class="rw-pflicht">*</span></label>
+              {% if form.adresse.errors %}<p class="rw-form-error" id="rwt-adresse-fehler" role="alert">{{ form.adresse.errors|join:", " }}</p>{% endif %}
+              <input type="text" id="rwt-adresse" name="adresse" maxlength="500" autocomplete="street-address"
+                class="rw-form-input"{% if form.adresse.errors %} aria-invalid="true" aria-describedby="rwt-adresse-fehler"{% endif %}
+                placeholder="Straße, PLZ, Ort" value="{{ form.adresse.value|default:'' }}" required>
+            </div>
+            <div class="rw-form-group rw-form-group--breit">
+              <label for="rwt-email" class="rw-form-label">E-Mail <i>(optional)</i></label>
+              {% if form.email.errors %}<p class="rw-form-error" id="rwt-email-fehler" role="alert">{{ form.email.errors|join:", " }}</p>{% endif %}
+              <input type="email" id="rwt-email" name="email" maxlength="254" autocomplete="email"
+                class="rw-form-input"{% if form.email.errors %} aria-invalid="true" aria-describedby="rwt-email-fehler"{% endif %}
+                placeholder="name@beispiel.de" value="{{ form.email.value|default:'' }}">
+            </div>
+            <div class="rw-form-group rw-form-group--breit">
+              <label for="rwt-hinweis" class="rw-form-label">Hinweis <i>(optional)</i></label>
+              {% if form.hinweis.errors %}<p class="rw-form-error" id="rwt-hinweis-fehler" role="alert">{{ form.hinweis.errors|join:", " }}</p>{% endif %}
+              <textarea id="rwt-hinweis" name="hinweis" maxlength="2000" rows="3"
+                class="rw-form-textarea"{% if form.hinweis.errors %} aria-invalid="true" aria-describedby="rwt-hinweis-fehler"{% endif %}
+                placeholder="z. B. Parkmöglichkeit, Etage, besondere Umstände">{{ form.hinweis.value|default:'' }}</textarea>
+            </div>
+          </div>
+
+          <div class="rw-termin-fuss">
+            <button type="button" class="textknopf" data-rw-click="rwTerminGeh" data-rw-arg="1">Zurück</button>
+            <button type="button" class="knopf knopf-voll" data-rw-click="rwTerminGeh" data-rw-arg="3">Weiter</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="rw-termin-stufe" data-rwt-stufe="3" data-rwt-titel="Prüfen und anfragen">
+          <legend>Prüfen und anfragen</legend>
+          <dl class="rw-termin-pruefen">
+            <div><dt>Termin</dt><dd data-rwt-review="slot" data-rwt-zu="1">–</dd></div>
+            <div><dt>Art</dt><dd data-rwt-review="besichtigungsart" data-rwt-zu="1">–</dd></div>
+            <div><dt>Objekt</dt><dd data-rwt-review="objektart" data-rwt-zu="2">–</dd></div>
+            <div><dt>Adresse</dt><dd data-rwt-review="adresse" data-rwt-zu="2">–</dd></div>
+            <div><dt>Kontakt</dt><dd data-rwt-review="kontakt" data-rwt-zu="2">–</dd></div>
+          </dl>
+          <p class="rw-termin-bestaetigung">
+            <span class="rwt-nur-vor-ort">Oliver ruft Sie zur Bestätigung an.</span><span class="rwt-nur-video">Oliver bestätigt den Termin telefonisch und ruft Sie zum Termin per WhatsApp-Video an.</span>
+            Ihre Angaben nutzen wir nur für
+            diese Terminanfrage und geben sie nur an die in der Datenschutzerklärung genannten
+            Dienstleister weiter (<a href="/datenschutz/#terminbuchung">Datenschutzhinweis</a>).
+          </p>
+          <div class="rw-termin-fuss">
+            <button type="button" class="textknopf" data-rw-click="rwTerminGeh" data-rw-arg="2">Zurück</button>
+            <button type="submit" class="knopf knopf-voll">Termin anfragen</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</section>

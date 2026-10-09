@@ -1,0 +1,50 @@
+{% load static rw_schema %}{% comment %}
+── Stylesheet-Einbindung aller oeffentlichen Seiten ──────────────────────
+Frueher stand hier ein blockierendes <link rel="stylesheet"> auf die
+163 KB grosse ruempelwerk.css. PageSpeed mass dafuer 160 ms Blockierzeit
+und 170 ms "Verzoegerung beim Rendering" im LCP: Der Hero konnte erst
+gezeichnet werden, wenn die komplette Datei geladen und geparst war.
+
+Jetzt zweistufig:
+1. Die Regeln oberhalb der Falz stehen inline (erzeugt von
+   `python manage.py build_critical_css`, s. rw_critical_css.html).
+   Damit rendert der sichtbare Bereich ohne eine einzige Netzwerkrunde.
+2. Die vollstaendige Datei kommt asynchron nach: media="print" laesst den
+   Browser laden, ohne zu blockieren; nach dem Laden wird auf "all"
+   umgeschaltet.
+
+Kein onload="…"-Attribut, sondern ein eigenes <script> – lesbarer und
+unabhaengig davon, ob die CSP irgendwann Attribut-Handler verbietet.
+Die `sheet`-Pruefung faengt den Fall ab, dass die Datei aus dem Cache
+schon fertig ist, bevor der Listener haengt (dann feuert load nicht mehr).
+
+Wird von jeder oeffentlichen Seite im <head> eingebunden – ersetzt dort
+sowohl den frueheren Preload als auch das <link rel="stylesheet">.
+
+`crit_page` nennt den Dateinamen des einbindenden Templates und waehlt
+damit dessen eigenen Inline-Block aus components/critical/. Frueher teilten
+sich alle Seiten einen gemeinsamen Block; darin bestanden 56 % aus Regeln
+fuer Klassen, die es auf der jeweiligen Seite gar nicht gibt (/impressum/
+trug Hero und Preisrechner mit).
+
+Fehlt `crit_page`, faellt die Seite auf genau diesen gemeinsamen Block
+zurueck: groesser, aber niemals unvollstaendig. Eine neue Seite, bei der die
+Variable vergessen wurde, rendert also korrekt statt ungestylt.
+
+Der Rueckfall greift jetzt auch, wenn `crit_page` gesetzt ist, die erzeugte
+Datei aber fehlt (`|kritisch` liefert beide Namen, {% include %} nimmt den
+ersten vorhandenen). Vorher war das ein 500 - und `build_critical_css`
+scheitert im Deploy bewusst weich.
+{% endcomment %}<style>{% if crit_page %}{% include crit_page|kritisch %}{% else %}{% include 'components/rw_critical_css.html' %}{% endif %}</style>
+<link id="rw-css" rel="stylesheet" href="{% static 'css/ruempelwerk.css' %}" media="print">
+<script>
+  (function(){
+    var l = document.getElementById('rw-css');
+    if (!l) return;
+    function show(){ l.media = 'all'; }
+    l.addEventListener('load', show);
+    if (l.sheet) show();                       // war schon im Cache
+    window.addEventListener('load', show);     // letzte Sicherung
+  })();
+</script>
+<noscript><link rel="stylesheet" href="{% static 'css/ruempelwerk.css' %}"></noscript>

@@ -1,0 +1,195 @@
+{% load static rw_schema %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="{{ seo_description }}">
+  <title>{{ seo_title }}</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% comment %}
+    Ohne seo_breadcrumb_name: Der Brotkrumen ist dreistufig
+    (Startseite › Ratgeber › Artikel) und kommt aus schema_bloecke.
+    seo_type="article" deckt sich mit dem Article-Knoten (EIG29).
+  {% endcomment %}
+  {% include 'components/rw_seo.html' with seo_title=seo_title seo_description=seo_description seo_path=seo_path seo_keywords=seo_keywords seo_type="article" seo_speakable="h1,.rw-antwort-text" %}
+  {% include 'components/rw_css.html' with crit_page='ratgeber_artikel.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  <section class="rw-section rw-hub-kopf rw-rg-kopf">
+    <div class="rw-container">
+      <nav class="rw-brotkrumen" aria-label="Brotkrumen">
+        <a href="/">Startseite</a> <span aria-hidden="true">›</span>
+        <a href="/ratgeber/">Ratgeber</a> <span aria-hidden="true">›</span>
+        {{ a.titel }}
+      </nav>
+      {% comment %}
+        GE23 (18.09.2026): Kategorie und Metazeile sind KEINE Absätze — und
+        standen trotzdem als <p> vor dem Antwortblock. Eine Antwortmaschine
+        liest die ersten Absätze einer Seite; hier waren das „Begriffe und
+        Abgrenzung“, der Teaser und „Von … · Stand …“, und die eigentliche
+        Antwort kam erst an vierter Stelle. Auf drei der fünf Ratgeberseiten
+        fiel sie damit aus dem Fenster. Als <div> ändert sich am Aussehen
+        nichts (`* { margin: 0 }`, beide Klassen setzen ihre Abstände selbst),
+        an der Reihenfolge der Absätze aber alles.
+      {% endcomment %}
+      <div class="rw-rg-kategorie">{{ a.kategorie }}</div>
+      <h1 class="rw-hub-titel">{{ a.h1 }}<br><em>{{ a.h1_em }}</em></h1>
+      <p class="rw-rg-teaser">{{ a.teaser }}</p>
+      <div class="rw-rg-meta">
+        Von {{ FIRMA_NAME }} · Stand <time datetime="{{ a.stand_iso }}">{{ a.stand }}</time>
+      </div>
+    </div>
+  </section>
+
+  {% include 'components/rw_antwort.html' with antwort_frage=a.answer_frage antwort_text=a.answer antwort_cta_url="/preisangebot/" %}
+
+  <section class="rw-section rw-svc-text-sec">
+    <div class="rw-container rw-svc-text">
+      {% if a.abschnitte|length > 2 %}
+      <nav class="rw-rg-toc" aria-labelledby="rw-rg-toc-t">
+        <p class="rw-rg-toc-titel" id="rw-rg-toc-t">Auf dieser Seite</p>
+        <ol>{% for s in a.abschnitte %}<li><a href="#{{ s.id }}">{{ s.titel }}</a></li>{% endfor %}</ol>
+      </nav>
+      {% endif %}
+      {% comment %}
+        Der safe-Filter ist zulässig: Die Texte stehen in apps/core/data/ratgeber.py,
+        also im Quelltext, nicht in einem Formular oder dem CMS.
+      {% endcomment %}
+      {% for s in a.abschnitte %}
+      <article class="rw-svc-block" id="{{ s.id }}">
+        <h2>{{ s.titel }}</h2>
+        {# audit-ok V02: Text aus apps/core/data/ratgeber.py (Python-Konstante, kein Nutzereingang), trägt a und strong #}
+        {% for p in s.absaetze %}<p>{{ p|safe }}</p>{% endfor %}
+        {% if s.schritte %}
+        <ol class="rw-rg-schritte">
+          {# audit-ok V02: Text aus apps/core/data/ratgeber.py (Python-Konstante, kein Nutzereingang), trägt a und strong #}
+          {% for p in s.schritte %}<li>{{ p|safe }}</li>{% endfor %}
+        </ol>
+        {% endif %}
+        {% if s.liste %}
+        <ul class="rw-svc-punkte">
+          {# audit-ok V02: Text aus apps/core/data/ratgeber.py (Python-Konstante, kein Nutzereingang), trägt a und strong #}
+          {% for p in s.liste %}<li>{{ p|safe }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+        {% if s.lokal and lokal %}
+        <ul class="rw-rg-lokal">
+          {% for o in lokal %}
+          <li class="rw-rg-lokal-eintrag">
+            <h3 class="rw-rg-lokal-titel"><a href="{{ o.url }}">{{ o.name }}</a></h3>
+            <p class="rw-rg-lokal-traeger">{{ o.traeger }}</p>
+            <p>{{ o.sperrmuell }}</p>
+            {% if o.quelle %}<p class="rw-rg-lokal-quelle"><a href="{{ o.quelle }}" rel="noopener" target="_blank">Quelle: Website der Stadt bzw. des Entsorgungsträgers</a></p>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </article>
+      {% if s.vergleich %}{% include 'components/rw_vergleich.html' with vergleiche=s.vergleiche %}{% endif %}
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="rw-section rw-svc-band">
+    <div class="rw-container rw-svc-faq">
+      <div class="rw-section-header rw-rg-sechead">
+        <h2 class="rw-section-title">Häufige <em>Fragen</em></h2>
+      </div>
+      <div class="rw-svc-faq-liste">
+        {% for frage, antwort in a.faq %}
+        <details class="rw-faq-city" id="{{ frage|faq_anker }}">
+          <summary>{{ frage }}<span aria-hidden="true">+</span></summary>
+          {# audit-ok V02: Antwort aus data/ratgeber.py (Python-Konstante), kein Nutzer-, CMS- oder DB-Eingang; trägt Links und strong #}
+          <p>{{ antwort|safe }}</p>
+        </details>
+        {% endfor %}
+      </div>
+      <p class="rw-rg-hinweis">
+        Dieser Artikel ist eine allgemeine Sachdarstellung und ersetzt keine
+        Steuer- oder Rechtsberatung im Einzelfall.
+      </p>
+    </div>
+  </section>
+
+  {% if leistungen %}
+  <section class="rw-section">
+    <div class="rw-container">
+      <div class="rw-section-header rw-rg-sechead">
+        <h2 class="rw-section-title">Passende <em>Leistungen</em></h2>
+      </div>
+      <div class="rw-svc-related">
+        {% for v in leistungen %}
+        <a href="{{ v.url }}" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">{{ v.name }}</span>
+          <span class="rw-svc-related-text">{{ v.text }}</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">Zur Leistungsseite →</span>
+        </a>
+        {% endfor %}
+      </div>
+      {% if staedte %}
+      <p class="rw-svc-staedte-fuss">
+        Vor Ort in
+        {% for s in staedte %}<a href="{{ s.url }}">Entrümpelung {{ s.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+        – oder <a href="/entrumpelung/">alle Städte ansehen</a>.
+      </p>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if weitere %}
+  <section class="rw-section rw-svc-band">
+    <div class="rw-container">
+      <div class="rw-section-header rw-rg-sechead">
+        <h2 class="rw-section-title">Weiter im <em>Ratgeber</em></h2>
+      </div>
+      <div class="rw-svc-related">
+        {% for w in weitere %}
+        <a href="{{ w.url }}" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">{{ w.titel }}</span>
+          <span class="rw-svc-related-text">{{ w.teaser }}</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">Artikel lesen →</span>
+        </a>
+        {% endfor %}
+      </div>
+      <p class="rw-svc-staedte-fuss">
+        Alle Themen und das Glossar: <a href="/ratgeber/">zur Ratgeber-Übersicht</a>.
+      </p>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="rw-cta rw-svc-cta">
+    <div class="rw-container">
+      <div class="rw-cta-inner">
+        <h2>Ihre Frage ist nicht dabei? <em>Wir antworten persönlich.</em></h2>
+        <p>
+          Schicken Sie uns ein paar Fotos oder beschreiben Sie Ihren Fall. Wir melden uns
+          in {{ ZUSAGE_ANTWORT_SPANNE }}; der Festpreis folgt nach der kostenlosen Besichtigung.
+        </p>
+        <div class="rw-cta-actions">
+          <a href="/anfrage/" class="rw-btn-primary">Kostenlos anfragen</a>
+          <a href="/preisangebot/" class="rw-btn-outline">Preis berechnen</a>
+        </div>
+        <p class="rw-tel-hint">
+          Lieber telefonisch? <a href="tel:{{ FIRMA_TELEFON }}" aria-label="{{ FIRMA_TELEFON_ANZEIGE }} anrufen">{{ FIRMA_TELEFON_ANZEIGE }}</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+</body>
+</html>

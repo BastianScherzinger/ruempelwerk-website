@@ -1,0 +1,492 @@
+{% load static rw_schema rw_auszeichnungen rw_antispam %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  {% with home_desc="Entrümpelung Halle (Saale) & Leipzig: Antwort in 2 Stunden, Festpreis direkt bei der Besichtigung, besenrein. Jetzt Termin buchen." %}
+  <meta name="description" content="{{ home_desc }}">
+  <title>Entrümpelung Halle (Saale) & Leipzig: Festpreis | Rümpelwerk</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% include 'components/rw_seo.html' with seo_title="Entrümpelung Halle (Saale) & Leipzig: Festpreis | Rümpelwerk" seo_description=home_desc seo_path="/" seo_keywords="Entrümpelung, Haushaltsauflösung, Wohnungsauflösung, Kellerentrümpelung, Nachlassräumung, Gewerbeentrümpelung, Entrümpelung Leipzig, Entrümpelung Halle, Entrümpelung Magdeburg, Entrümpelung Hannover, Entrümpelung Dresden, Entrümpelung Chemnitz, Festpreis Entrümpelung, Haushaltsauflösung günstig" seo_speakable="h1,.rw-antwort-text" %}
+  {% endwith %}
+  {% include 'components/rw_css.html' with crit_page='home.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <aside class="rw-laufband" id="rw-laufband" aria-label="Neu: Online-Besichtigung">
+    <button type="button" class="rw-laufband-pause" aria-pressed="false" aria-controls="rw-laufband-spur"><span class="rw-laufband-vh">Laufband pausieren</span><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path class="rw-laufband-ik-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/><path class="rw-laufband-ik-los" d="M8 5v14l11-7z"/></svg></button>
+    <div class="rw-laufband-fenster">
+      <div class="rw-laufband-spur" id="rw-laufband-spur">
+        <ul class="rw-laufband-liste">
+          <li><strong>Neu:</strong> Online-Besichtigung per WhatsApp-Video</li>
+          <li>Vor Ort: Festpreis-Angebot {{ ZUSAGE_ANGEBOT }}</li>
+          {% if ZUSAGE_TERMIN_FRUEHESTENS %}<li>Besichtigung {{ ZUSAGE_TERMIN_FRUEHESTENS }} buchbar</li>{% endif %}
+          <li>{{ ZUSAGE_ANTWORT }}</li>
+          <li>Schnell, sauber, professionell</li>
+        </ul>
+      </div>
+    </div>
+    <a class="rw-laufband-knopf" href="/termin/#online-besichtigung">Jetzt <span class="rw-laufband-lang">Online-Besichtigung </span>buchen</a>
+  </aside>
+
+  <main id="inhalt">
+
+  {# ════════ 1 · HERO — Aussage links, Rechner rechts (Bauplan §3 Zeile 2) ════════ #}
+  <section class="rw-hero rw-hero--start" id="hero" aria-labelledby="rw-h1">
+    <div class="rwf-hero-grid">
+      <div class="rwf-hero-text">
+        <div class="rwf-hero-ort">Halle (Saale) · Leipzig · Umland</div>
+        <h1 id="rw-h1">Entrümpelung und Haushaltsauflösung in Halle und Leipzig</h1>
+        <div class="rwf-hero-person">
+          <img src="{% static 'images/oliver-pohl-192.webp' %}" width="192" height="192" alt="Oliver Pohl, Inhaber von Rümpelwerk Mitteldeutschland" decoding="async">
+          <p class="rwf-hero-satz"><b>Entrümpelung ab {{ PREISE.keller.min_txt }}&nbsp;€</b>: Oliver Pohl, Inhaber, sieht sich Ihr Objekt kostenlos an – vor Ort oder per WhatsApp-Video.</p>
+        </div>
+        <ul class="rwf-hero-zusagen">
+          <li>Festpreis-Angebot {{ ZUSAGE_ANGEBOT }}</li>
+          <li>Per Video: Angebot {{ ZUSAGE_ANGEBOT_VIDEO }}, wenn Sie uns alle Räume zeigen</li>
+          <li>Schnell, professionell und besenrein übergeben</li>
+        </ul>
+
+        {% comment %}Kontaktwege (03.10.2026): Im Hero nur zwei Wege - Anrufen und die ganz normale
+           Anfrage (Formular rechts bzw. am Handy direkt darunter). WhatsApp und die Terminbuchung
+           stehen nur noch als kleine Nebenlinks darunter; der Preisrechner (Richtpreis) liegt auf
+           /preisangebot/. Vorher: drei gleich große Knöpfe + Rechner im Hero, am Handy überladen.{% endcomment %}
+        <div class="rwf-hero-knoepfe rwf-hero-kontakt">
+          <a class="knopf knopf-hell knopf-gross rwf-hero-anruf" href="tel:{{ FIRMA_TELEFON }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>
+            Anrufen: {{ FIRMA_TELEFON_ANZEIGE }}
+          </a>
+          <a class="knopf knopf-rand-hell knopf-gross rwf-hero-anfrage-knopf" href="#hero-anfrage">Anfrage schreiben</a>
+        </div>
+        <p class="rwf-hero-zeiten">Telefon {{ FIRMA_ZEITEN }}</p>
+        <p class="rwf-hero-neben">Oder: <a href="{{ FIRMA_WHATSAPP_LINK_KURZ }}" target="_blank" rel="noopener">per WhatsApp schreiben</a> · <a href="/termin/">Besichtigung online buchen</a></p>
+
+        <ul class="rwf-hero-belege" aria-label="Bewertungen">
+          <li><span class="rwf-sterne-txt" aria-hidden="true">★★★★★</span><span><b>{{ bewertung.wert_anzeige }} bei Google</b> <i>{{ bewertung.anzahl }} Bewertungen</i></span></li>
+          <li><img class="rw-tl-icon" src="{% static trustlocal.rang_icon_pfad %}" alt="" width="18" height="18"><span><b>Trustlocal {{ trustlocal.rang }}</b> <i>{{ trustlocal.name }}</i></span></li>
+        </ul>
+        {% include 'components/rw_bewertung_quelle.html' %}
+
+        {# Hero-Foto: unter 700 px blendet CSS es aus; die leere Quelle verhindert dort den Download. Quelle und Bild auf EINER Zeile (Regel 28). #}
+        <figure class="rwf-hero-foto">
+          <picture><source media="(max-width: 700px)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACw="><img src="{% static 'images/halle-fensterfront.webp' %}" srcset="{% static 'images/halle-fensterfront-640.webp' %} 640w, {% static 'images/halle-fensterfront.webp' %} 1200w" sizes="560px" width="1200" height="522" loading="eager" alt="Geräumte Gewerbehalle mit Fensterfront und leerem Teppichboden"></picture>
+        </figure>
+      </div>
+
+      {# Normale Anfrage (03.10.2026): dieselben Felder wie /anfrage/, schickt dorthin - View, Spam-Abwehr, Mail und Erfolgsmeldung bleiben dort. #}
+      <div class="rwf-hero-anfrage" id="hero-anfrage">
+        <form class="rwf-anfrage-karte" method="post" action="/anfrage/" aria-labelledby="rwf-anfrage-h">
+          {% csrf_token %}
+          {% rw_antispam %}
+          <p class="rwf-anfrage-titel" id="rwf-anfrage-h">Kostenlos anfragen</p>
+          <p class="rwf-anfrage-sub">Antwort in {{ ZUSAGE_ANTWORT_SPANNE }}, {{ ZUSAGE_ANTWORT_GILT }}. Unverbindlich.</p>
+          <label class="rwf-feld">Was dürfen wir tun? *
+            <select name="leistung" required>
+              <option value="entruempelung" selected>Entrümpelung / Haushaltsauflösung</option>
+              <option value="sanierung">Sanierung</option>
+              <option value="komplett">Entrümpelung + Sanierung</option>
+              <option value="sonstiges">Sonstiges</option>
+            </select>
+          </label>
+          <div class="rwf-feld-paar">
+            <label class="rwf-feld">Name *<input type="text" name="name" maxlength="200" autocomplete="name" required></label>
+            <label class="rwf-feld">Telefon<input type="tel" name="telefon" maxlength="50" autocomplete="tel"></label>
+          </div>
+          <label class="rwf-feld">E-Mail *<input type="email" name="email" maxlength="254" autocomplete="email" required></label>
+          <label class="rwf-feld">Adresse des Objekts<input type="text" name="adresse" maxlength="500" autocomplete="street-address" placeholder="Straße, PLZ, Ort"></label>
+          <label class="rwf-feld">Ihr Anliegen<textarea name="zusatz_info" maxlength="2000" rows="3" placeholder="z. B. 3-Zimmer-Wohnung in Halle, 2. OG, Wunschtermin"></textarea></label>
+          <button type="submit" class="knopf knopf-gross rwf-anfrage-senden">Anfrage senden</button>
+          <p class="rwf-anfrage-klein">Ihre Angaben nutzen wir nur für diese Anfrage. <a href="/datenschutz/">Datenschutz</a></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  {# ════════ 2 · Vertrauenszeile ════════ #}
+  <section class="rwf-vertrauen" aria-label="Worauf Sie sich verlassen können">
+    <div class="rw-container">
+      <ul class="rwf-vertrauen-liste">
+        <li><strong>{{ bewertung.wert_anzeige }} von 5 Sternen bei Google</strong><span>{{ bewertung.anzahl }} Google-Bewertungen</span></li>
+        <li><strong><img class="rw-tl-icon" src="{% static trustlocal.rang_icon_pfad %}" alt="" width="18" height="18"> Trustlocal {{ trustlocal.rang }}</strong><span>{{ trustlocal.name }} · {{ trustlocal.wert }} von {{ trustlocal.skala }}</span></li>
+        <li><strong>Festpreisangebot</strong><span>{{ ZUSAGE_ANGEBOT }}, verbindlich im Angebot</span></li>
+        <li><strong>Entsorgungsnachweis</strong><span>schriftlich für Ihre Unterlagen</span></li>
+      </ul>
+    </div>
+  </section>
+
+  {# ════════ 4 · Leistungen: Antwortblock + Preisliste ════════ #}
+  {% include 'components/rw_antwort.html' with antwort_frage=antwort_frage antwort_text=antwort_text %}
+
+  <section class="rwf-leistungen" id="leistungen" aria-labelledby="rwf-leistungen-h">
+    <div class="rw-container">
+      <div class="kopfzeile">
+        <h2 id="rwf-leistungen-h">Leistungen und Richtpreise</h2>
+        <p>Inklusive Transport, Entsorgung und besenreiner Übergabe. Den verbindlichen Festpreis erhalten Sie {{ ZUSAGE_ANGEBOT }} schriftlich.</p>
+      </div>
+      <div class="rwf-preisliste">
+        <dl class="rwf-preis-spalte">
+          <div class="rwf-posten">
+            <dt><a href="/wohnungsaufloesung/">Wohnungsauflösung</a><span class="rwf-punkte" aria-hidden="true"></span><span class="rwf-preis"><i>ab</i> {{ PREISE.wohnung.min_txt }}&nbsp;€</span></dt>
+            <dd>Die ganze Wohnung, vom Keller bis zum Balkon. Richtwert {{ PREISE.wohnung.rate_txt }}.</dd>
+          </div>
+          <div class="rwf-posten">
+            <dt><a href="/haushaltsaufloesung/">Haushaltsauflösung</a><span class="rwf-punkte" aria-hidden="true"></span><span class="rwf-preis"><i>ab</i> {{ PREISE.haus.min_txt }}&nbsp;€</span></dt>
+            <dd>Einfamilienhaus mit allen Etagen und Nebenräumen. Richtwert {{ PREISE.haus.rate_txt }}.</dd>
+          </div>
+          <div class="rwf-posten">
+            <dt><a href="/kellerentruempelung/">Kellerentrümpelung</a><span class="rwf-punkte" aria-hidden="true"></span><span class="rwf-preis"><i>ab</i> {{ PREISE.keller.min_txt }}&nbsp;€</span></dt>
+            <dd>Keller, Dachboden oder Abstellraum. Richtwert {{ PREISE.keller.rate_txt }}.</dd>
+          </div>
+          <div class="rwf-posten">
+            <dt><a href="/nachlassraeumung/">Nachlassräumung</a><span class="rwf-punkte" aria-hidden="true"></span><span class="rwf-preis rwf-preis-text">nach Besichtigung</span></dt>
+            <dd>Mit Sicherung von Dokumenten und Wertgegenständen für die Angehörigen.</dd>
+          </div>
+        </dl>
+        <dl class="rwf-preis-spalte">
+          <div class="rwf-posten">
+            <dt><a href="/gewerbeentruempelung/">Gewerbeentrümpelung</a><span class="rwf-punkte" aria-hidden="true"></span><span class="rwf-preis"><i>ab</i> {{ PREISE.gewerbe.min_txt }}&nbsp;€</span></dt>
+            <dd>Büro, Laden, Lager oder Halle. Richtwert {{ PREISE.gewerbe.rate_txt }}.</dd>
+          </div>
+          <div class="rwf-posten">
+            <dt><a href="/preisangebot/?objekt=garten">Gartenräumung</a><span class="rwf-punkte" aria-hidden="true"></span><span class="rwf-preis"><i>ab</i> {{ PREISE.garten.min_txt }}&nbsp;€</span></dt>
+            <dd>Schnittgut, Gartenhaus und Hausrat im Schuppen.</dd>
+          </div>
+          <div class="rwf-posten">
+            <dt><a href="/preisangebot/?objekt=scheune">Scheune und Nebengebäude</a><span class="rwf-punkte" aria-hidden="true"></span><span class="rwf-preis"><i>ab</i> {{ PREISE.scheune.min_txt }}&nbsp;€</span></dt>
+            <dd>Scheunen, Garagen und Werkstätten.</dd>
+          </div>
+          <div class="rwf-posten">
+            <dt><a href="/messie-wohnung-entruempeln/">Messie-Wohnung</a><span class="rwf-punkte" aria-hidden="true"></span><span class="rwf-preis rwf-preis-text">nach Besichtigung</span></dt>
+            <dd>Diskret und ohne Vorwürfe.</dd>
+          </div>
+        </dl>
+      </div>
+      <div class="rwf-preis-fuss">
+        <p>Außerdem: <a href="/sperrmuell-entsorgung/" class="textlink" style="font-size:inherit;">Sperrmüll-Entsorgung</a>, Wohnungsübergabe an den Vermieter und <a href="/sanierung-renovierung/" class="textlink" style="font-size:inherit;">kleine Renovierung</a> nach der Räumung. Ratenzahlung auf Anfrage. Arbeitskosten im eigenen Haushalt teils nach §&nbsp;35a EStG absetzbar, die komplette Haushaltsauflösung nicht.</p>
+        <a class="textlink" href="/preisangebot/">Richtpreis für Ihr Objekt berechnen</a>
+      </div>
+    </div>
+  </section>
+
+  {# ════════ 5 · Vorher und Nachher: 3 echte Paare ════════ #}
+  <section class="rwf-vorher" aria-labelledby="rwf-vorher-h">
+    <div class="rw-container">
+      <div class="kopfzeile">
+        <h2 id="rwf-vorher-h">Vorher und nachher</h2>
+        <p>Fotos aus unseren eigenen Einsätzen, jeweils derselbe Raum.</p>
+      </div>
+      <div class="rwf-paare">
+        <div class="rwf-paar">
+          <figure><img src="{% static 'images/keller-vorher-720.webp' %}" srcset="{% static 'images/keller-vorher-360.webp' %} 360w, {% static 'images/keller-vorher-720.webp' %} 720w" sizes="180px" width="720" height="960" loading="lazy" alt="Kellerraum, bis unter die Decke vollgestellt"><figcaption><b>Vorher</b></figcaption></figure>
+          <figure><img src="{% static 'images/keller-nachher-720.webp' %}" srcset="{% static 'images/keller-nachher-360.webp' %} 360w, {% static 'images/keller-nachher-720.webp' %} 720w" sizes="180px" width="720" height="960" loading="lazy" alt="Derselbe Kellerraum, leer und besenrein"><figcaption><b>Nachher</b></figcaption></figure>
+          <p class="rwf-paar-titel">Kellerabteil · besenrein übergeben</p>
+        </div>
+        <div class="rwf-paar">
+          <figure><img src="{% static 'images/halle-voll-720.webp' %}" srcset="{% static 'images/halle-voll-360.webp' %} 360w, {% static 'images/halle-voll-720.webp' %} 720w" sizes="180px" width="720" height="960" loading="lazy" alt="Gewerbehalle mit Regalen vor der Räumung"><figcaption><b>Vorher</b></figcaption></figure>
+          <figure><img src="{% static 'images/halle-leer-720.webp' %}" srcset="{% static 'images/halle-leer-360.webp' %} 360w, {% static 'images/halle-leer-720.webp' %} 720w" sizes="295px" width="720" height="540" loading="lazy" alt="Geräumte Gewerbehalle mit leerem Teppichboden"><figcaption><b>Nachher</b></figcaption></figure>
+          <p class="rwf-paar-titel">Ehemaliger Markt · Fläche für den Vermieter geräumt</p>
+        </div>
+        <div class="rwf-paar">
+          <figure><img src="{% static 'images/garten-vorher-720.webp' %}" srcset="{% static 'images/garten-vorher-360.webp' %} 360w, {% static 'images/garten-vorher-720.webp' %} 720w" sizes="180px" width="720" height="960" loading="lazy" alt="Garten mit Bergen von Schnittgut"><figcaption><b>Vorher</b></figcaption></figure>
+          <figure><img src="{% static 'images/garten-nachher-720.webp' %}" srcset="{% static 'images/garten-nachher-360.webp' %} 360w, {% static 'images/garten-nachher-720.webp' %} 720w" sizes="295px" width="720" height="540" loading="lazy" alt="Derselbe Garten nach der Räumung"><figcaption><b>Nachher</b></figcaption></figure>
+          <p class="rwf-paar-titel">Garten · Schnittgut und Reste entsorgt</p>
+        </div>
+      </div>
+      <a class="textlink" href="/galerie/">Alle Einsätze in der Galerie</a>
+    </div>
+  </section>
+
+  {# ════════ 6 · Stimmen: echte Google-Rezensionen, kein Karussell ════════ #}
+  <section class="rwf-stimmen" id="bewertungen" aria-labelledby="rwf-stimmen-h">
+    <div class="rw-container rwf-stimmen-raster">
+      <div>
+        <h2 id="rwf-stimmen-h">Was Kunden bei Google schreiben</h2>
+        <p class="rwf-stimmen-zahl"><span class="rwf-sterne" aria-hidden="true">{% for _ in "12345" %}<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01z"/></svg>{% endfor %}</span><b>{{ bewertung.wert_anzeige }} von 5 Sternen</b> aus {{ bewertung.anzahl }} Bewertungen (Google, Stand {{ bewertung.stand_anzeige }})</p>
+        <a class="textlink" href="{{ bewertung.profil_url }}" target="_blank" rel="noopener">Alle {{ bewertung.anzahl }} Bewertungen auf Google</a>
+      </div>
+      <div class="rwf-zitate">
+        {% for r in rezensionen %}
+        <blockquote><p>„{{ r.text }}“</p><footer>{{ r.name }} · Google</footer></blockquote>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {# ════════ 7 · Ablauf: die einzige Nummernreihe der Seite ════════ #}
+  <section class="rwf-ablauf" id="ablauf" aria-labelledby="rwf-ablauf-h">
+    <div class="rw-container">
+      <div class="kopfzeile">
+        <h2 id="rwf-ablauf-h">So läuft es ab</h2>
+        <p>Vier Schritte, und Sie wissen bei jedem, woran Sie sind.</p>
+      </div>
+      <ol class="rwf-schritte">
+        <li><span class="rwf-schritt-nr">1</span><strong>Termin oder Anruf</strong><p>Online buchen, anrufen oder per WhatsApp schreiben. Antwort in {{ ZUSAGE_ANTWORT_SPANNE }}, {{ ZUSAGE_ANTWORT_GILT }}; Telefon {{ FIRMA_ZEITEN }}.</p></li>
+        <li><span class="rwf-schritt-nr">2</span><strong>Kostenlose Besichtigung</strong><p>{{ ZUSAGE_BESICHTIGUNG_DAUER }} vor Ort oder per Video, Termine {{ ZUSAGE_TERMIN_FRUEHESTENS }} buchbar. Wir besprechen gemeinsam, was bleibt.</p></li>
+        <li><span class="rwf-schritt-nr">3</span><strong>Festpreis schriftlich</strong><p>Oliver nennt Ihnen den Festpreis {{ ZUSAGE_ANGEBOT }}. Unverbindlich, bis Sie zusagen.</p></li>
+        <li><span class="rwf-schritt-nr">4</span><strong>Räumung und Übergabe</strong><p>Wir räumen, entsorgen mit Nachweis und übergeben besenrein – termingerecht und gründlich.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  {# ════════ 8 · Für Angehörige ════════ #}
+  <section class="rwf-angehoerige" aria-labelledby="rwf-angeh-h">
+    <div class="rw-container rwf-angehoerige-raster">
+      <figure class="rwf-angehoerige-bild">
+        <img src="{% static 'images/wohnzimmer-vorher.webp' %}" width="1400" height="648" loading="lazy" alt="Möbliertes Wohnzimmer vor einer Haushaltsauflösung">
+      </figure>
+      <div class="rwf-angehoerige-text">
+        <h2 id="rwf-angeh-h">Für Angehörige</h2>
+        <p>Eine Wohnung aufzulösen, in der ein Mensch gelebt hat, ist keine gewöhnliche Räumung. Sie sagen uns, was bleiben soll – um alles andere kümmern wir uns, bis zur Übergabe an den Vermieter oder die Hausverwaltung.</p>
+        <ul class="rwf-haken-los">
+          <li><strong>Wertgegenstände und Dokumente</strong> legen wir beiseite und übergeben sie Ihnen persönlich.</li>
+          <li><strong>Schlüsselübergabe</strong> an Vermieter oder Hausverwaltung, mit Übergabeprotokoll.</li>
+          <li><strong>Entsorgungsnachweis</strong> schriftlich, für Ihre Unterlagen.</li>
+        </ul>
+        <div class="rwf-hero-knoepfe" style="margin-top:28px;">
+          <a class="knopf knopf-rand" href="/termin/">Besichtigung besprechen</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# ════════ 9 · Über uns + Nachweise (Auszeichnungen: Platzhalter, siehe Kommentar) ════════ #}
+  <section class="rwf-ueber" id="ueber-uns" aria-labelledby="rwf-ueber-h">
+    <div class="rw-container rwf-ueber-raster">
+      <div class="rwf-ueber-text">
+        <h2 id="rwf-ueber-h">Über uns</h2>
+        <p class="rwf-leitspruch">Strukturiert · Effizient · Besenrein</p>
+        <p>Rümpelwerk Mitteldeutschland ist ein Betrieb aus Halle (Saale) unter der Leitung von Oliver Pohl. Er ist Ihr Ansprechpartner vom ersten Anruf bis zur Übergabe. Wir arbeiten mit eigenen Fahrzeugen und entsorgen mit Nachweis.</p>
+        <div class="rwf-fahrzeuge">
+          <figure><img src="{% static 'images/transporter.webp' %}" width="900" height="675" loading="lazy" alt="Eigener Transporter mit geöffneten Hecktüren und leerem Laderaum"><figcaption>Transporter für Wohnungen und Keller</figcaption></figure>
+          <figure><img src="{% static 'images/lkw.webp' %}" width="900" height="778" loading="lazy" alt="Eigener Koffer-LKW mit Ladebordwand"><figcaption>Koffer-LKW für große Räumungen</figcaption></figure>
+        </div>
+        <div class="rwf-hero-knoepfe" style="margin-top:28px;">
+          <a class="textlink" href="/ueber-uns/">Mehr über uns</a>
+        </div>
+      </div>
+
+      <aside class="rwf-nachweise" aria-labelledby="rwf-nachweise-h">
+        <h3 id="rwf-nachweise-h">Unabhängig bewertet</h3>
+        {% comment %}
+          Nacharbeit Stufe 4b (Bauplan §6): Die Google-Zahl stand hier bis
+          Commit 39e00de im selben Block wie Trustlocal - verboten (Regel:
+          test_auszeichnungen haelt fest, dass Trustlocal/WKDB nie neben der
+          Google-Zahl stehen). Ersetzt durch {% rw_nachweise %}: Trustlocal-
+          Karte (Siegel, 9,9/10, 32 Bewertungen) + WKDB-Zeile, ohne Google.
+          Die Google-Zahl bleibt im Hero, in der Vertrauenszeile und bei den
+          Stimmen - nur eben nicht mehr direkt neben Trustlocal.
+        {% endcomment %}
+        {% rw_nachweise %}
+      </aside>
+    </div>
+  </section>
+
+  {# ════════ 10 · Einsatzgebiet (Silo-Verteiler, unveraendert aus Stufe vor Upgrade) ════════ #}
+  <section class="rw-section" id="einzugsgebiet" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      <div class="kopfzeile">
+        <h2 id="rwf-gebiet-h">Entrümpelung in Ihrer Region</h2>
+        <p>Wir räumen in Sachsen-Anhalt, Sachsen und Niedersachsen. In jeder Region gibt es einen persönlichen Ansprechpartner.</p>
+      </div>
+      <div class="rw-city-grid" data-rw-reveal>
+        <a href="/standorte/" class="rw-city-card">
+          <div class="rw-city-card-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="rw-city-card-name" style="display:flex;align-items:center;gap:10px;justify-content:space-between;">
+            <span>Leipzig &amp; Halle</span>
+            <img width="128" height="125" src="{% static 'images/regionalleiter_leipzig_sm.webp' %}" alt="Oliver Pohl, Ansprechpartner für Leipzig und Halle" style="width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:center 20%;border:2px solid var(--rw-orange);flex-shrink:0;" loading="lazy" decoding="async">
+          </div>
+          <div class="rw-city-card-services">Entrümpelung · Haushaltsauflösung · Wohnungsauflösung · Nachlassräumung · Kellerentrümpelung</div>
+          <div class="rw-city-card-badge">Firmensitz Halle</div>
+        </a>
+        <a href="/standorte/" class="rw-city-card">
+          <div class="rw-city-card-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="rw-city-card-name"><span>Magdeburg</span></div>
+          <div class="rw-city-card-services">Wohnungsauflösung · Gewerbeentrümpelung · Kellerentrümpelung · Sperrmüllentsorgung</div>
+          <div class="rw-city-card-badge">Einsatzgebiet</div>
+        </a>
+        <a href="/standorte/" class="rw-city-card">
+          <div class="rw-city-card-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="rw-city-card-name"><span>Hannover</span></div>
+          <div class="rw-city-card-services">Haushaltsräumung · Nachlassräumung · Wohnungsübergabe · Entrümpelung</div>
+          <div class="rw-city-card-badge">Einsatzgebiet</div>
+        </a>
+        <a href="/standorte/" class="rw-city-card">
+          <div class="rw-city-card-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="rw-city-card-name" style="display:flex;align-items:center;gap:10px;justify-content:space-between;">
+            <span>Dresden &amp; Chemnitz</span>
+            <img width="128" height="178" src="{% static 'images/regionalleiter_dresden_sm.webp' %}" alt="Viktor Grebe, Ansprechpartner für Dresden und Chemnitz" style="width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:center top;border:2px solid var(--rw-orange);flex-shrink:0;" loading="lazy" decoding="async">
+          </div>
+          <div class="rw-city-card-services">Haushaltsauflösung · Erbschaftsräumung · Gewerberäumung · Sanierung nach Räumung</div>
+          <div class="rw-city-card-badge">Einsatzgebiet</div>
+        </a>
+      </div>
+      {% comment %}
+        P1 vom 27.08.2026 - die Rolle der Startseite fuer "Halle" (unveraendert
+        aus dem vorherigen Aufbau, nur die Kachel-Optik ist Stufe 4 ruhiger).
+        Quelle ist STANDORTE_NAV aus dem Context-Processor, nicht eine
+        siebte Handliste derselben sechs Staedte.
+      {% endcomment %}
+      <p style="text-align:center;margin-top:28px;font-size:0.92rem;color:var(--mute);line-height:2;">
+        Direkt zur Stadtseite:
+        {% for s in STANDORTE_NAV %}<a href="/entrumpelung/{{ s.slug }}/" class="textlink" style="font-size:inherit;white-space:nowrap;">Entrümpelung {{ s.name }}</a>{% if not forloop.last %} · {% endif %}{% endfor %}
+      </p>
+
+      <div style="margin-top:36px;">
+        <p style="text-align:center;font-size:0.8125rem;font-weight:600;color:var(--mute);margin-bottom:14px;">Alle Einsatzgebiete</p>
+        {% comment %}
+          Alle 54 Stadtseiten, aus cities.alle_stadtseiten() - siehe Begruendung
+          in der Vorgaengerfassung dieser Datei (Befund W3, Klicktiefe).
+        {% endcomment %}
+        <div class="rw-ortchips rw-ortchips--alle">
+          {% for w in ALLE_STADTSEITEN %}<a class="rw-ortchip" href="/entrumpelung/{{ w.slug }}/">{{ w.name }}</a>
+          {% endfor %}</div>
+      </div>
+      <p style="text-align:center;margin-top:20px;font-size:0.9rem;color:var(--mute);">
+        Nicht dabei? Wir arbeiten in Sachsen, Sachsen-Anhalt und Niedersachsen – fragen Sie einfach, ob Ihr Ort dazugehört.
+        <a href="/anfrage/" class="textlink" style="font-size:inherit;">Jetzt anfragen</a>
+      </p>
+    </div>
+  </section>
+
+  {# ════════ 11 · Ratgeber ════════ #}
+  <section class="rwf-ratgeber" id="ratgeber" aria-labelledby="rwf-ratgeber-h">
+    <div class="rw-container">
+      <div class="kopfzeile">
+        <h2 id="rwf-ratgeber-h">Aus dem Ratgeber</h2>
+        <p>Wir stellen ein: Helfer, Fahrer und Innendienst. <a class="textlink" href="/jobs/">Offene Stellen</a></p>
+      </div>
+      <ul class="rwf-artikel">
+        <li><a href="/ratgeber/entruempelung-steuerlich-absetzen/"><span class="rwf-artikel-titel">Entrümpelung von der Steuer absetzen</span><span class="rwf-artikel-art">Ratgeber</span></a></li>
+        <li><a href="/ratgeber/unterschied-entruempelung-haushaltsaufloesung/"><span class="rwf-artikel-titel">Entrümpelung oder Haushaltsauflösung?</span><span class="rwf-artikel-art">Ratgeber</span></a></li>
+        <li><a href="/ratgeber/sperrmuell-container-oder-entruempelungsfirma/"><span class="rwf-artikel-titel">Sperrmüll, Container oder Firma?</span><span class="rwf-artikel-art">Ratgeber</span></a></li>
+      </ul>
+    </div>
+  </section>
+
+  {# ════════ 12 · Aktuelles: die 3 neuesten Beiträge, sonst ausgeblendet ════════ #}
+  {% if aktuelles_preview %}
+  <section class="rwf-aktuelles" id="aktuelles" aria-labelledby="rwf-aktuelles-h">
+    <div class="rw-container">
+      <div class="kopfzeile">
+        <h2 id="rwf-aktuelles-h">Aktuelles</h2>
+        <p>Einblicke in unsere Arbeit – Berichte, Zitate und Vorher-Nachher-Bilder.</p>
+      </div>
+      <div class="rw-news-grid">
+        {% for post in aktuelles_preview %}
+
+          {% if post.typ == 'zitat' %}
+          <article class="rw-news-card rw-news-card--quote" data-rw-reveal data-rw-delay="{{ forloop.counter }}">
+            <div class="rw-news-body">
+              <div class="rw-news-meta">
+                <span class="rw-news-badge rw-news-badge--quote">Kundenstimme</span>
+                <time class="rw-news-date" datetime="{{ post.datum|date:'c' }}">{{ post.datum|date:"d.m.Y" }}</time>
+              </div>
+              <span class="rw-news-quote-mark" aria-hidden="true">&ldquo;</span>
+              <p class="rw-news-text">{{ post.inhalt|truncatewords:28 }}</p>
+              {% if post.zitat_autor %}<div class="rw-news-source">— {{ post.zitat_autor }}</div>{% endif %}
+              <a class="textlink" href="/aktuelles/">Weiterlesen<span class="rwt-sr"> – Kundenstimme vom {{ post.datum|date:"d.m.Y" }}</span></a>
+            </div>
+          </article>
+
+          {% else %}
+          <article class="rw-news-card" data-rw-reveal data-rw-delay="{{ forloop.counter }}">
+            {% if post.typ == 'vorher_nachher' %}
+              {% if post.vor_gallery_urls or post.nach_gallery_urls %}
+              <div class="rw-news-vn">
+                {% if post.vor_gallery_urls %}<figure class="rw-news-vn-fig"><img src="{{ post.vor_gallery_urls.0 }}" width="600" height="600"{% if post.vor_gallery_urls.0.srcset %} srcset="{{ post.vor_gallery_urls.0.srcset_kurz }}" sizes="(max-width:480px) 47vw, (max-width:900px) 23vw, 195px"{% endif %} alt="{{ post.vor_gallery_urls.0.alt|default:post.titel }}" loading="lazy"><figcaption class="rw-news-vn-cap vor">Vorher</figcaption></figure>{% endif %}
+                {% if post.nach_gallery_urls %}<figure class="rw-news-vn-fig"><img src="{{ post.nach_gallery_urls.0 }}" width="600" height="600"{% if post.nach_gallery_urls.0.srcset %} srcset="{{ post.nach_gallery_urls.0.srcset_kurz }}" sizes="(max-width:480px) 47vw, (max-width:900px) 23vw, 195px"{% endif %} alt="{{ post.nach_gallery_urls.0.alt|default:post.titel }}" loading="lazy"><figcaption class="rw-news-vn-cap nach">Nachher</figcaption></figure>{% endif %}
+              </div>
+              {% endif %}
+            {% elif post.gallery_urls %}
+              <div class="rw-news-media"><img src="{{ post.gallery_urls.0 }}" width="800" height="500"{% if post.gallery_urls.0.srcset %} srcset="{{ post.gallery_urls.0.srcset_kurz }}" sizes="(max-width:480px) 94vw, (max-width:900px) 46vw, 390px"{% endif %} alt="{{ post.gallery_urls.0.alt|default:post.titel }}" loading="lazy"></div>
+            {% endif %}
+            <div class="rw-news-body">
+              <div class="rw-news-meta">
+                <span class="rw-news-badge">{% if post.typ == 'vorher_nachher' %}Vorher / Nachher{% else %}Bericht{% endif %}</span>
+                <time class="rw-news-date" datetime="{{ post.datum|date:'c' }}">{{ post.datum|date:"d.m.Y" }}</time>
+              </div>
+              <h3 class="rw-news-title">{{ post.titel }}</h3>
+              {% if post.inhalt %}
+              {# Startseite nur Anriss (Seitengewicht live, 01.10.2026); voller Text auf der Beitragsseite #}
+              <p class="rw-news-text">{{ post.inhalt|truncatewords:28 }}</p>
+              <a class="textlink" href="{% if post.slug %}/aktuelles/{{ post.datum|date:'Y' }}/{{ post.slug }}/{% else %}/aktuelles/{% endif %}">Weiterlesen<span class="rwt-sr"> – {{ post.titel }}</span></a>
+              {% endif %}
+            </div>
+          </article>
+          {% endif %}
+
+        {% endfor %}
+      </div>
+      <div style="text-align:center;margin-top:28px;">
+        <a href="/aktuelles/" class="textlink">Alle Beiträge ansehen</a>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {# ════════ 13 · FAQ ════════ #}
+  <section class="rw-section rw-faq-section" id="faq" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      <div class="kopfzeile">
+        <h2 id="rwf-faq-h">Häufige Fragen</h2>
+        <p>Die wichtigsten Antworten rund um Haushaltsauflösung, Kosten und Ablauf. Ausführlicher im <a href="/ratgeber/" class="textlink" style="font-size:inherit;">Ratgeber</a>.</p>
+      </div>
+      <div class="rw-faq-grid">
+        {% comment %}
+          Eine Quelle mit dem Schema: schema.HOME_FAQ (EIG145/GE36). Der safe-Filter ist
+          zulaessig, der Text steht im Quelltext, nicht in einem Formular.
+        {% endcomment %}
+        {% for frage, antwort in home_faq %}
+        <details class="rw-faq-item" id="{{ frage|faq_anker }}">
+          <summary class="rw-faq-q">{{ frage }}</summary>
+          {# audit-ok V02: Antwort aus schema.HOME_FAQ (Python-Konstante, kein Nutzereingang), trägt Links und strong #}
+          <p class="rw-faq-a">{{ antwort|safe }}</p>
+        </details>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {# ════════ 14 · Abschluss: dunkles Band ════════ #}
+  <section class="rw-cta rw-band rwf-abschluss" style="padding:88px 0;">
+    <div class="rw-container rwf-abschluss-raster">
+      <div>
+        <h2 id="rwf-abschluss-h">Sprechen Sie mit Oliver Pohl.</h2>
+        <p>Rufen Sie an, schreiben Sie per WhatsApp oder buchen Sie die Besichtigung direkt online. {{ ZUSAGE_REAKTION_SATZ }} Richtpreis per WhatsApp – verbindlich wird er erst nach der kostenlosen Besichtigung.</p>
+      </div>
+      <div>
+        <a class="rwf-gross-tel" href="tel:{{ FIRMA_TELEFON }}">{{ FIRMA_TELEFON_ANZEIGE }}</a>
+        <p class="rwf-abschluss-klein">Telefon und WhatsApp · {{ FIRMA_ZEITEN }}</p>
+        <div class="rwf-abschluss-knoepfe">
+          <a class="knopf knopf-hell" href="/termin/">Besichtigung buchen</a>
+          <a class="knopf knopf-rand-hell" href="{{ FIRMA_WHATSAPP_LINK_KURZ }}" target="_blank" rel="noopener">WhatsApp schreiben</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+
+  {# Floating WhatsApp Button (FAB) - bleibt neben dem WA-Popup aus rw_js.html (Bauplan §3 Zeile 15). #}
+  <aside aria-label="Schnellkontakt per WhatsApp">
+  <a href="{{ FIRMA_WHATSAPP_LINK_KURZ }}" target="_blank" rel="noopener" aria-label="WhatsApp Chat" class="rw-fab"
+     style="position:fixed;bottom:90px;right:18px;z-index:8900;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,0.5);transition:transform 200ms,box-shadow 200ms;text-decoration:none;"
+     data-rw-hover="transform:scale(1.1);box-shadow:0 8px 28px rgba(37,211,102,0.65)"
+     data-rw-hover-aus="transform:;box-shadow:0 4px 20px rgba(37,211,102,0.5)">
+    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="#fff"><use href="#rw-wa-ik"/></svg>
+  </a>
+  </aside>
+
+  {% include 'components/rw_js.html' %}
+  <script src="{% static 'js/rw_laufband.js' %}" defer></script>
+
+</body>
+</html>

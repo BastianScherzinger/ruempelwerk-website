@@ -1,0 +1,37 @@
+{% load static %}{% comment %}
+  Der zuständige Regionalleiter einer Stadt (G6).
+
+  Erwartet `leiter` im Kontext (aus views._leiter_meta, gespeist von
+  cities.leiter_key und models.AUTOR_META) und `city`. Ohne `leiter` rendert
+  die Komponente nichts.
+
+  Warum sie existiert: Der `Person`-Knoten im Schema behauptet, dass diese
+  Person für dieses Gebiet zuständig ist. Regel 12 verlangt, dass sichtbarer
+  Inhalt und Schema übereinstimmen — eine Person, die nur im JSON-LD steht und
+  auf der Seite nirgends, ist genau die Doppelpflege, gegen die die Regel
+  geschrieben ist.
+
+  **Christoph Regner (Magdeburg) hat als einziger kein Foto.** Dann greift der
+  `{% else %}`-Zweig mit den Initialen. Bewusst kein generisches Symbolbild: Es
+  behauptete ein Foto einer benannten Person und zeigte keine — das ist eine
+  falsche Aussage über einen realen Menschen, und ein Feld ohne Bild ist besser
+  als ein falsches Bild. Sobald ein echtes Foto da ist, genügt der Eintrag in
+  `AUTOR_META`; hier ist nichts nachzuziehen.
+
+  `width`/`height` kommen aus `AUTOR_META` und sind die ECHTEN Dateimaße —
+  `check_seo` gleicht sie gegen die Bilddatei ab.
+{% endcomment %}{% if leiter %}
+<div class="rw-ansprech">
+  {% if leiter.foto %}
+  <img class="rw-ansprech-bild" src="{% static leiter.foto %}" width="{{ leiter.breite }}" height="{{ leiter.hoehe }}"
+       alt="{{ leiter.name }}, {{ leiter.rolle }} – Ansprechpartner für Entrümpelungen in {{ city.name }}" loading="lazy" decoding="async">
+  {% else %}
+  <span class="rw-ansprech-bild rw-ansprech-bild--leer" aria-hidden="true">{{ leiter.name|slice:":1" }}</span>
+  {% endif %}
+  <div class="rw-ansprech-text">
+    <p class="rw-ansprech-rolle">Ihr Ansprechpartner in {{ city.name }}</p>
+    <p class="rw-ansprech-name">{{ leiter.name }}</p>
+    <p class="rw-ansprech-region">{{ leiter.rolle }}</p>
+  </div>
+</div>
+{% endif %}

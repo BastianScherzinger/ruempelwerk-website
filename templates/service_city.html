@@ -1,0 +1,349 @@
+{% load static rw_schema %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="{{ seo_description }}">
+  <title>{{ seo_title }}</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% comment %}
+    Das Hero-Foto ist das LCP-Element. Ohne Preload startet der Download erst,
+    wenn der Parser den Body erreicht – dieselbe Vorkehrung wie auf den
+    Leistungs- und Stadtseiten.
+  {% endcomment %}
+  <link rel="preload" as="image" media="(max-width:640px)" href="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif" fetchpriority="high">
+  <link rel="preload" as="image" media="(min-width:641px)" href="{% static 'images/hero-banner.avif' %}" type="image/avif" fetchpriority="high">
+  {% comment %}
+    Bewusst OHNE seo_breadcrumb_name: Der Brotkrumen dieser Seite ist
+    VIERstufig (Startseite › Dienstleistungen › Leistung › Stadt) und steckt
+    schon in schema_bloecke. Beides zusammen ergäbe zwei BreadcrumbList.
+  {% endcomment %}
+  {% include 'components/rw_seo.html' with seo_title=seo_title seo_description=seo_description seo_path=seo_path seo_keywords=seo_keywords seo_speakable="h1,.rw-antwort-text" %}
+  {% include 'components/rw_css.html' with crit_page='service_city.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  {# ════════ HERO ════════ #}
+  <section class="rw-hero rw-hero--banner rw-hero--service rw-hero--split">
+    {# AVIF zuerst, WebP als zweite Quelle, JPEG im img-Element als Rueckfall - 06.09.2026, P8/E3. #}
+    {# AVIF und WebP stehen bewusst auf EINER Zeile: build_critical_css nimmt die ersten 160 #}
+    {# Zeilen nach <body (Regel 28). Als eigene Zeile hat die AVIF-Quelle auf der Startseite #}
+    {# .rw-rechner-teaser aus dem kritischen CSS verdraengt - gemessen: -762 Byte (Regel 26). #}
+    <picture class="rw-hero-media">
+      <source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif"><source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.webp' %}" type="image/webp">
+      <source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.jpg' %}">
+      <source srcset="{% static 'images/hero-banner.avif' %}" type="image/avif"><source srcset="{% static 'images/hero-banner.webp' %}" type="image/webp">
+      <img src="{% static 'images/hero-banner.jpg' %}" width="1915" height="821" fetchpriority="high"
+           alt="Besenrein geräumter Wohnraum nach einer {{ l.name }} in {{ stadt.name }} durch Rümpelwerk Mitteldeutschland">
+    </picture>
+    <div class="rw-hero-overlay"></div>
+    <div class="rw-hero-inner">
+      <div class="rw-hero-content">
+        {% comment %}
+          Vier Stufen – dieselben wie in breadcrumb_schema() in der View.
+          Weichen sichtbarer Brotkrumen und Schema voneinander ab, ist das ein
+          Verstoß gegen Googles Regeln zu strukturierten Daten.
+        {% endcomment %}
+        <nav class="rw-brotkrumen rw-brotkrumen--hell" aria-label="Brotkrumen">
+          <a href="/">Startseite</a> <span aria-hidden="true">›</span>
+          <a href="/dienstleistungen/">Dienstleistungen</a> <span aria-hidden="true">›</span>
+          <a href="{{ l.url }}">{{ l.label }}</a> <span aria-hidden="true">›</span>
+          {{ stadt.name }}
+        </nav>
+        <h1>{{ m.h1 }}<br><em>{{ m.h1_em }}</em></h1>
+        <p class="rw-hero-sub">{{ m.hero_sub }}</p>
+        <div class="rwf-hero-knoepfe">
+          <a class="knopf knopf-hell knopf-gross" href="#rechner">Richtangebot berechnen
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="knopf knopf-rand-hell knopf-gross" href="/anfrage/">Kostenlos anfragen</a>
+        </div>
+        <ul class="rwf-hero-belege" aria-label="Bewertungen">
+          <li>
+            <span class="rwf-sterne" aria-hidden="true">{% for _ in "12345" %}<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01z"/></svg>{% endfor %}</span>
+            <span><b>{{ bewertung.wert_anzeige }}</b> bei Google · {{ bewertung.anzahl }} Google-Bewertungen</span>
+          </li>
+          <li><img class="rw-tl-icon" src="{% static trustlocal.rang_icon_pfad %}" alt="" width="18" height="18"> <span><b>Trustlocal {{ trustlocal.rang }}</b> · {{ trustlocal.name }}</span></li>
+        </ul>
+        {% include 'components/rw_bewertung_quelle.html' %}
+      </div>
+      <aside class="rwf-hero-calc" aria-label="Preisrechner">
+        {% comment %}
+          Genau EINE Einbindung des Rechners je Seite – die Elemente haben
+          feste IDs (rw-step-1, rw-gate, rw-aufzug), zwei Instanzen wuerden
+          kollidieren. Vorbelegt via rechner_objektart/rechner_stadtort.
+        {% endcomment %}
+        {% include 'components/rw_rechner.html' with rechner_objektart=l.objektart rechner_stadtort=stadt.name rechner_titel='' %}
+      </aside>
+    </div>
+  </section>
+
+  {% comment %}
+    ANTWORT ZUERST (G2). Der erste zusammenhängende Absatz beantwortet die
+    Suchanfrage „<Leistung> <Stadt>“ ohne Vorrede – das ist der Absatz, den AI
+    Overviews, ChatGPT und Perplexity zitieren. Server-gerendert, nicht hinter
+    einem Aufklapper: Generative Crawler führen kein JavaScript aus.
+  {% endcomment %}
+  {% include 'components/rw_antwort.html' with antwort_frage=m.answer_frage antwort_text=m.answer antwort_cta_url="#rechner" %}
+
+  {# ════════ FLIESSTEXT ════════ #}
+  <section class="rw-section rw-svc-text-sec" data-rw-reveal>
+    <div class="rw-container rw-svc-text">
+      {% for a in m.abschnitte %}
+      <article class="rw-svc-block" id="{{ a.id }}">
+        <h2>{{ a.titel }}</h2>
+        {% comment %}
+          Der safe-Filter ist zulässig und nötig: Der Text steht in
+          apps/core/data/matrix.py, stammt also aus dem Quelltext und nicht aus
+          einem Formular oder dem CMS.
+        {% endcomment %}
+        {# audit-ok V02: Text aus apps/core/data/matrix.py (Python-Konstante, kein Nutzereingang), trägt a und strong #}
+        {% for p in a.absaetze %}<p>{{ p|safe }}</p>{% endfor %}
+        {% if a.quellen %}<p class="rw-lokal-quelle">Nach {% for q in a.quellen %}<a href="{{ q.1 }}" target="_blank" rel="noopener">{{ q.0 }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}, Stand <time datetime="{{ m.quellen_stand_iso }}">{{ m.quellen_stand }}</time>.</p>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% comment %}
+    Der recherchierte Teil – Wertstoffhof, Sperrmüllregelung, Gebäudebestand,
+    Ortsteile. Quelle: apps/core/data/city_lokal.py, dort steht auch, warum
+    nichts davon geschätzt werden darf. Fehlt ein Feld, fällt der Kasten weg.
+    Das sind vier der Unterscheidungsmerkmale, die A13 je Seite verlangt.
+  {% endcomment %}
+  {% if lokal.hof or lokal.sperrmuell or m.bebauung %}
+  <section class="rw-section rw-svc-band" data-rw-reveal aria-labelledby="rw-lokal-titel">
+    <div class="rw-container" style="max-width:1000px;">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title" id="rw-lokal-titel">
+          Was in {{ stadt.name }} <em>tatsächlich gilt</em>
+        </h2>
+        <p class="rw-section-sub">
+          Nicht jede Räumung braucht eine Firma. Damit Sie das abwägen können,
+          stehen hier die Regeln, die in {{ stadt.name }} gelten – nachgeschlagen
+          beim Träger, nicht geschätzt.
+        </p>
+      </div>
+      <div class="rw-lokal-grid">
+        {% if lokal.hof %}
+        <article class="rw-lokal-karte">
+          <h3 class="rw-lokal-titel"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg> Wertstoffhof</h3>
+          <p>{{ lokal.hof }}</p>
+        </article>
+        {% endif %}
+        {% if lokal.sperrmuell %}
+        <article class="rw-lokal-karte">
+          <h3 class="rw-lokal-titel"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 7h13v10H1z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="5.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/></svg> Sperrmüllabholung</h3>
+          <p>{{ lokal.sperrmuell }}</p>
+        </article>
+        {% endif %}
+      </div>
+      {% if m.bebauung %}
+      <div class="rw-lokal-notiz">
+        <h3 class="rw-lokal-notiz-titel">Womit wir bei einer {{ l.label }} in {{ stadt.name }} rechnen</h3>
+        <p>{{ m.bebauung }}</p>
+      </div>
+      {% endif %}
+      {% if lokal.ortsteile %}
+      <p class="rw-ortsteile">
+        Wir räumen in {{ stadt.name }} und Umgebung, unter anderem rund um
+        {% for t in lokal.ortsteile %}{% if forloop.last %} und {% elif not forloop.first %}, {% endif %}{{ t }}{% endfor %}.
+      </p>
+      {% endif %}
+      <p class="rw-lokal-fuss">
+        Angaben für {{ stadt.name }} nach {{ lokal.traeger }}, Stand
+        <time datetime="{{ m.lokal_stand_iso }}">{{ m.lokal_stand }}</time> – ohne Gewähr.
+        {% if lokal.quelle %}<a href="{{ lokal.quelle }}" target="_blank" rel="noopener">Beim Träger nachlesen</a>.{% endif %}
+        Ab welcher Menge sich die Firma rechnet, sagen wir Ihnen bei der
+        Besichtigung ehrlich – auch wenn die Antwort „selbst machen“ lautet.
+      </p>
+    </div>
+  </section>
+  {% endif %}
+
+  {% comment %}
+    PREISRECHNER: steht seit Upgrade Stufe 6b im Hero - genau EINE
+    Einbindung je Seite, keine zweite Instanz hier unten.
+  {% endcomment %}
+
+  {% if beispiele %}
+  {# ════════ DURCHGERECHNETE BEISPIELE ════════ #}
+  <section class="rw-section rw-svc-band" data-rw-reveal>
+    <div class="rw-container">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title">Drei Beispiele, <em>durchgerechnet</em></h2>
+        <p class="rw-section-sub">
+          Gerechnet mit derselben Funktion wie das Angebot.{% if beispiele_mit_nachlass %} Der Standortnachlass für {{ stadt.name }} ist als letzter Schritt schon abgezogen.{% else %} Der Standortrabatt für {{ stadt.name }} ist noch nicht abgezogen.{% endif %}
+        </p>
+      </div>
+      <div class="rw-svc-beispiele">
+        {% for b in beispiele %}
+        <article class="rw-svc-beispiel">
+          <h3 class="rw-svc-beispiel-titel">{{ b.titel }}</h3>
+          <p class="rw-svc-beispiel-text">{{ b.beschreibung }}</p>
+          <ol class="rw-beispiel-weg">
+            {% for s in b.schritte %}
+            <li><span class="rw-beispiel-weg-label">{{ s.label }}</span><span class="rw-beispiel-weg-wert">{{ s.wert }}</span></li>
+            {% endfor %}
+          </ol>
+          <p class="rw-svc-beispiel-preis">{{ b.preis_txt }}</p>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {% if leiter %}
+  {# ════════ WER VOR ORT ZUSTÄNDIG IST ════════ #}
+  {# Ohne Foto (Magdeburg, Stand 02.10.2026) steht der Kasten ohne Bild - kein Platzhalter, kein leeres img. #}
+  <section class="rw-section" data-rw-reveal>
+    <div class="rw-container" style="max-width:760px;">
+      <div class="rw-lokal-notiz" style="display:flex;gap:18px;align-items:flex-start;">
+        {% if leiter.foto %}<img src="{% static leiter.foto %}" width="{{ leiter.breite }}" height="{{ leiter.hoehe }}"
+             alt="{{ leiter.name }}, {{ leiter.rolle }} – zuständig für {{ m.h1 }}"
+             style="width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:center 20%;border:2px solid var(--rw-orange);flex-shrink:0;"
+             loading="lazy" decoding="async">{% endif %}
+        <div>
+          <h2 class="rw-lokal-notiz-titel">Ihr Ansprechpartner für {{ stadt.name }}</h2>
+          <p>
+            <strong>{{ leiter.name }}</strong> führt die Region {{ leiter.region }}.
+            Er nimmt die Besichtigung ab, beziffert den Festpreis und ist Ihr
+            Ansprechpartner bis zur Übergabe. Termin vor Ort in
+            {{ stadt.response_dativ }}.
+            <a href="/ueber-uns/">Das ganze Team ansehen</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {% if m.ablauf %}
+  {# ════════ ABLAUF ════════ #}
+  {% comment %}
+    Sichtbarer Ablauf und HowTo-Schema kommen aus EINER Liste
+    (matrix.matrix_ablauf, ueber m.ablauf) - Regel 12. Bis zum 25.08.2026
+    hatten die fuenf Matrixseiten als einzige Seitenklasse kein HowTo (G8);
+    das Schema haette es ohne den sichtbaren Abschnitt auch nicht bekommen
+    duerfen, denn strukturierte Daten ohne sichtbare Entsprechung sind ein
+    Verstoss gegen Googles Richtlinien.
+  {% endcomment %}
+  <section class="rw-section rw-svc-band" id="ablauf" data-rw-reveal>
+    <div class="rw-container">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title">So läuft eine <em>{{ l.name }} in {{ stadt.name }}</em> ab</h2>
+        <p class="rw-section-sub">Von der ersten Nachricht bis zur Übergabe – {{ m.ablauf|length }} Schritte. Keiner davon kostet Sie etwas, bevor der Preis feststeht.</p>
+      </div>
+      <ol class="rw-ablauf">
+        {% for s in m.ablauf %}
+        <li class="rw-ablauf-schritt">
+          <span class="rw-ablauf-nr" aria-hidden="true">{{ forloop.counter }}</span>
+          <div>
+            <h3 class="rw-ablauf-titel">{{ s.titel }}</h3>
+            <p class="rw-ablauf-text">{{ s.text }}</p>
+          </div>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </section>
+  {% endif %}
+
+  {# ════════ FAQ ════════ #}
+  <section class="rw-section" data-rw-reveal>
+    <div class="rw-container rw-svc-faq">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title">Häufige Fragen zur <em>{{ l.name }} in {{ stadt.name }}</em></h2>
+      </div>
+      {% comment %}
+        Sichtbare FAQ und FAQPage-Schema kommen aus derselben Quelle
+        (m.faq → S.faq_schema in der View). <details> ist nativ – der Text
+        steht auch ohne JavaScript im DOM.
+      {% endcomment %}
+      <div class="rw-svc-faq-liste">
+        {% for frage, antwort in m.faq %}
+        {# G4: Fragment-Anker aus dem Fragetext - siehe faq_anker. #}
+        <details class="rw-faq-city" id="{{ frage|faq_anker }}">
+          <summary>{{ frage }}<span aria-hidden="true">+</span></summary>
+          {# audit-ok V02: Antwort aus data/matrix.py (Python-Konstante, Stadtnamen aus cities.py), kein Nutzer-, CMS- oder DB-Eingang; trägt Links und strong #}
+          <p>{{ antwort|safe }}</p>
+        </details>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {# ════════ ANDERE LEISTUNGEN IN DIESER STADT ════════ #}
+  {# Die Karten nur, wo es Geschwister gibt (Leipzig); die beiden Aufwaertslinks darunter stehen seit Charge 2 auf JEDER Matrixseite. #}
+  <section class="rw-section rw-svc-band" data-rw-reveal>
+    <div class="rw-container">
+      {% if geschwister %}
+      <div class="rw-section-header">
+        <h2 class="rw-section-title">Was wir in {{ stadt.name }} <em>sonst noch räumen</em></h2>
+      </div>
+      <div class="rw-svc-related">
+        {% for g in geschwister %}
+        <a href="{{ g.url }}" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">{{ g.leistung.name }} {{ stadt.name }}</span>
+          <span class="rw-svc-related-text">{{ g.hero_sub }}</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">Zur Seite →</span>
+        </a>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% comment %}
+        Die beiden Aufwärtslinks stehen im Fließtext und nicht in der
+        Navigation: Nur kontextuelle Links zählen im Linkgraph von
+        check_seo --links, weil Navigation und Footer auf jeder Seite stehen.
+      {% endcomment %}
+      <p class="rw-svc-staedte-fuss">
+        Alles zur <a href="{{ l.url }}">{{ l.label }}</a> unabhängig vom Ort steht auf
+        der allgemeinen Leistungsseite. Alles über unsere Arbeit in
+        <a href="/entrumpelung/{{ m.stadt_slug }}/">{{ stadt.name }}</a> – Einzugsgebiet,
+        Nachbarorte und Reaktionszeit – auf der Stadtseite.
+      </p>
+    </div>
+  </section>
+
+  {# ════════ CTA ════════ #}
+  <section class="rw-cta rw-svc-cta">
+    <div class="rw-container">
+      <div class="rw-cta-inner" data-rw-reveal>
+        <h2>{{ l.name }} in {{ stadt.name }} anfragen – <em>kostenlos und unverbindlich</em></h2>
+        <p>
+          Fotos schicken, wir melden uns mit einer Einschätzung. Festpreisangebot {{ ZUSAGE_ANGEBOT }}. Termin vor Ort in {{ stadt.response_dativ }}.
+        </p>
+        <div class="rw-cta-actions">
+          <a href="{{ FIRMA_WHATSAPP_LINK }}" target="_blank" rel="noopener" class="rw-btn-wa" data-rw-track="whatsapp_click">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.541 5.877L.057 23.386a.5.5 0 0 0 .611.601l5.647-1.525A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+            Fotos per WhatsApp senden
+          </a>
+          <a href="/anfrage/" class="rw-btn-outline">Anfrageformular</a>
+        </div>
+        <p class="rw-tel-hint">
+          Lieber telefonisch? <a href="tel:{{ FIRMA_TELEFON }}" aria-label="{{ FIRMA_TELEFON_ANZEIGE }} anrufen">{{ FIRMA_TELEFON_ANZEIGE }}</a>
+        </p>
+        {% include 'components/rw_trustlocal_score.html' %}
+        <p class="rw-svc-cta-belege">
+          Mehr: <a href="/galerie/">Galerie</a> · <a href="/aktuelles/">Aktuelles</a> · <a href="/ueber-uns/">Team</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+  {% include 'components/rw_rechner_js.html' %}
+</body>
+</html>

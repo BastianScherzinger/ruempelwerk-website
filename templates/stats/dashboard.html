@@ -1,0 +1,580 @@
+{% load static %}<!DOCTYPE html>
+<!-- data-rw-no-consent: interne Seite, nie ein Cookie-Banner (siehe components/rw_cookie_banner.html) -->
+<html lang="de" data-rw-no-consent>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>// ANALYTICS · RÜMPELWERK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --g:    #00ff88;
+      --g2:   #16a34a;
+      --g3:   rgba(0,255,136,0.08);
+      --blue: #38bdf8;
+      --amber:#fbbf24;
+      --purple:#c084fc;
+      --red:  #f87171;
+      --bg:   #030712;
+      --bg2:  #080f1f;
+      --card: rgba(255,255,255,0.025);
+      --bdr:  rgba(0,255,136,0.12);
+      --bdr2: rgba(255,255,255,0.06);
+      --text: #e2e8f0;
+      --muted:#475569;
+      --font: 'JetBrains Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background effects ── */
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,255,136,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,136,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .bg-glow {
+      position: fixed; z-index: 0; pointer-events: none;
+      width: 800px; height: 800px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,255,136,0.04) 0%, transparent 65%);
+      top: -200px; right: -200px;
+      animation: glow-drift 8s ease-in-out infinite;
+    }
+    @keyframes glow-drift {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50% { transform: translate(-30px,40px) scale(1.05); }
+    }
+    .scanlines {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px
+      );
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      height: 56px;
+      background: rgba(3,7,18,0.85);
+      border-bottom: 1px solid var(--bdr);
+      backdrop-filter: blur(20px);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .status-indicator {
+      display: flex; align-items: center; gap: 7px;
+      font-family: var(--font);
+      font-size: 0.65rem;
+      color: var(--g);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .pulse-dot {
+      width: 7px; height: 7px;
+      background: var(--g);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--g);
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { box-shadow: 0 0 4px var(--g); }
+      50% { box-shadow: 0 0 14px var(--g), 0 0 28px rgba(0,255,136,0.3); }
+    }
+    .divider { width: 1px; height: 20px; background: var(--bdr2); }
+    .topbar-date {
+      font-family: var(--font);
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .badge-live {
+      font-family: var(--font);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--g);
+      background: rgba(0,255,136,0.08);
+      border: 1px solid rgba(0,255,136,0.2);
+      padding: 3px 10px;
+      border-radius: 2px;
+    }
+    .logout-form button {
+      background: transparent;
+      border: 1px solid var(--bdr2);
+      border-radius: 2px;
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: border-color 150ms, color 150ms;
+    }
+    .logout-form button:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── Subnav ── */
+    .subnav {
+      background: rgba(3,7,18,0.9);
+      border-bottom: 1px solid var(--bdr2);
+      padding: 0 24px;
+      display: flex;
+      gap: 4px;
+    }
+    .subnav-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 16px;
+      font-family: var(--font);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color 150ms, border-color 150ms;
+    }
+    .subnav-link:hover { color: var(--text); }
+    .subnav-link.active { color: var(--g); border-bottom-color: var(--g); }
+
+    /* ── Main ── */
+    .main {
+      position: relative; z-index: 10;
+      max-width: 1140px; margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    .page-header { margin-bottom: 32px; }
+    .breadcrumb {
+      font-family: var(--font);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .breadcrumb span { color: var(--g); }
+    h1 {
+      font-family: var(--font);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+    h1 em { color: var(--g); font-style: normal; }
+    .page-sub {
+      font-family: var(--font);
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    /* ── KPI Grid ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .kpi {
+      background: var(--card);
+      border: 1px solid var(--bdr2);
+      border-radius: 4px;
+      padding: 22px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 250ms;
+      animation: card-in 0.5s ease both;
+    }
+    .kpi:nth-child(1) { animation-delay: 0.1s; }
+    .kpi:nth-child(2) { animation-delay: 0.15s; }
+    .kpi:nth-child(3) { animation-delay: 0.2s; }
+    .kpi:nth-child(4) { animation-delay: 0.25s; }
+    @keyframes card-in {
+      from { opacity:0; transform: translateY(12px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .kpi::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent, var(--g)), transparent);
+      opacity: 0.5;
+    }
+    .kpi:hover { border-color: rgba(255,255,255,0.1); }
+    .kpi-label {
+      font-family: var(--font);
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .kpi-value {
+      font-family: var(--font);
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+      color: var(--accent, var(--g));
+      text-shadow: 0 0 30px var(--accent, var(--g));
+      transition: text-shadow 300ms;
+    }
+    .kpi-value.dur { font-size: 1.9rem; }
+    .kpi-sub {
+      font-family: var(--font);
+      font-size: 0.62rem;
+      color: var(--muted);
+    }
+    .kpi-trend {
+      font-family: var(--font);
+      font-size: 0.65rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .kpi-trend.up   { color: var(--g); }
+    .kpi-trend.down { color: var(--red); }
+    .kpi-trend.neutral { color: var(--muted); }
+
+    .kpi.k-visitors { --accent: var(--g); }
+    .kpi.k-sessions { --accent: var(--blue); }
+    .kpi.k-views    { --accent: var(--amber); }
+    .kpi.k-duration { --accent: var(--purple); }
+
+    /* ── Section ── */
+    .section {
+      background: var(--card);
+      border: 1px solid var(--bdr2);
+      border-radius: 4px;
+      padding: 22px;
+      margin-bottom: 16px;
+      animation: card-in 0.5s ease 0.3s both;
+    }
+    .sec-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .sec-title {
+      font-family: var(--font);
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .sec-badge {
+      font-family: var(--font);
+      font-size: 0.58rem;
+      letter-spacing: 1px;
+      color: var(--g);
+      background: rgba(0,255,136,0.07);
+      border: 1px solid rgba(0,255,136,0.15);
+      padding: 3px 10px;
+      border-radius: 2px;
+    }
+
+    /* ── Bar Chart ── */
+    .chart-area { overflow-x: visible; padding-bottom: 4px; }
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 140px;
+      min-width: 0;
+      padding-bottom: 28px;
+    }
+    @media (max-width: 640px) { .bar-chart { height: 90px; gap: 3px; } }
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+      position: relative;
+      cursor: default;
+    }
+    .bar-col:hover .bar { filter: brightness(1.2); }
+    .bar {
+      width: 100%;
+      border-radius: 2px 2px 0 0;
+      min-height: 2px;
+      background: var(--g2);
+      transform-origin: bottom;
+      transform: scaleY(0);
+      animation: bar-grow 0.6s cubic-bezier(.16,.8,.22,1) both;
+      position: relative;
+    }
+    .bar::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--g);
+      box-shadow: 0 0 6px var(--g);
+    }
+    .bar.is-today {
+      background: linear-gradient(to top, var(--g2), var(--g));
+    }
+    .bar.is-today::after { box-shadow: 0 0 12px var(--g), 0 0 24px rgba(0,255,136,0.3); }
+    .bar-lbl {
+      position: absolute;
+      bottom: -24px;
+      font-family: var(--font);
+      font-size: 0.55rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .bar-lbl.is-today { color: var(--g); font-weight: 700; }
+
+    @keyframes bar-grow { to { transform: scaleY(1); } }
+    {% for i in "0123456789" %}
+    {% endfor %}
+
+    /* ── Table ── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    th {
+      text-align: left;
+      padding: 8px 14px;
+      font-family: var(--font);
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      font-weight: 700;
+      border-bottom: 1px solid var(--bdr2);
+      white-space: nowrap;
+    }
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      color: #94a3b8;
+      font-family: var(--font);
+      font-size: 0.72rem;
+      transition: color 150ms;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr.today-row td {
+      color: var(--g);
+      font-weight: 700;
+      background: rgba(0,255,136,0.03);
+    }
+    tr:hover td { color: #e2e8f0; background: rgba(255,255,255,0.02); }
+    .trend-up   { color: var(--g); }
+    .trend-down { color: var(--red); }
+    .trend-neu  { color: var(--muted); }
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      font-family: var(--font);
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 2;
+      letter-spacing: 0.5px;
+    }
+    .empty-state::before {
+      content: '// ';
+      color: var(--g);
+    }
+
+    @media (max-width: 640px) {
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .kpi-value { font-size: 2rem; }
+      .kpi-value.dur { font-size: 1.5rem; }
+      .topbar { padding: 0 12px; }
+      .topbar .divider, .topbar-date { display: none; }
+      .subnav { padding: 0 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .subnav::-webkit-scrollbar { display: none; }
+      .subnav-link { white-space: nowrap; }
+      .main { padding: 20px 12px 48px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Bewusst OHNE components/rw_nav.html, components/rw_js.html und
+       static/css/ruempelwerk.css: Das ist der interne Bereich mit eigenem
+       Design. Die oeffentlichen Bausteine legten eine fixe Navbar (72px),
+       die Mobile-Bottom-Nav, den Cookie-Banner und das WhatsApp-Popup
+       ueber diese Seite und machten sie unbedienbar. Nicht wieder einfuegen. -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <div class="scanlines"></div>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="status-indicator">
+        <div class="pulse-dot"></div>
+        <span>RÜMPELWERK</span>
+      </div>
+      <div class="divider"></div>
+      <span class="topbar-date">{{ today|date:"d.m.Y · D" }}</span>
+    </div>
+    <div class="topbar-right">
+      <div class="badge-live">● LIVE</div>
+      <form class="logout-form" method="post" action="logout/">
+        {% csrf_token %}
+        <button type="submit">DISCONNECT</button>
+      </form>
+    </div>
+  </header>
+
+  <nav class="subnav">
+    <a href="/{{ stats_path }}/data/" class="subnav-link active">📊 Statistiken</a>
+    <a href="/{{ stats_path }}/anfragen/" class="subnav-link">📥 Anfragen</a>
+    <a href="/{{ stats_path }}/aktuelles/" class="subnav-link">📰 Aktuelles verwalten</a>
+    <a href="/{{ stats_path }}/fehler/" class="subnav-link">🚨 Fehler</a>
+    <a href="/{{ stats_path }}/termine/" class="subnav-link">📅 Termine</a>
+  </nav>
+
+  <main class="main">
+
+    <!-- Header -->
+    <div class="page-header">
+      <div class="breadcrumb">ANALYTICS / <span>ÜBERSICHT</span></div>
+      <h1>// Besucher<em>statistiken</em></h1>
+      <p class="page-sub">{{ today|date:"l, d. F Y" }} — Echtzeit-Daten</p>
+    </div>
+
+    {% if offen_nicht_zugestellt %}
+    <a href="/{{ stats_path }}/anfragen/" role="alert" style="display:block;margin:0 0 20px;padding:14px 18px;border:1px solid rgba(248,113,113,0.45);border-left:3px solid #f87171;border-radius:6px;background:rgba(248,113,113,0.08);color:#fecaca;text-decoration:none;font-size:0.95rem;">
+      <strong style="color:#f87171;">{{ offen_nicht_zugestellt }} Anfrage{{ offen_nicht_zugestellt|pluralize:"n" }} offen, nicht zugestellt</strong> – die Benachrichtigung ist nie angekommen. Zur Liste →
+    </a>
+    {% elif offen_nicht_zugestellt == 0 %}
+    <p style="margin:0 0 20px;font-size:0.8rem;color:#94a3b8;">Offen, nicht zugestellt: 0 · <a href="/{{ stats_path }}/anfragen/" style="color:#00ff88;">Anfragen ansehen</a></p>
+    {% endif %}
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi k-visitors">
+        <div class="kpi-label">» Besucher heute</div>
+        <div class="kpi-value" data-count="{{ today_visitors }}">0</div>
+        {% if visitor_trend %}
+          <div class="kpi-trend {% if visitor_trend.up %}up{% else %}down{% endif %}">
+            {% if visitor_trend.up %}↑ +{{ visitor_trend.diff }}{% else %}↓ {{ visitor_trend.diff }}{% endif %} vs. gestern
+          </div>
+        {% else %}
+          <div class="kpi-trend neutral">// erster tag</div>
+        {% endif %}
+      </div>
+      <div class="kpi k-sessions">
+        <div class="kpi-label">» Sitzungen heute</div>
+        <div class="kpi-value" data-count="{{ today_sessions }}">0</div>
+        <div class="kpi-sub">Browser-Sessions</div>
+      </div>
+      <div class="kpi k-views">
+        <div class="kpi-label">» Seitenaufrufe</div>
+        <div class="kpi-value" data-count="{{ today_pageviews }}">0</div>
+        <div class="kpi-sub">Aufgerufene Seiten</div>
+      </div>
+      <div class="kpi k-duration">
+        <div class="kpi-label">» Ø Verweildauer</div>
+        <div class="kpi-value dur">{{ today_avg_fmt }}</div>
+        <div class="kpi-sub">Pro Sitzung</div>
+      </div>
+    </div>
+
+    <!-- Bar Chart -->
+    {% if chart_days %}
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-title">» Besucher — letzte 14 Tage</span>
+        <span class="sec-badge">CHART</span>
+      </div>
+      <div class="chart-area">
+        <div class="bar-chart">
+          {% for day in chart_days %}
+            {% widthratio day.unique_visitors max_visitors 148 as bar_h %}
+            <div class="bar-col">
+              <div class="bar{% if day.is_today %} is-today{% endif %}"
+                   style="height:{{ bar_h }}px; animation-delay:{{ forloop.counter0 }}00ms;"
+                   title="{% if day.is_today %}Heute{% else %}{{ day.date|date:'d.m.' }}{% endif %}: {{ day.unique_visitors }} Besucher"></div>
+              <div class="bar-lbl{% if day.is_today %} is-today{% endif %}">
+                {% if day.is_today %}HEUTE{% else %}{{ day.date|date:"d.m." }}{% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- History Table -->
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-title">» Tagesverlauf — letzte 30 Tage</span>
+        <span class="sec-badge">HISTORY</span>
+      </div>
+      {% if history_rows %}
+      <table>
+        <thead>
+          <tr>
+            <th>Datum</th>
+            <th>Besucher</th>
+            <th>Sitzungen</th>
+            <th>Aufrufe</th>
+            <th>Ø Dauer</th>
+            <th>Trend</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="today-row">
+            <td>{{ today|date:"d.m.Y" }} ★ live</td>
+            <td>{{ today_visitors }}</td>
+            <td>{{ today_sessions }}</td>
+            <td>{{ today_pageviews }}</td>
+            <td>{{ today_avg_fmt }}</td>
+            <td class="trend-neu">—</td>
+          </tr>
+          {% for row in history_rows %}
+          <tr>
+            <td>{{ row.date|date:"d.m.Y" }}</td>
+            <td>{{ row.unique_visitors }}</td>
+            <td>{{ row.total_sessions }}</td>
+            <td>{{ row.total_pageviews }}</td>
+            <td>{{ row.avg_fmt }}</td>
+            <td class="trend-{{ row.trend_class }}">{{ row.trend }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        KEINE HISTORISCHEN DATEN VORHANDEN<br>
+        Vergleichswerte erscheinen ab morgen.
+      </div>
+      {% endif %}
+    </div>
+
+  </main>
+
+  {% comment %}
+  SI09 (08.09.2026): Die Zaehleranimation liegt jetzt in
+  static/js/rw_stats_dashboard.js. Sie stand hier als Inline-Block, und jeder
+  Inline-Block kostet in der neuen CSP einen eigenen SHA-256 – dieser hier
+  brauchte keinen, er liest seine Zahlen aus data-count.
+  {% endcomment %}
+  <script src="{% static 'js/rw_stats_dashboard.js' %}" defer></script>
+</body>
+</html>

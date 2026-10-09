@@ -1,0 +1,251 @@
+{% load static rw_schema rw_antispam %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  {# rw_seo.html rendert weder <title> noch description – beides gehört hierher. #}
+  <title>{{ job.seo_title }}</title>
+  <meta name="description" content="{{ job.seo_description }}">
+  {# Ohne diese beiden Zeilen fragt der Browser /favicon.ico an und bekommt 404. #}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% include 'components/rw_head_fonts.html' %}
+  {% include 'components/rw_seo.html' with seo_title=job.seo_title seo_description=job.seo_description seo_path=job.seo_path seo_breadcrumb_name=job.title seo_breadcrumb_zwischen="Jobs|/jobs/" seo_keywords=job.seo_keywords seo_speakable="h1,.rw-antwort-text" %}
+  {% include 'components/rw_css.html' with crit_page='job_detail.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt" class="rw-formseite">
+
+  {# ════════ PAGE HERO ════════ #}
+  <div class="rw-leistungen-hero">
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <a href="/jobs/">Jobs</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>{{ job.title }}</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Stellenangebot</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:14px;">
+          {{ job.icon }} {{ job.title }}
+        </h1>
+        <p style="font-size:1rem;color:var(--rw-text-2);max-width:600px;line-height:1.8;margin-bottom:24px;">
+          {{ job.teaser }}
+        </p>
+        <div class="rw-promise-strip">
+          <span class="rw-promise-badge" style="{{ job.badge_style }}">{{ job.badge }}</span>
+          <span class="rw-promise-badge"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> {{ job.orte }}</span>
+          <span class="rw-promise-badge green"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/></svg> Faire Bezahlung</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'components/rw_antwort.html' with antwort_frage=antwort_frage antwort_text=antwort_text %}
+
+  {# ════════ JOB DETAILS + FORM ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      <div class="rw-anfrage-wrap">
+
+        {# Left: Details #}
+        <div style="flex:1;min-width:0;">
+
+          {# Aufgaben #}
+          <div class="rw-form-card" data-rw-reveal style="padding:32px 36px;margin-bottom:24px;">
+            <h2 style="font-family:var(--rw-font-head);font-weight:500;font-size:1.2rem;color:var(--rw-text);margin:0 0 20px;display:flex;align-items:center;gap:10px;">
+              <span style="font-size:1.4rem;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span> Deine Aufgaben
+            </h2>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+              {% for item in job.aufgaben %}
+              <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.95rem;color:var(--rw-text-2);line-height:1.6;">
+                <span style="color:var(--rw-orange);font-weight:900;flex-shrink:0;margin-top:2px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+                {{ item }}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          {# Verdienst #}
+          <div class="rw-form-card" data-rw-reveal data-rw-delay="1" style="padding:32px 36px;margin-bottom:24px;">
+            <h2 style="font-family:var(--rw-font-head);font-weight:500;font-size:1.2rem;color:var(--rw-text);margin:0 0 20px;display:flex;align-items:center;gap:10px;">
+              <span style="font-size:1.4rem;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/></svg></span> Was du verdienst
+            </h2>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+              {% for item in job.verdienst %}
+              <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.95rem;color:var(--rw-text-2);line-height:1.6;">
+                <span style="color:var(--rw-orange);font-weight:900;flex-shrink:0;margin-top:2px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+                {{ item }}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          {# Voraussetzungen #}
+          <div class="rw-form-card" data-rw-reveal data-rw-delay="2" style="padding:32px 36px;margin-bottom:24px;">
+            <h2 style="font-family:var(--rw-font-head);font-weight:500;font-size:1.2rem;color:var(--rw-text);margin:0 0 20px;display:flex;align-items:center;gap:10px;">
+              <span style="font-size:1.4rem;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span> Was du mitbringst
+            </h2>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+              {% for item in job.voraussetzungen %}
+              <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.95rem;color:var(--rw-text-2);line-height:1.6;">
+                <span style="color:var(--rw-orange);font-weight:900;flex-shrink:0;margin-top:2px;">→</span>
+                {{ item }}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          {# Wir bieten #}
+          <div class="rw-form-card" data-rw-reveal data-rw-delay="3" style="padding:32px 36px;">
+            <h2 style="font-family:var(--rw-font-head);font-weight:500;font-size:1.2rem;color:var(--rw-text);margin:0 0 20px;display:flex;align-items:center;gap:10px;">
+              <span style="font-size:1.4rem;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9"/><path d="M12 8C9 8 6 8 6 5.5 6 4 8 4 12 8zM12 8c3 0 6 0 6-2.5C18 4 16 4 12 8z"/></svg></span> Was wir bieten
+            </h2>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+              {% for item in job.wir_bieten %}
+              <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.95rem;color:var(--rw-text-2);line-height:1.6;">
+                <span style="color:var(--rw-orange);font-weight:900;flex-shrink:0;margin-top:2px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+                {{ item }}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+        </div>
+
+        {# Right: Application form #}
+        <div class="rw-anfrage-sidebar" style="position:sticky;top:90px;align-self:flex-start;">
+
+          <div class="rw-form-card" data-rw-reveal style="padding:32px 28px;">
+
+            {% if messages %}
+              {% for message in messages %}
+                <div class="{% if message.level_tag == 'error' %}rw-alert-error{% else %}rw-alert-success{% endif %}"{% if message.level_tag == 'error' %} role="alert"{% endif %}>
+                  <span>{% if message.level_tag == 'error' %}<svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg>{% else %}<svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>{% endif %}</span>
+                  <span>{{ message }}</span>
+                </div>
+              {% endfor %}
+            {% endif %}
+
+            <h2 class="rw-form-headline" style="font-size:1.15rem;margin-bottom:6px;">Jetzt bewerben</h2>
+            <p class="rw-form-subline" style="margin-bottom:20px;">Alle mit <span style="color:var(--rw-orange);">*</span> markierten Felder sind Pflichtfelder.</p>
+
+            <form method="post" novalidate>
+              {% csrf_token %}
+              {# Regel 18: volle Spam-Abwehr, nicht nur ein Honeypot. Bis zum 01.09.2026 stand hier ein nacktes website-Feld - dieselbe Bestueckung, mit der /anfrage/ geflutet wurde. #}
+              {% rw_antispam %}
+
+              <div class="rw-form-group" style="margin-bottom:16px;">
+                <label for="jd-name" class="rw-form-label">Name <span style="color:var(--rw-orange);">*</span></label>
+                {# BF24: Kennung am Fehlertext, aria-describedby am Feld - ohne die Bindung nennt der Screenreader beim Feld nur das Label. #}
+                {% if errors.name %}<p class="rw-form-error" id="jd-name-fehler" role="alert">{{ errors.name }}</p>{% endif %}
+                <input type="text" id="jd-name" name="name" maxlength="200" autocomplete="name"
+                  class="rw-form-input{% if errors.name %} rw-form-input--error{% endif %}"
+                  {% if errors.name %}aria-invalid="true" aria-describedby="jd-name-fehler"{% endif %}
+                  placeholder="Vor- und Nachname" value="{{ post.name|default:'' }}" required>
+              </div>
+
+              <div class="rw-form-group" style="margin-bottom:16px;">
+                <label for="jd-email" class="rw-form-label">E-Mail <span style="color:var(--rw-orange);">*</span></label>
+                {% if errors.email %}<p class="rw-form-error" id="jd-email-fehler" role="alert">{{ errors.email }}</p>{% endif %}
+                <input type="email" id="jd-email" name="email" maxlength="200" autocomplete="email"
+                  class="rw-form-input{% if errors.email %} rw-form-input--error{% endif %}"
+                  {% if errors.email %}aria-invalid="true" aria-describedby="jd-email-fehler"{% endif %}
+                  placeholder="deine@email.de" value="{{ post.email|default:'' }}" required>
+              </div>
+
+              <div class="rw-form-group" style="margin-bottom:16px;">
+                <label for="jd-telefon" class="rw-form-label">Telefonnummer <span style="color:var(--rw-orange);">*</span></label>
+                {% if errors.telefon %}<p class="rw-form-error" id="jd-telefon-fehler" role="alert">{{ errors.telefon }}</p>{% endif %}
+                <input type="tel" id="jd-telefon" name="telefon" maxlength="50" autocomplete="tel"
+                  class="rw-form-input{% if errors.telefon %} rw-form-input--error{% endif %}"
+                  {% if errors.telefon %}aria-invalid="true" aria-describedby="jd-telefon-fehler"{% endif %}
+                  placeholder="+49 …" value="{{ post.telefon|default:'' }}" required>
+              </div>
+
+              <div class="rw-form-group" style="margin-bottom:24px;">
+                <label for="jd-nachricht" class="rw-form-label">Kurze Vorstellung (optional)</label>
+                <textarea id="jd-nachricht" name="nachricht" class="rw-form-textarea" maxlength="2000"
+                  placeholder="Erfahrungen, Verfügbarkeit, Fragen …" style="min-height:100px;">{{ post.nachricht|default:'' }}</textarea>
+              </div>
+
+              <button type="submit" class="rw-btn-primary rw-form-submit">
+                Bewerbung abschicken →
+              </button>
+
+              <div class="rw-anfrage-promise" style="margin-top:14px;">
+                <span class="rw-anfrage-promise-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+                <span>Wir melden uns bei dir.</span>
+              </div>
+
+              <p style="font-size:0.75rem;color:var(--rw-text-3);text-align:center;margin-top:10px;">
+                Wir verwenden deine Angaben nur für das Bewerbungsverfahren und geben sie nur an die in der Datenschutzerklärung genannten Dienstleister weiter.
+                <a href="/datenschutz/" style="color:var(--rw-text-3);">Datenschutz</a>
+              </p>
+            </form>
+          </div>
+
+          <div class="rw-info-box" data-rw-reveal data-rw-delay="1" style="margin-top:16px;">
+            <p class="rw-info-box-title">Noch Fragen?</p>
+            <p style="font-size:0.88rem;color:var(--rw-text-2);line-height:1.7;margin:0 0 12px;">
+              Schreib uns direkt – wir melden uns bei dir.
+            </p>
+            <a href="mailto:{{ CONTACT_EMAIL }}" style="font-size:0.88rem;color:var(--rw-orange);font-weight:700;text-decoration:none;">
+              <svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg> {{ CONTACT_EMAIL }}
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% comment %}
+    ANDERE STELLEN (A14). Bis hierher war jede Stellenseite eine Sackgasse:
+    Sie wurde nur von /jobs/ verlinkt und verlinkte selbst keine andere.
+    Wer die falsche Stelle erwischt, soll die richtige finden, ohne die
+    Zurueck-Taste zu benutzen.
+  {% endcomment %}
+  {% comment %}
+    IS21 (02.10.2026): Nur noch Titel und Eckdaten der anderen Stellen. Die
+    Teaser-Saetze standen auf jeder Stellenseite wortgleich und machten die
+    Seiten untereinander zu 63 % textgleich.
+  {% endcomment %}
+  {% if andere_jobs %}
+  <section class="rw-section rw-jobs-weitere" data-rw-reveal>
+    <div class="rw-container">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title">Passt nicht? <em>Diese Stellen sind auch offen</em></h2>
+      </div>
+      <p class="rw-svc-staedte-fuss">Die übrigen offenen Stellen mit Art der Beschäftigung und Einsatzort:</p>
+      <div class="rw-svc-related">
+        {% for j in andere_jobs %}
+        <a href="/jobs/{{ j.slug }}/" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">{{ j.title }}</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">{{ j.badge }} · {{ j.orte }} →</span>
+        </a>
+        {% endfor %}
+      </div>
+      <p class="rw-svc-staedte-fuss">
+        Alle Stellen im Überblick: <a href="/jobs/">Jobs &amp; Karriere bei Rümpelwerk</a>.
+        Nichts Passendes dabei? <a href="/kooperationspartner/">Als Subunternehmer mit uns arbeiten</a>.
+      </p>
+    </div>
+  </section>
+  {% endif %}
+
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>

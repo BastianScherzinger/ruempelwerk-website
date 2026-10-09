@@ -1,0 +1,110 @@
+{% load static %}{# audit-ok V07: JSON-LD kommt über components/rw_seo.html (Tag rw_head_schema) - die Seite liefert genau einen ld+json-Block, check_seo prüft ihn #}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="{{ seo_description }}">
+  <title>{{ seo_title }}</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {# LCP-Bild vorziehen: ohne Preload startet der Download erst, wenn #}
+  {# der Parser das Hero-Element im Body erreicht - also nach dem CSS. #}
+  <link rel="preload" as="image" href="{% static 'images/vorhernachherfirma.webp' %}" fetchpriority="high">
+  {% include 'components/rw_seo.html' with seo_title=seo_title seo_description=seo_description seo_path="/preisangebot/" seo_breadcrumb_name="Preisrechner" seo_keywords="Entrümpelung Kosten, Entrümpelung Preis, Haushaltsauflösung Kosten, Wohnungsauflösung Preis, Kellerentrümpelung Kosten, Entrümpelung günstig, Entrümpelung Preisangebot, Entrümpelung Angebot anfordern" seo_speakable="h1,.rw-lead-antwort" %}
+  {% include 'components/rw_css.html' with crit_page='preisangebot.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  {# ════════ PAGE HERO ════════ #}
+  <div class="rw-leistungen-hero rw-leistungen-hero--media">
+    <div class="rw-hero-media-bg"><img src="{% static 'images/vorhernachherfirma.webp' %}" alt="" width="1000" height="546" fetchpriority="high"></div>
+    <div class="rw-hero-media-overlay"></div>
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>Preisrechner</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Kostenlos &amp; unverbindlich</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(2rem,4vw,3rem);margin-bottom:14px;">
+          Preisangebot <em>anfordern</em>
+        </h1>
+        <p class="rw-lead-antwort" data-rw-readmore style="font-size:1rem;color:var(--rw-text-2);max-width:600px;line-height:1.8;margin-bottom:28px;">
+          {{ hero_antwort }}
+          Malerarbeiten &amp; kleine Reparaturen <strong style="color:var(--rw-text);">optional dazubuchbar.</strong>
+          Jeden Satz und Zuschlag vorher nachlesen: <a href="/entruempelung-kosten/">Entrümpelung Kosten berechnen</a>.
+        </p>
+        {% comment %}
+          Orchestrator-Befund Punkt 3: Icon-Chip-Vertrauensreihe raus, reiner
+          Text wie im homepage-Beleg (rwf-hero-belege).
+        {% endcomment %}
+        <ul class="rwf-hero-belege" aria-label="Zusagen">
+          <li><span>Ergebnis in {{ ZUSAGE_RECHNER }}</span></li>
+          <li><span>Standort-Nachlass möglich</span></li>
+          <li><span>Maler &amp; Reparaturen optional</span></li>
+          <li><span>Kein Kundenkonto nötig</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  {% include 'components/rw_trustbar.html' %}
+
+  {# ════════ RECHNER ════════ #}
+  {# ════════ RECHNER (Komponente, A15) ════════ #}
+  {% include 'components/rw_rechner.html' %}
+
+  {# ════════ VERTRAUEN ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg-2);padding-top:0;">
+    <div class="rw-container">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;padding-top:48px;border-top:1px solid var(--rw-border);">
+        <div class="rw-rechner-trust-item">
+          <div style="font-size:1.8rem;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div>
+            <div style="font-family:var(--rw-font-head);font-weight:800;font-size:0.88rem;color:var(--rw-text);">Keine Bindung</div>
+            <div style="font-size:0.78rem;color:var(--rw-text-2);">Komplett unverbindlich</div>
+          </div>
+        </div>
+        <div class="rw-rechner-trust-item">
+          <div style="font-size:1.8rem;"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <div>
+            <div style="font-family:var(--rw-font-head);font-weight:800;font-size:0.88rem;color:var(--rw-text);">Richtpreis in {{ ZUSAGE_RECHNER }}</div>
+            <div style="font-size:0.78rem;color:var(--rw-text-2);">Nach Name und E-Mail</div>
+          </div>
+        </div>
+        <div class="rw-rechner-trust-item">
+          <div style="font-size:1.8rem;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></div>
+          <div>
+            <div style="font-family:var(--rw-font-head);font-weight:800;font-size:0.88rem;color:var(--rw-text);">Festpreis danach</div>
+            <div style="font-size:0.78rem;color:var(--rw-text-2);">Verbindlich im Angebot</div>
+          </div>
+        </div>
+        <div class="rw-rechner-trust-item">
+          <div style="font-size:1.8rem;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg></div>
+          <div>
+            <div style="font-family:var(--rw-font-head);font-weight:800;font-size:0.88rem;color:var(--rw-text);">Eigene Fahrzeuge</div>
+            <div style="font-size:0.78rem;color:var(--rw-text-2);">Besenrein übergeben</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+  {% include 'components/rw_rechner_js.html' %}
+
+</body>
+</html>
+

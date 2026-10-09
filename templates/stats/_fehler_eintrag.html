@@ -1,0 +1,24 @@
+<article class="fehler{% if e.erledigt %} erledigt{% endif %}">
+  <div class="kopf">
+    <div><span class="art">{{ e.art }}</span> <span class="ort">{{ e.ort|default:e.quelle }}</span></div>
+    <span class="zahl">{{ e.anzahl }}×</span>
+  </div>
+  {% if e.meldung %}<p class="meldung">{{ e.meldung }}</p>{% endif %}
+  <p class="meta">
+    zuerst {{ e.erstmals|date:"d.m.Y H:i" }} · zuletzt {{ e.zuletzt|date:"d.m.Y H:i" }}
+    · Logger {{ e.quelle }}{% if e.pfad %} · {{ e.methode }} {{ e.pfad }}{% endif %}
+    · {% if e.gemeldet_bis and e.gemeldet_bis >= e.zuletzt %}per Mail gemeldet{% else %}noch nicht gemeldet{% endif %}
+  </p>
+  {% if e.verlauf %}
+  <details>
+    <summary>Stacktrace</summary>
+    <pre>{{ e.verlauf }}</pre>
+  </details>
+  {% endif %}
+  {% if not e.erledigt %}
+  <form class="erledigt-form" method="post" action="/{{ stats_path }}/fehler/{{ e.pk }}/erledigt/">
+    {% csrf_token %}
+    <button type="submit">Als erledigt markieren</button>
+  </form>
+  {% endif %}
+</article>

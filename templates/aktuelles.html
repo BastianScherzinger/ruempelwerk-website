@@ -1,0 +1,261 @@
+{% load static %}{# audit-ok V07: JSON-LD kommt über components/rw_seo.html (Tag rw_head_schema) - die Seite liefert genau einen ld+json-Block, check_seo prüft ihn #}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  {# rw_seo.html rendert weder <title> noch description – beides gehört hierher. #}
+  <title>Aktuelles: Erfahrungen aus Entrümpelungen | Rümpelwerk</title>
+  <meta name="description" content="Berichte abgeschlossener Entrümpelungen und Haushaltsauflösungen: Vorher-Nachher-Fotos und Rückmeldungen entdecken.">
+  {# Ohne diese beiden Zeilen fragt der Browser /favicon.ico an und bekommt 404. #}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% include 'components/rw_seo.html' with seo_title="Aktuelles: Erfahrungen aus Entrümpelungen | Rümpelwerk" seo_description="Berichte abgeschlossener Entrümpelungen und Haushaltsauflösungen: Vorher-Nachher-Fotos und Rückmeldungen entdecken." seo_path="/aktuelles/" seo_breadcrumb_name="Aktuelles" seo_speakable="h1,.rw-antwort-text" %}
+  {# Blaettern ueber ?seite= (P8/D4). rel=prev/next verkettet die Folgeseiten; #}
+  {# das canonical aus rw_seo.html zeigt weiter auf /aktuelles/ - die Folgeseiten #}
+  {# sind Blaetterwerk, kein eigenes Thema, und stehen deshalb in keiner Sitemap. #}
+  {% if seite_vorher %}<link rel="prev" href="/aktuelles/{{ seite_vorher }}">{% endif %}
+  {% if seite_naechste %}<link rel="next" href="/aktuelles/{{ seite_naechste }}">{% endif %}
+  {% include 'components/rw_head_fonts.html' %}
+  {# LCP-Bild vorziehen: ohne Preload startet der Download erst, wenn #}
+  {# der Parser das Hero-Element im Body erreicht - also nach dem CSS. #}
+  <link rel="preload" as="image" media="(max-width:640px)" href="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif" fetchpriority="high">
+  <link rel="preload" as="image" media="(min-width:641px)" href="{% static 'images/hero-banner.avif' %}" type="image/avif" fetchpriority="high">
+  {% include 'components/rw_css.html' with crit_page='aktuelles.html' %}
+  <style>
+    /* ── Aktuelles-Archiv: nutzt das Karten-Raster der Startseite (.rw-news-*) ──
+       Zusätzliche Helfer für die reicheren Archiv-Inhalte (Mehrbild-Galerie,
+       Autor-Fußzeile, alle Vorher/Nachher-Paare, Zitat-Karte). */
+
+    /* Mehrbild-Galerie im Karten-Kopf (Bericht mit >1 Bild) */
+    .ak-gallery { display: grid; gap: 2px; }
+    .ak-gallery.g1 { grid-template-columns: 1fr; }
+    .ak-gallery.g2 { grid-template-columns: 1fr 1fr; }
+    .ak-gallery.g3 { grid-template-columns: 2fr 1fr; }
+    .ak-gallery.g3 .ak-img:first-child { grid-row: span 2; }
+    .ak-gallery.gn { grid-template-columns: 1fr 1fr; }
+    .ak-img { overflow: hidden; background: var(--rw-bg-2); }
+    .ak-img img { width: 100%; height: 100%; min-height: 150px; object-fit: cover; display: block; transition: transform var(--rw-ease-out); }
+    .ak-gallery.g3 .ak-img:first-child img { min-height: 302px; }
+    .rw-news-card:hover .ak-img img { transform: scale(1.04); }
+
+    /* Vorher / Nachher – alle Paare untereinander je Spalte */
+    .ak-vn { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .ak-vn-col { display: flex; flex-direction: column; gap: 2px; }
+    .ak-vn-label {
+      font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
+      padding: 6px 10px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+    .ak-vn-label.vor  { background: rgba(0,0,0,0.6); color: #e5e7eb; }
+    .ak-vn-label.nach { background: var(--gruen); color: #fff; } /* 8,2:1 (axe color-contrast, BF29) */
+    .ak-vn-img { overflow: hidden; background: var(--rw-bg-2); aspect-ratio: 4 / 3; }
+    .ak-vn-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--rw-ease-out); }
+    .rw-news-card:hover .ak-vn-img img { transform: scale(1.04); }
+
+    /* Autor-Fußzeile */
+    .ak-author {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 22px; border-top: 1px solid var(--rw-border);
+      background: var(--rw-bg-2); margin-top: auto;
+    }
+    .ak-author img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--rw-border-hot); }
+    .ak-author-ph { width: 30px; height: 30px; border-radius: 50%; background: var(--rw-bg); border: 1px solid var(--rw-border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ak-author-name { font-size: 0.78rem; font-weight: 700; color: var(--rw-text); line-height: 1.3; }
+    .ak-author-role { font-size: 0.66rem; color: var(--rw-text-3); }
+  </style>
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  <div class="rw-leistungen-hero rw-leistungen-hero--media">
+    <div class="rw-hero-media-bg"><picture>
+      {# AVIF auf DERSELBEN Zeile wie WebP: eine eigene Zeile kostet 762 Byte kritisches CSS (Regel 26/28). #}
+      <source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif"><source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.webp' %}" type="image/webp">
+      <source srcset="{% static 'images/hero-banner.avif' %}" type="image/avif"><source srcset="{% static 'images/hero-banner.webp' %}" type="image/webp">
+      <img src="{% static 'images/hero-banner.jpg' %}" alt="" width="1915" height="821" fetchpriority="high">
+    </picture></div>
+    <div class="rw-hero-media-overlay"></div>
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>Aktuelles</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Neuigkeiten &amp; Berichte</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(2rem,4vw,3rem);margin-bottom:14px;">Aktuelles</h1>
+        <p data-rw-readmore style="font-size:1rem;color:var(--rw-text-2);max-width:600px;line-height:1.8;">
+          Einblicke in unsere Arbeit – Berichte, Kundenstimmen und Vorher-Nachher-Fotos.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {% include 'components/rw_antwort.html' with antwort_frage=antwort_frage antwort_text=antwort_text %}
+
+  {% if posts %}
+  <section class="rw-section" style="background:var(--rw-bg-2);">
+    <div class="rw-container">
+
+      <div class="rw-section-header" data-rw-reveal style="margin-bottom:32px;">
+        {# Die Zahl nennt den GESAMTBESTAND, nicht die Seite - sonst staende ab #}
+        {# Seite 2 dauerhaft "10 Beitraege" da, egal wie viele es wirklich sind. #}
+        <div class="rw-section-badge">{{ eintraege_gesamt }} Beitrag{{ eintraege_gesamt|pluralize:",e" }}</div>
+      </div>
+
+      <div class="rw-news-grid">
+
+        {% for post in posts %}
+
+        {# ── BERICHT ── #}
+        {% if post.typ == 'bericht' %}
+        <article class="rw-news-card" data-rw-reveal data-rw-delay="{{ forloop.counter }}">
+          {% if post.gallery_urls %}
+            {% with c=post.gallery_urls|length %}
+              {% if c == 1 %}
+                <div class="rw-news-media"><img src="{{ post.gallery_urls.0 }}" width="800" height="500"{% if post.gallery_urls.0.srcset %} srcset="{{ post.gallery_urls.0.srcset }}" sizes="(max-width:480px) 94vw, (max-width:900px) 46vw, 390px"{% endif %} alt="{{ post.gallery_urls.0.alt|default:post.titel }}" loading="lazy"></div>
+              {% else %}
+                <div class="ak-gallery {% if c == 2 %}g2{% elif c == 3 %}g3{% else %}gn{% endif %}">
+                  {# g3 stellt das erste Bild in der 2fr-Spalte dar – dafuer ein groesseres sizes. #}
+                  {% for url in post.gallery_urls %}
+                  {# audit-ok V04: CMS-Bild ohne gespeicherte Masse (Cloudinary, kein width_field) - Grösse kommt aus dem Raster (.ak-img img) #}
+                  <div class="ak-img"><img src="{{ url }}"{% if url.srcset %} srcset="{{ url.srcset }}" sizes="{% if c == 3 and forloop.first %}(max-width:480px) 62vw, (max-width:900px) 31vw, 260px{% else %}(max-width:480px) 47vw, (max-width:900px) 23vw, 195px{% endif %}"{% endif %} alt="{{ url.alt|default:post.titel }}" width="800" height="600" loading="lazy"></div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+          {% endif %}
+          <div class="rw-news-body">
+            <div class="rw-news-meta">
+              <span class="rw-news-badge">Bericht</span>
+              <span class="rw-news-date">{{ post.datum|date:"d.m.Y" }}</span>
+            </div>
+            <h2 class="rw-news-title">{{ post.titel }}</h2>
+            {% if post.inhalt %}
+            <div class="rw-news-text rw-clamp" data-rw-clamp>{{ post.inhalt|linebreaks }}</div>
+            <button type="button" class="rw-news-toggle" hidden>Mehr lesen</button>
+            {% endif %}
+          </div>
+          {% if post.autor_info %}
+          <div class="ak-author">
+            {% if post.autor_info.foto %}<img src="/static/{{ post.autor_info.foto }}" alt="{{ post.autor_info.name }}, {{ post.autor_info.rolle }}, Autor des Beitrags {{ post.titel }}" width="128" height="125" loading="lazy" decoding="async">
+            {% else %}<div class="ak-author-ph"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>{% endif %}
+            <div><div class="ak-author-name">{{ post.autor_info.name }}</div><div class="ak-author-role">{{ post.autor_info.region }}</div></div>
+          </div>
+          {% endif %}
+        </article>
+
+        {# ── ZITAT ── #}
+        {% elif post.typ == 'zitat' %}
+        <article class="rw-news-card rw-news-card--quote" data-rw-reveal data-rw-delay="{{ forloop.counter }}">
+          <div class="rw-news-body">
+            <div class="rw-news-meta">
+              <span class="rw-news-badge rw-news-badge--quote">Kundenstimme</span>
+              <span class="rw-news-date">{{ post.datum|date:"d.m.Y" }}</span>
+            </div>
+            <span class="rw-news-quote-mark" aria-hidden="true">&ldquo;</span>
+            <p class="rw-news-text rw-clamp" data-rw-clamp>{{ post.inhalt }}</p>
+            <button type="button" class="rw-news-toggle" hidden>Mehr lesen</button>
+            {% if post.zitat_autor %}<div class="rw-news-source">— {{ post.zitat_autor }}</div>{% endif %}
+            {% if post.gallery_urls %}
+            <div class="ak-gallery {% if post.gallery_urls|length == 1 %}g1{% elif post.gallery_urls|length == 2 %}g2{% else %}gn{% endif %}" style="margin-top:14px;">
+              {# audit-ok V04: CMS-Bild ohne gespeicherte Masse (Cloudinary, kein width_field) - Grösse kommt aus dem Raster (.ak-img img) #}
+              {% for url in post.gallery_urls %}<div class="ak-img"><img src="{{ url }}"{% if url.srcset %} srcset="{{ url.srcset }}" sizes="(max-width:480px) 47vw, (max-width:900px) 23vw, 195px"{% endif %} alt="{{ url.alt|default:post.titel }}" width="800" height="600" loading="lazy"></div>{% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          {% if post.autor_info %}
+          <div class="ak-author">
+            {% if post.autor_info.foto %}<img src="/static/{{ post.autor_info.foto }}" alt="{{ post.autor_info.name }}, {{ post.autor_info.rolle }}, Autor des Beitrags {{ post.titel }}" width="128" height="125" loading="lazy" decoding="async">
+            {% else %}<div class="ak-author-ph"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>{% endif %}
+            <div><div class="ak-author-name">{{ post.autor_info.name }}</div><div class="ak-author-role">{{ post.autor_info.region }}</div></div>
+          </div>
+          {% endif %}
+        </article>
+
+        {# ── VORHER / NACHHER ── #}
+        {% elif post.typ == 'vorher_nachher' %}
+        <article class="rw-news-card" data-rw-reveal data-rw-delay="{{ forloop.counter }}">
+          {% if post.vor_gallery_urls or post.nach_gallery_urls %}
+          <div class="ak-vn">
+            <div class="ak-vn-col">
+              <div class="ak-vn-label vor">Vorher</div>
+              {% for url in post.vor_gallery_urls %}
+              {# audit-ok V04: CMS-Bild ohne gespeicherte Masse (Cloudinary, kein width_field) - Grösse kommt aus dem Raster (.ak-vn-img img) #}
+              <div class="ak-vn-img"><img src="{{ url }}"{% if url.srcset %} srcset="{{ url.srcset }}" sizes="(max-width:480px) 47vw, (max-width:900px) 23vw, 195px"{% endif %} alt="{{ url.alt|default:post.titel }}" width="800" height="600" loading="lazy"></div>
+              {% endfor %}
+            </div>
+            <div class="ak-vn-col">
+              <div class="ak-vn-label nach"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Nachher</div>
+              {% for url in post.nach_gallery_urls %}
+              {# audit-ok V04: CMS-Bild ohne gespeicherte Masse (Cloudinary, kein width_field) - Grösse kommt aus dem Raster (.ak-vn-img img) #}
+              <div class="ak-vn-img"><img src="{{ url }}"{% if url.srcset %} srcset="{{ url.srcset }}" sizes="(max-width:480px) 47vw, (max-width:900px) 23vw, 195px"{% endif %} alt="{{ url.alt|default:post.titel }}" width="800" height="600" loading="lazy"></div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          <div class="rw-news-body">
+            <div class="rw-news-meta">
+              <span class="rw-news-badge">Vorher / Nachher</span>
+              <span class="rw-news-date">{{ post.datum|date:"d.m.Y" }}</span>
+            </div>
+            <h2 class="rw-news-title">{{ post.titel }}</h2>
+            {% if post.inhalt %}
+            <div class="rw-news-text rw-clamp" data-rw-clamp>{{ post.inhalt|linebreaks }}</div>
+            <button type="button" class="rw-news-toggle" hidden>Mehr lesen</button>
+            {% endif %}
+          </div>
+          {% if post.autor_info %}
+          <div class="ak-author">
+            {% if post.autor_info.foto %}<img src="/static/{{ post.autor_info.foto }}" alt="{{ post.autor_info.name }}, {{ post.autor_info.rolle }}, Autor des Beitrags {{ post.titel }}" width="128" height="125" loading="lazy" decoding="async">
+            {% else %}<div class="ak-author-ph"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>{% endif %}
+            <div><div class="ak-author-name">{{ post.autor_info.name }}</div><div class="ak-author-role">{{ post.autor_info.region }}</div></div>
+          </div>
+          {% endif %}
+        </article>
+        {% endif %}
+
+        {% endfor %}
+
+      </div>{# /rw-news-grid #}
+
+      {% if seiten_gesamt > 1 %}
+      {% comment %}
+        Geblaettert wird ueber einen Query-Parameter und nicht ueber neue
+        Pfade: apps/core/urls.py endet auf einem Catch-All fuer Stadtseiten
+        (Regel 5), und ein Pfad wie /aktuelles/seite-2/ waere eine weitere
+        URL, die man dort vorbeisortieren muesste. Die Styles stehen inline,
+        weil diese Leiste auf genau zwei Seiten vorkommt und ruempelwerk.css
+        dafuer nicht wachsen muss.
+      {% endcomment %}
+      <nav aria-label="Weitere Beiträge" style="display:flex;align-items:center;justify-content:center;gap:20px;margin-top:40px;flex-wrap:wrap;">
+        {% if seite_vorher %}<a href="{{ seite_vorher }}" rel="prev" class="rw-btn-outline" style="font-weight:700;">&larr; Neuere Beiträge</a>{% endif %}
+        <span style="color:var(--rw-text-2);font-size:0.95rem;">Seite {{ seite.number }} von {{ seiten_gesamt }}</span>
+        {% if seite_naechste %}<a href="{{ seite_naechste }}" rel="next" class="rw-btn-outline" style="font-weight:700;">Ältere Beiträge &rarr;</a>{% endif %}
+      </nav>
+      {% endif %}
+
+    </div>
+  </section>
+
+  {% else %}
+  <section class="rw-section" style="background:var(--rw-bg-2);">
+    <div class="rw-container" style="text-align:center;padding:80px 0 60px;">
+      <div style="font-size:2.5rem;margin-bottom:16px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 22h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2"/><path d="M16 6h-6M16 10h-6M13 14h-3"/></svg></div>
+      <h2 style="font-family:var(--rw-font-head);font-size:1.3rem;font-weight:500;color:var(--rw-text);margin-bottom:10px;">Noch keine Beiträge</h2>
+      <p style="color:var(--rw-text-2);">Hier erscheinen Berichte und Fotos aus abgeschlossenen Aufträgen – schauen Sie bald wieder vorbei.</p>
+    </div>
+  </section>
+  {% endif %}
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>

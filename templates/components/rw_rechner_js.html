@@ -1,0 +1,28 @@
+{% load static %}
+{% comment %}
+  Der Preisrechner-Wizard (A15). Der Code liegt seit dem 26.08.2026 in
+  static/js/rw_rechner.js — inline war er 26 KiB auf 69 Seiten und nie
+  cachebar (Befund W4). Dieses Template liefert nur noch zwei Dinge:
+
+  1. die Preise als application/json,
+  2. den <script src>-Verweis darauf.
+
+  Gehoert IMMER zusammen mit components/rw_rechner.html auf dieselbe Seite und
+  IMMER nach components/rw_js.html: Das Tracking-Event 'rechner_start' laeuft
+  ueber window.rwTrack, das dort definiert wird. Beide Dateien tragen `defer`,
+  und `defer` haelt die Dokumentreihenfolge ein — die Bedingung gilt weiter.
+
+  Die Preise stehen als application/json in der Seite, nicht als JS-Literal —
+  so kann keine Zahl beim Kopieren zwischen Python und JavaScript verloren
+  gehen. Sie kommen aus apps/core/data/pricing.py (F2), nie hier eintippen.
+  Der Block MUSS im HTML bleiben: er haengt am Kontext der jeweiligen Seite.
+{% endcomment %}
+{{ PREISE_JS|json_script:"rw-preise-daten" }}
+{% comment %}
+  Die WhatsApp-Nummer kommt aus data/firma.py ueber den Context-Processor
+  (Regel 25) - der Rechner baut daraus den Direktkontakt am Ergebnis.
+  Mehrzeilig MUSS {% comment %} sein: {# #} ist einzeilig und landet sonst
+  woertlich im HTML (Regel 13, hier prompt wieder zugeschnappt).
+{% endcomment %}
+{{ FIRMA_WHATSAPP|json_script:"rw-wa-nummer" }}
+<script src="{% static 'js/rw_rechner.js' %}" defer></script>

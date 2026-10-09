@@ -1,0 +1,59 @@
+{% extends "emails/basis.html" %}
+{# audit-ok V06: geladen in emails._render als f'emails/{vorlage}' - absichtlich kein Literal (EIG337) #}
+{% comment %}
+  Mails an den Anfragenden (Richtangebot, Erinnerung, Kooperation, Bewerbung).
+  Gehen nur hinaus, wenn KUNDENMAIL_AN_ABSENDER an ist (emails._absenden).
+  Zeitzusagen kommen als Kontext aus data/zusagen.py, nie getippt (Regel 24).
+{% endcomment %}
+{% block titel %}{{ titel }}{% endblock %}
+{% block inhalt %}
+            <p class="rw-akzent" style="margin:0 0 6px;font-size:12px;line-height:16px;font-weight:700;color:#157a39;letter-spacing:1.5px;text-transform:uppercase;">{{ art }}</p>
+            <h1 class="rw-text" style="margin:0 0 14px;font-size:22px;line-height:29px;font-weight:800;color:#0f172a;">{{ anrede }}</h1>
+            {% for absatz in absaetze %}
+            <p class="rw-text" style="margin:0 0 14px;font-size:15px;line-height:24px;color:#334155;">{{ absatz }}</p>
+            {% endfor %}
+
+            {% if preis %}
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="rw-flaeche" style="margin:6px 0 20px;background:#f0fdf4;border:1px solid #cfe9d8;border-radius:10px;">
+              <tr>
+                <td style="padding:18px 20px;">
+                  <div class="rw-akzent" style="font-size:12px;line-height:16px;font-weight:700;color:#157a39;letter-spacing:1.5px;text-transform:uppercase;">{{ preis_label }}</div>
+                  <div class="rw-text" style="font-size:32px;line-height:40px;font-weight:800;color:#0f3d24;letter-spacing:-0.5px;">{{ preis }}&nbsp;&euro;</div>
+                  <div class="rw-leise" style="font-size:13px;line-height:19px;color:#5b697e;">{{ preis_zusatz }}</div>
+                </td>
+              </tr>
+            </table>
+            {% endif %}
+
+            {% if felder %}
+            <p class="rw-leise" style="margin:6px 0 4px;font-size:12px;line-height:16px;font-weight:700;color:#5b697e;letter-spacing:1.5px;text-transform:uppercase;">{{ angaben_label|default:"Ihre Angaben" }}</p>
+            {% include "emails/_felder.html" %}
+            {% endif %}
+
+            {% if punkte %}
+            <p class="rw-leise" style="margin:22px 0 6px;font-size:12px;line-height:16px;font-weight:700;color:#5b697e;letter-spacing:1.5px;text-transform:uppercase;">So geht es weiter</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              {% for punkt in punkte %}
+              <tr>
+                <td class="rw-akzent" style="width:22px;padding:5px 0;vertical-align:top;font-size:15px;line-height:22px;font-weight:700;color:#157a39;">{{ forloop.counter }}.</td>
+                <td class="rw-text" style="padding:5px 0;vertical-align:top;font-size:15px;line-height:22px;color:#334155;">{{ punkt }}</td>
+              </tr>
+              {% endfor %}
+            </table>
+            {% endif %}
+
+            {% if knopf_url %}
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 6px;">
+              <tr>
+                <td class="rw-knopf">
+                  <a href="{{ knopf_url }}" style="display:inline-block;background:#157a39;color:#ffffff;font-size:15px;line-height:20px;font-weight:700;padding:13px 24px;border-radius:8px;text-decoration:none;">{{ knopf_text }}</a>
+                </td>
+              </tr>
+            </table>
+            {% endif %}
+
+            <p class="rw-text" style="margin:20px 0 0;font-size:14px;line-height:22px;color:#334155;">{{ kontakt_satz }} <a href="tel:{{ marke.telefon }}" class="rw-akzent" style="color:#157a39;font-weight:600;text-decoration:none;">{{ marke.telefon_anzeige }}</a> &middot; <a href="mailto:{{ marke.kontakt }}" class="rw-akzent" style="color:#157a39;font-weight:600;text-decoration:none;">{{ marke.kontakt }}</a></p>
+            {% if kleingedrucktes %}
+            <p class="rw-leise" style="margin:14px 0 0;font-size:12px;line-height:18px;color:#5b697e;">{{ kleingedrucktes }}</p>
+            {% endif %}
+{% endblock %}

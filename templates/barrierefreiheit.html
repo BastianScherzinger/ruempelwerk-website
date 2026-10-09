@@ -1,0 +1,112 @@
+{% load static %}{# audit-ok V07: JSON-LD kommt über components/rw_seo.html (Tag rw_head_schema) - die Seite liefert genau einen ld+json-Block, check_seo prüft ihn #}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  {% comment %}Titel und Beschreibung einmal setzen: Tag und rw_seo-Include lesen dieselben Variablen (Regel 7, EIG297).{% endcomment %}
+  {% with seo_titel="Erklärung zur Barrierefreiheit – Rümpelwerk Mitteldeutschland" seo_beschr="Erklärung zur Barrierefreiheit der Website von Rümpelwerk Mitteldeutschland: Stand, bekannte Einschränkungen und Kontakt." %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{{ seo_titel }}</title>
+  <meta name="description" content="{{ seo_beschr }}">
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% include 'components/rw_seo.html' with seo_noindex=True seo_title=seo_titel seo_description=seo_beschr seo_path="/barrierefreiheit/" %}
+  {% include 'components/rw_css.html' with crit_page='impressum.html' %}
+  {% endwith %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  <div class="rw-leistungen-hero">
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>Barrierefreiheit</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Rechtliches</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(2rem,4vw,3rem);margin-bottom:14px;">
+          Erklärung zur Barrierefreiheit
+        </h1>
+        <p style="font-size:1rem;color:var(--rw-text-2);max-width:600px;line-height:1.8;">
+          Stand dieser Website, bekannte Einschränkungen und Ihr Weg zu uns
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <section class="rw-section" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      <div class="rw-legal-content">
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">Geltung des Barrierefreiheitsstärkungsgesetzes</h2>
+          <p>
+            {{ FIRMA_NAME }} (Inhaber: {{ FIRMA_INHABER }}) ist ein kleines, inhabergeführtes
+            Unternehmen mit weniger als zehn Beschäftigten und, nach unserer Kenntnis, einem
+            Jahresumsatz von höchstens zwei Millionen Euro. Damit sind wir ein Kleinstunternehmen im Sinne des
+            Barrierefreiheitsstärkungsgesetzes (BFSG). Für Kleinstunternehmen, die Dienstleistungen
+            erbringen, gelten die Anforderungen des Gesetzes nach § 3 Absatz 3 BFSG nicht. Wir
+            sind deshalb nicht verpflichtet, eine Erklärung zur Barrierefreiheit abzugeben.
+          </p>
+          <p>
+            Wir möchten, dass möglichst viele Menschen unsere Website nutzen können, und
+            veröffentlichen diese Erklärung freiwillig.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">Was wir umgesetzt haben</h2>
+          <ul class="rw-legal-list">
+            <li>Jede Seite hat einen Sprunglink „Zum Inhalt springen“ und genau einen Hauptbereich.</li>
+            <li>Die Seiten sind sprachlich als Deutsch gekennzeichnet und mit Überschriften gegliedert.</li>
+            <li>Die Farben der Seitenköpfe und des Fußbereichs werden gegen die Kontrastanforderungen nachgerechnet; ein automatischer Test hält das fest.</li>
+            <li>Der Tastaturfokus ist sichtbar; die Seiten sind darauf ausgelegt, sich mit der Tastatur bedienen zu lassen.</li>
+            <li>Bewegte Elemente werden abgeschaltet, wenn Ihr Gerät „Bewegung reduzieren“ eingestellt hat.</li>
+            <li>Bilder tragen in der Regel Beschreibungstexte; reine Zierbilder sind als solche gekennzeichnet.</li>
+            <li>Alle Angaben, die Sie zum Anfragen brauchen, stehen als Text auf der Seite, nicht nur in Bildern.</li>
+          </ul>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">Bekannte Einschränkungen</h2>
+          <p>
+            Wir prüfen die Seiten mit automatischen Werkzeugen. Eine Prüfung durch eine
+            unabhängige Stelle oder eine Zertifizierung gibt es nicht. Automatische Werkzeuge
+            finden nicht alles; einzelne Stellen können deshalb Barrieren enthalten, die wir
+            noch nicht kennen. Dazu zählen zum Beispiel eingebettete Inhalte Dritter wie die
+            Karte und die Google-Bewertungen, auf deren Aufbau wir keinen Einfluss haben.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">Barriere gefunden? Sagen Sie es uns</h2>
+          <p>
+            Wenn Sie auf einer Seite nicht weiterkommen oder Inhalte in einer anderen Form
+            brauchen, melden Sie sich bei uns. Wir antworten, so schnell wir können, und
+            helfen bei Bedarf direkt telefonisch bei Ihrer Anfrage.
+          </p>
+          <p>
+            Telefon ({{ FIRMA_ZEITEN_LANG }}) und WhatsApp: <a href="tel:{{ FIRMA_TELEFON }}" aria-label="{{ FIRMA_TELEFON_ANZEIGE }} anrufen" style="color:var(--rw-orange);">{{ FIRMA_TELEFON_ANZEIGE }}</a><br>
+            E-Mail: <a href="mailto:{{ CONTACT_EMAIL }}" style="color:var(--rw-orange);">{{ CONTACT_EMAIL }}</a><br>
+            Post: {{ FIRMA_NAME }}, {{ FIRMA_STRASSE }}, {{ FIRMA_PLZ }} {{ FIRMA_ORT }}
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+{% load static rw_schema rw_termin %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{{ seo_titel }}</title>
+  <meta name="description" content="{{ seo_beschreibung }}">
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% comment %}
+    Einzige Adresse der Terminbuchung (seit 02.10.2026, vorher auch /#termin
+    auf der Startseite). noindex bleibt: ein Buchungsformular ohne eigenen
+    Suchinhalt; Navigation, Hero und Laufband aller Seiten führen hierher.
+
+    seo_titel/seo_beschreibung kommen aus der View (Regel 14: {{ }} wird in
+    einem include-with-Argument nicht interpoliert - die Dauer "25 Minuten"
+    steckt sonst als getippter Text in zwei Dateien statt einmal in
+    zusagen.py::BESICHTIGUNG_DAUER).
+  {% endcomment %}
+  {% include 'components/rw_seo.html' with seo_noindex=True seo_title=seo_titel seo_description=seo_beschreibung seo_path="/termin/" %}
+  {% include 'components/rw_css.html' with crit_page='termin.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt" class="rw-formseite">
+    {% rw_termin als_h1=True form=form %}
+    {% if termin_gebucht %}{{ termin_gebucht|json_script:"rw-termin-gebucht" }}{% endif %}
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+  {% include 'components/rw_termin_js.html' %}
+
+</body>
+</html>

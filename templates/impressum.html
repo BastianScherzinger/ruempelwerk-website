@@ -1,0 +1,177 @@
+{% load static %}{# audit-ok V07: JSON-LD kommt über components/rw_seo.html (Tag rw_head_schema) - die Seite liefert genau einen ld+json-Block, check_seo prüft ihn #}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  {% comment %}Titel und Beschreibung einmal setzen: Tag und rw_seo-Include lesen dieselben Variablen (Regel 7, EIG297).{% endcomment %}
+  {% with seo_titel="Impressum – Rümpelwerk Mitteldeutschland" seo_beschr="Impressum und Anbieterkennzeichnung von Rümpelwerk Mitteldeutschland, Inhaber Oliver Pohl." %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{{ seo_titel }}</title>
+  <meta name="description" content="{{ seo_beschr }}">
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% include 'components/rw_seo.html' with seo_noindex=True seo_title=seo_titel seo_description=seo_beschr seo_path="/impressum/" %}
+  {% include 'components/rw_css.html' with crit_page='impressum.html' %}
+  {% endwith %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  <div class="rw-leistungen-hero">
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>Impressum</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Rechtliches</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(2rem,4vw,3rem);margin-bottom:14px;">
+          Impressum
+        </h1>
+        <p style="font-size:1rem;color:var(--rw-text-2);max-width:600px;line-height:1.8;">
+          Angaben gemäß § 5 DDG
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <section class="rw-section" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      <div class="rw-legal-content">
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">Angaben gemäß § 5 DDG</h2>
+          <p>
+            <strong>{{ FIRMA_NAME }}</strong><br>
+            Inhaber: {{ FIRMA_INHABER }}<br>
+            {{ FIRMA_STRASSE }}<br>
+            {{ FIRMA_PLZ }} {{ FIRMA_ORT }}<br>
+            {{ FIRMA_LAND }}
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">Kontakt</h2>
+          <p>
+            Telefon: <a href="tel:{{ FIRMA_TELEFON }}" aria-label="{{ FIRMA_TELEFON_ANZEIGE }} anrufen" style="color:var(--rw-orange);">{{ FIRMA_TELEFON_ANZEIGE }}</a> (auch per WhatsApp erreichbar)<br>
+            E-Mail: <a href="mailto:{{ CONTACT_EMAIL }}" style="color:var(--rw-orange);">{{ CONTACT_EMAIL }}</a><br>
+            Eine neue Servicerufnummer wird derzeit eingerichtet und an dieser Stelle veröffentlicht.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">Steuernummer</h2>
+          <p>
+            Steuernummer: {{ FIRMA_STEUERNUMMER }}<br>
+            Zuständiges Finanzamt: {{ FIRMA_FINANZAMT }}
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+          <p>
+            Oliver Pohl<br>
+            Cansteinstraße 14<br>
+            06110 Halle
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">Streitschlichtung</h2>
+          <p>
+            Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
+            Verbraucherschlichtungsstelle teilzunehmen.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">Haftung für Inhalte</h2>
+          <p>
+            Als Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG für eigene Inhalte auf diesen Seiten
+            nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 DDG sind wir als
+            Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde
+            Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige
+            Tätigkeit hinweisen.
+          </p>
+          <p>
+            Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den
+            allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch
+            erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei
+            Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">Haftung für Links</h2>
+          <p>
+            Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen
+            Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen.
+            Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der
+            Seiten verantwortlich.
+          </p>
+          <p>
+            Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße
+            überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar.
+            Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete
+            Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von
+            Rechtsverletzungen werden wir derartige Links umgehend entfernen.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">Urheberrecht</h2>
+          <p>
+            Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen
+            dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art
+            der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen
+            Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind
+            nur für den privaten, nicht kommerziellen Gebrauch gestattet.
+          </p>
+          <p>
+            Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die
+            Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche
+            gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden,
+            bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen
+            werden wir derartige Inhalte umgehend entfernen.
+          </p>
+        </div>
+
+        {% comment %}
+          Ziel von 'license' und 'acquireLicensePage' in jedem ImageObject
+          (apps/core/schema.py::bild_rechte, BILDRECHTE_PFAD). Wer die id
+          umbenennt, zieht die Konstante mit - test_schema.py prueft beides.
+        {% endcomment %}
+        <div class="rw-legal-block" id="bildrechte">
+          <h2 class="rw-legal-h2">Bildrechte</h2>
+          <p>
+            Die Vorher-Nachher-Fotos aus unseren Aufträgen (Galerie und Aktuelles), die
+            Fotos unserer Fahrzeuge und das Firmenlogo sind eigene Aufnahmen von
+            {{ FIRMA_NAME }}. Bildnachweis: © {{ FIRMA_NAME }}. Alle Rechte vorbehalten.
+          </p>
+          <p>
+            Eine Nutzung außerhalb dieser Website – etwa in einem Presseartikel oder auf
+            einer anderen Seite – ist nur mit unserer vorherigen schriftlichen Zustimmung
+            erlaubt. Eine Anfrage dazu richten Sie mit Angabe des Bildes und des
+            geplanten Zwecks an
+            <a href="mailto:{{ CONTACT_EMAIL }}" style="color:var(--rw-orange);">{{ CONTACT_EMAIL }}</a>.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>
+

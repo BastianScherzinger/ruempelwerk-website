@@ -1,0 +1,50 @@
+{% comment %}
+  Vergleichstabellen (G11) — eine Renderstelle für alle.
+
+  Erwartet `vergleiche` im Kontext: eine Liste von Dicts mit `titel`, `kopf`,
+  `zeilen`, `anker` und optional `fazit`/`fazit_frage`. Quellen sind
+  `services.py` (`vergleich`, `vergleich_2`, `hub_vergleich()`), nie das
+  Template.
+
+  Warum echte Tabellen: „X vs. Y" beantworten generative Systeme fast immer mit
+  einer Tabelle — und dafür brauchen sie eine Quelle, die schon eine hat.
+
+  Drei Dinge, die hier Pflicht sind und leicht wegfallen:
+
+  * **`<caption>`.** Löst ein Extraktor die Tabelle aus der Seite, ist sie sonst
+    unbeschriftet. Genau daran ist die Messung vom 27.08.2026 gescheitert: Sie
+    zählte captions, fand nur die der Preistabelle und schloss daraus, es gebe
+    „keinen einzigen Vergleich" — dabei waren sechs da.
+  * **Der Scroll-Container.** Ohne ihn scrollt auf dem Handy die ganze Seite
+    waagerecht. `tabindex="0"` dazu, sonst ist der Bereich per Tastatur nicht
+    scrollbar.
+  * **Eigener `anker` je Vergleich.** Die Komponente bringt pro Vergleich zwei
+    `id` mit: `{{ v.anker }}` und `{{ v.anker }}-frage` (beide aus
+    `rw_antwort.html`). Zwei Vergleiche mit demselben Anker wären doppelte `id`
+    (Regel 10); `services._vergleiche()` vergibt sie deshalb fortlaufend.
+
+  Das Fazit über der Tabelle ist der Teil, der zitiert wird — die Tabelle ist
+  der Beleg darunter. Es kommt aus derselben Komponente wie der
+  Antwort-zuerst-Block (Regel 27: nicht danebenbauen), nur eine
+  Überschriftenebene tiefer.
+{% endcomment %}
+{% for v in vergleiche %}
+<div class="rw-vergleich"{% if v.eigene_spalte %} data-eigene="{{ v.eigene_spalte }}"{% endif %}>
+  {% if v.fazit %}{% include 'components/rw_antwort.html' with antwort_frage=v.fazit_frage antwort_text=v.fazit antwort_id=v.anker antwort_stufe="h3" antwort_cta_url=None %}{% endif %}
+  <div class="rw-vergleich-scroll" tabindex="0" role="region" aria-label="{{ v.titel }}">
+    <table>
+      <caption class="rw-vergleich-titel">{{ v.titel }}</caption>
+      <thead>
+        <tr>{% for k in v.kopf %}{% if k %}<th scope="col">{{ k }}</th>{% else %}<td></td>{% endif %}{% endfor %}</tr>
+      </thead>
+      <tbody>
+        {% for zeile in v.zeilen %}
+        <tr>
+          {% for zelle in zeile %}{% if forloop.first %}<th scope="row">{{ zelle }}</th>{% else %}<td>{{ zelle }}</td>{% endif %}{% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endfor %}

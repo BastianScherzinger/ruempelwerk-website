@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<!-- data-rw-no-consent: interne Seite, nie ein Cookie-Banner (siehe components/rw_cookie_banner.html) -->
+<html lang="de" data-rw-no-consent>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>// TERMINE · RÜMPELWERK</title>
+  {% comment %}
+    Termine (Bauplan §5, 28.09.2026): Wochenvorlage (welche Uhrzeiten je Wochentag
+    offen sind), Sperren (einzelne Nicht-Zeiten) und die Liste der Terminanfragen mit
+    Statuspflege. Dieselbe Bildsprache wie anfragen.html/fehler.html, bewusst ohne
+    rw_*-Bausteine (docs/cms-intern.md).
+  {% endcomment %}
+  <style>
+    :root {
+      --g: #00ff88; --red: #f87171; --amber: #fbbf24;
+      --bg: #030712; --card: rgba(255,255,255,0.025);
+      --bdr: rgba(0,255,136,0.12); --bdr2: rgba(255,255,255,0.06);
+      --text: #e2e8f0; --muted: #94a3b8;
+      --mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+      --sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 0 24px; height: 56px; border-bottom: 1px solid var(--bdr); }
+    .titel { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 2px; color: var(--g); text-transform: uppercase; }
+    .logout-form button { background: transparent; border: 1px solid var(--bdr2); border-radius: 2px;
+      color: var(--muted); font-family: var(--mono); font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 1.5px; padding: 6px 14px; cursor: pointer; }
+    .logout-form button:hover, .logout-form button:focus-visible { border-color: var(--red); color: var(--red); }
+    .subnav { border-bottom: 1px solid var(--bdr2); padding: 0 24px; display: flex; gap: 4px; overflow-x: auto; }
+    .subnav-link { padding: 10px 16px; font-family: var(--mono); font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase; color: var(--muted); text-decoration: none;
+      border-bottom: 2px solid transparent; white-space: nowrap; }
+    .subnav-link:hover { color: var(--text); }
+    .subnav-link.active { color: var(--g); border-bottom-color: var(--g); }
+    main { max-width: 1040px; margin: 0 auto; padding: 32px 24px 64px; }
+    h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+    h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+    .hinweis { color: var(--muted); font-size: 0.9rem; line-height: 1.6; max-width: 70ch; margin-bottom: 24px; }
+    section.block { border: 1px solid var(--bdr2); border-radius: 6px; padding: 18px 20px; background: var(--card); margin-bottom: 28px; }
+    .wochentabelle { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 8px; }
+    .wochentabelle th, .wochentabelle td { padding: 6px 8px; border-bottom: 1px solid var(--bdr2); text-align: center; }
+    .wochentabelle th { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    .wochentabelle td:first-child, .wochentabelle th:first-child { text-align: left; }
+    .wochentabelle label { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+    .tag-aus { opacity: 0.45; }
+    .btn { background: transparent; border: 1px solid var(--bdr); border-radius: 3px; color: var(--g);
+      font-family: var(--mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 8px 16px; cursor: pointer; margin-top: 14px; }
+    .btn:hover, .btn:focus-visible { background: rgba(0,255,136,0.08); }
+    .btn.rot { border-color: rgba(248,113,113,0.4); color: var(--red); }
+    .sperren-liste { list-style: none; margin-top: 12px; font-size: 0.88rem; }
+    .sperren-liste li { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 8px 0; border-bottom: 1px solid var(--bdr2); }
+    .sperren-liste form { display: inline; }
+    .sperre-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-top: 14px; }
+    .sperre-form label { display: flex; flex-direction: column; gap: 4px; font-family: var(--mono);
+      font-size: 0.62rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    .sperre-form input { background: #0b1120; border: 1px solid var(--bdr2); border-radius: 3px;
+      color: var(--text); padding: 7px 9px; font-size: 0.85rem; font-family: var(--sans); }
+    .leer { padding: 24px; border: 1px dashed var(--bdr); border-radius: 6px; color: var(--g);
+      font-family: var(--mono); font-size: 0.8rem; }
+    .lead { background: var(--card); border: 1px solid var(--bdr2); border-left: 3px solid var(--g);
+      border-radius: 6px; padding: 14px 18px; margin-bottom: 10px; }
+    .lead.verdacht { border-left-color: var(--amber); opacity: 0.85; }
+    .lead.abgesagt { border-left-color: var(--muted); opacity: 0.7; }
+    .kopf { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+    .name { font-weight: 700; font-size: 1rem; }
+    .zeit { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+    .kontakt { margin-top: 6px; font-size: 0.9rem; line-height: 1.7; word-break: break-word; }
+    .kontakt a { color: var(--g); }
+    .details { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+    .status-form { margin-top: 10px; display: flex; gap: 8px; align-items: center; }
+    .status-form select { background: #0b1120; border: 1px solid var(--bdr2); border-radius: 3px;
+      color: var(--text); padding: 5px 8px; font-size: 0.82rem; }
+    .status-form button { background: transparent; border: 1px solid var(--bdr); border-radius: 3px;
+      color: var(--g); font-family: var(--mono); font-size: 0.6rem; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 5px 12px; cursor: pointer; }
+    :focus-visible { outline: 2px solid var(--g); outline-offset: 2px; }
+    @media (max-width: 600px) {
+      .topbar, .subnav { padding: 0 12px; } main { padding: 24px 16px 48px; }
+      .wochentabelle { font-size: 0.72rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <span class="titel">Termine</span>
+    <form class="logout-form" method="post" action="/{{ stats_path }}/logout/">
+      {% csrf_token %}
+      <button type="submit">DISCONNECT</button>
+    </form>
+  </header>
+
+  <nav class="subnav" aria-label="Dashboard">
+    <a href="/{{ stats_path }}/data/" class="subnav-link">📊 Statistiken</a>
+    <a href="/{{ stats_path }}/anfragen/" class="subnav-link">📥 Anfragen</a>
+    <a href="/{{ stats_path }}/aktuelles/" class="subnav-link">📰 Aktuelles verwalten</a>
+    <a href="/{{ stats_path }}/fehler/" class="subnav-link">🚨 Fehler</a>
+    <a href="/{{ stats_path }}/termine/" class="subnav-link active" aria-current="page">📅 Termine</a>
+  </nav>
+
+  <main>
+    <h1>Terminbuchung</h1>
+    <p class="hinweis">
+      Wochenvorlage, Sperren und die eingegangenen Besichtigungsanfragen aus
+      <code>/termin/</code>. Eine Anfrage ist keine Zusage – Oliver ruft zur Bestätigung an
+      (Status hier nachpflegen).
+    </p>
+
+    <section class="block" aria-labelledby="vorlage-titel">
+      <h2 id="vorlage-titel">Wochenvorlage</h2>
+      <p class="hinweis" style="margin-bottom:0;">Welche Uhrzeiten sind an welchem Wochentag grundsätzlich buchbar. Sonntag ist immer geschlossen und steht deshalb nicht in der Liste.</p>
+      {% if vorlage_fehler %}
+        <p class="fehler" role="alert" style="color:#f87171;margin:10px 0 0;">Wochenvorlage nicht gespeichert: {{ vorlage_fehler|join:" " }}</p>
+      {% endif %}
+      <form method="post" action="/{{ stats_path }}/termine/vorlage/">
+        {% csrf_token %}
+        <table class="wochentabelle">
+          <thead>
+            <tr>
+              <th scope="col">Tag</th>
+              <th scope="col">an</th>
+              {% for zeit in wochentage.0.zeiten %}<th scope="col">{{ zeit.zeit }}</th>{% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for tag in wochentage %}
+              <tr{% if not tag.aktiv %} class="tag-aus"{% endif %}>
+                <td>{{ tag.label }}</td>
+                <td><label><input type="checkbox" name="aktiv_{{ tag.wochentag }}" {% if tag.aktiv %}checked{% endif %}></label></td>
+                {% for z in tag.zeiten %}
+                  <td>
+                    <label>
+                      <input type="checkbox" name="zeit_{{ tag.wochentag }}_{{ z.zeit|slice:"0:2" }}-{{ z.zeit|slice:"3:5" }}" {% if z.an %}checked{% endif %}>
+                    </label>
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <button type="submit" class="btn">Wochenvorlage speichern</button>
+      </form>
+    </section>
+
+    <section class="block" aria-labelledby="sperren-titel">
+      <h2 id="sperren-titel">Sperren</h2>
+      {% if fehler %}
+        <p class="fehler" role="alert" style="color:#f87171;margin:10px 0 0;">Sperre nicht angelegt: {{ fehler|join:" " }}</p>
+      {% endif %}
+      <p class="hinweis" style="margin-bottom:0;">Einzelne Tage oder einzelne Uhrzeiten sperren (Urlaub, Feiertag außerhalb der Liste, Notfall). Uhrzeit leer lassen = ganzer Tag gesperrt.</p>
+      {% if sperren %}
+        <ul class="sperren-liste">
+          {% for s in sperren %}
+            <li>
+              <span>{{ s.datum|date:"d.m.Y" }}{% if s.uhrzeit %} · {{ s.uhrzeit|time:"H:i" }} Uhr{% else %} · ganzer Tag{% endif %}{% if s.grund %} – {{ s.grund }}{% endif %}</span>
+              <form method="post" action="/{{ stats_path }}/termine/sperre/{{ s.pk }}/del/">
+                {% csrf_token %}
+                <button type="submit" class="btn rot" style="margin-top:0;">Löschen</button>
+              </form>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="leer" style="margin-top:12px;">Keine Sperren eingetragen.</p>
+      {% endif %}
+      <form method="post" action="/{{ stats_path }}/termine/sperre/neu/" class="sperre-form">
+        {% csrf_token %}
+        <label>Datum <input type="date" name="datum" required></label>
+        <label>Uhrzeit (leer = ganzer Tag) <input type="time" name="uhrzeit"></label>
+        <label>Grund <input type="text" name="grund" maxlength="200"></label>
+        <button type="submit" class="btn">Sperre anlegen</button>
+      </form>
+    </section>
+
+    <section aria-labelledby="anfragen-titel">
+      <h2 id="anfragen-titel">Terminanfragen der letzten {{ tage }} Tage</h2>
+      {% for t in anfragen %}
+        <article class="lead{% if t.verdacht %} verdacht{% elif t.status == 'abgesagt' %} abgesagt{% endif %}">
+          <div class="kopf">
+            <span class="name">{{ t.name }}</span>
+            <span class="zeit">{{ t.beginn|date:"d.m.Y H:i" }} Uhr</span>
+          </div>
+          <div class="kontakt">
+            {% if t.telefon %}<a href="tel:{{ t.telefon }}">{{ t.telefon }}</a>{% endif %}
+            {% if t.telefon and t.email %} · {% endif %}
+            {% if t.email %}<a href="mailto:{{ t.email }}">{{ t.email }}</a>{% endif %}
+            <br>{{ t.get_besichtigungsart_display }} · {{ t.get_objektart_display }} · {{ t.adresse }}
+          </div>
+          {% if t.hinweis %}<p class="details">{{ t.hinweis }}</p>{% endif %}
+          <form method="post" action="/{{ stats_path }}/termine/{{ t.pk }}/status/" class="status-form">
+            {% csrf_token %}
+            <select name="status">
+              {% for wert, label in status_choices %}
+                <option value="{{ wert }}" {% if wert == t.status %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+            <button type="submit">Status setzen</button>
+          </form>
+        </article>
+      {% empty %}
+        <p class="leer">Keine Terminanfragen in den letzten {{ tage }} Tagen.</p>
+      {% endfor %}
+    </section>
+  </main>
+</body>
+</html>

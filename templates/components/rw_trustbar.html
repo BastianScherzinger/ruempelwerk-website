@@ -1,0 +1,49 @@
+{# ════════ TRUST-/RATING-LEISTE (Google) – wiederverwendbar ════════ #}
+<section class="rw-trustbar" aria-label="Bewertungen und Vertrauenssignale">
+  <div class="rw-container">
+    <div class="rw-trustbar-inner">
+      <a class="rw-trustbar-rating" href="{{ bewertung.profil_url }}" target="_blank" rel="noopener">
+        {% comment %}
+          Bewusst ohne aria-label: der zugängliche Name muss den sichtbaren
+          Text ("4,9 … 22 Google-Bewertungen") als zusammenhängende Kette
+          enthalten, sonst meldet axe label-content-name-mismatch. Der
+          sichtbare Text trägt den Zweck bereits; Logo und Sterne sind
+          aria-hidden.
+
+          Alle Zahlen hier kommen aus dem Context-Processor `bewertung`
+          (apps/core/data/reviews.py), NICHT aus dem Template. Sie standen hier
+          zwei Wellen lang hart als "5,0" und "8" – auf der Startseite, wenige
+          hundert Pixel unter derselben Leiste, stand zur selben Zeit "5,0 bei
+          22". Google verlangt Übereinstimmung zwischen AggregateRating und
+          sichtbarem Inhalt; eine hart getippte Zahl bricht das beim ersten
+          neuen Kunden.
+        {% endcomment %}
+        <span class="rw-trustbar-google" aria-hidden="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/></svg>
+        </span>
+        <span class="rw-trustbar-score">{{ bewertung.wert_anzeige }}</span>
+        <span class="rw-trustbar-stars" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01z"/></svg>
+        </span>
+        <span class="rw-trustbar-count"><strong>{{ bewertung.anzahl }}</strong> Google-Bewertungen</span>
+      </a>
+      <span class="rw-trustbar-divider" aria-hidden="true"></span>
+      {% comment %}
+        Upgrade Stufe 2 (Bauplan §3 Zeile 3): vier ruhige Textspalten statt
+        Symbolkacheln - die SVG-Icons je Chip sind entfernt, Text und Klassen
+        bleiben unveraendert (CSS traegt die neue, stillere Optik).
+      {% endcomment %}
+      <div class="rw-trustbar-chips">
+        <span class="rw-trustbar-chip">Kostenlose Besichtigung</span>
+        <span class="rw-trustbar-chip">Festpreis nach Besichtigung</span>
+        <span class="rw-trustbar-chip">Entsorgungsnachweis</span>
+        <span class="rw-trustbar-chip">{{ ZUSAGE_REAKTION }}</span>
+      </div>
+    </div>
+    {% include 'components/rw_bewertung_quelle.html' %}
+  </div>
+</section>

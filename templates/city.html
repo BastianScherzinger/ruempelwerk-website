@@ -1,0 +1,510 @@
+{% load static rw_schema rw_termin %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="{{ seo_description }}">
+  <title>{{ seo_title }}</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {# Seit der Hero ein Foto traegt, ist es das LCP-Element. Ohne Preload      #}
+  {# startet der Download erst, wenn der Parser den Body erreicht.            #}
+  <link rel="preload" as="image" media="(max-width:640px)" href="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif" fetchpriority="high">
+  <link rel="preload" as="image" media="(min-width:641px)" href="{% static 'images/hero-banner.avif' %}" type="image/avif" fetchpriority="high">
+
+  {% comment %}
+    Kopf-Contract wie auf jeder anderen oeffentlichen Seite. Bis zum
+    19.08.2026 stand hier eine handgebaute Kopie: robots, canonical, keywords,
+    author, Open Graph und Twitter Card einzeln getippt — und ohne
+    rw_seo.html damit auch **ohne den Consent-Mode-Bootstrap**. Auf allen 54
+    Stadtseiten wurde deshalb nie Google Analytics geladen, obwohl das genau
+    die Seiten sind, auf denen Besucher aus der Suche ankommen. Ebenso fehlten
+    hreflang (de / x-default) und og:image:width/height.
+
+    Kein seo_breadcrumb_name: Der Brotkrumen dieser Seite ist dreistufig und
+    steht schon in schema_bloecke. Beides zusammen ergaebe zwei
+    BreadcrumbList je Seite.
+  {% endcomment %}
+  {% include 'components/rw_seo.html' with seo_speakable="h1,.rw-antwort-text" %}
+  {% include 'components/rw_css.html' with crit_page='city.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  {# ════ HERO ════ #}
+  {# Banner-Optik wie die Startseite: Foto + dunkler Verlauf statt des alten  #}
+  {# Blob-Gradients. --city stellt das Grid auf eine Spalte (kein Rechner-    #}
+  {# Widget rechts) und deckelt die Hoehe etwas niedriger als auf der         #}
+  {# Startseite - hier zaehlt der Inhalt darunter.                            #}
+  <section class="rw-hero rw-hero--banner rw-hero--city rw-hero--stadt rw-hero--split">
+    {# AVIF zuerst, WebP als zweite Quelle, JPEG im img-Element als Rueckfall - 06.09.2026, P8/E3. #}
+    {# AVIF und WebP stehen bewusst auf EINER Zeile: build_critical_css nimmt die ersten 160 #}
+    {# Zeilen nach <body (Regel 28). Als eigene Zeile hat die AVIF-Quelle auf der Startseite #}
+    {# .rw-rechner-teaser aus dem kritischen CSS verdraengt - gemessen: -762 Byte (Regel 26). #}
+    <picture class="rw-hero-media">
+      <source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif"><source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.webp' %}" type="image/webp">
+      <source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.jpg' %}">
+      <source srcset="{% static 'images/hero-banner.avif' %}" type="image/avif"><source srcset="{% static 'images/hero-banner.webp' %}" type="image/webp">
+      <img src="{% static 'images/hero-banner.jpg' %}" width="1915" height="821" fetchpriority="high"
+           alt="Besenrein entrümpelter, heller Wohnraum nach einer Entrümpelung in {{ city.name }} durch Rümpelwerk Mitteldeutschland">
+    </picture>
+    <div class="rw-hero-overlay"></div>
+    <div class="rw-hero-inner">
+      <div class="rw-hero-content">
+        {% comment %}
+          Sichtbarer Brotkrumen (A16). Das BreadcrumbList-Schema dieser Seite
+          nennt seit F5 drei Stufen (Startseite > Standorte > Entrümpelung X);
+          auf der Seite selbst war davon nichts zu sehen. Fuer Besucher, die
+          ueber die Suche direkt hier einsteigen - und das ist bei einer
+          Stadtseite der Regelfall - war der Weg nach oben damit unsichtbar.
+          Die Stufen sind dieselben wie im Schema und muessen es bleiben.
+        {% endcomment %}
+        <nav class="rw-brotkrumen rw-brotkrumen--hell" aria-label="Brotkrumen">
+          <a href="/">Startseite</a> <span aria-hidden="true">›</span>
+          <a href="/standorte/">Standorte</a> <span aria-hidden="true">›</span>
+          Entrümpelung {{ city.name }}
+        </nav>
+        {% comment %}
+          Schlichte Ortszeile statt Eyebrow-Pille mit Punkt (Orchestrator-
+          Befund Punkt 1) - derselbe Ton wie .rwf-hero-ort auf der
+          Startseite ("Halle (Saale) · Leipzig · Umland"), hier der
+          recherchierte Standortsatz aus cities.py.
+        {% endcomment %}
+        <div class="rwf-hero-ort">{% if city.randgebiet %}Einsatzgebiet{% else %}Einsatzgebiet {{ city.region }}{% endif %}</div>
+        <h1>
+          Entrümpelung {{ city.name }}.<br>
+          <em>Festpreis. {% if city.randgebiet %}Termin nach Absprache.{% else %}Termin vor Ort in {{ city.response_dativ }}.{% endif %}</em>
+        </h1>
+        <p class="rw-hero-sub">
+          {{ city.intro_hook }} – professionelle
+          <strong>Haushaltsauflösung, Wohnungsauflösung, Kellerentrümpelung
+          und Nachlassräumung</strong> in {{ city.name }} und {{ city.region }}.
+          {% if city.randgebiet %}Einsatzgebiet mit längerer Anfahrt: Wir kommen ab einer kompletten Wohnungs- oder Hausauflösung, Termin nach Absprache.{% elif city.schnell %}Termin vor Ort in {{ city.response_dativ }}. Angebot {{ ZUSAGE_ANGEBOT }}.{% else %}Termin vor Ort in {{ city.response_dativ }}. Den Richtpreis berechnen Sie selbst im Rechner.{% endif %}
+        </p>
+        <div class="rwf-hero-knoepfe">
+          <a class="knopf knopf-hell knopf-gross" href="#rechner">Richtangebot berechnen
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="knopf knopf-rand-hell knopf-gross" href="/anfrage/">Kostenlos anfragen</a>
+        </div>
+        <ul class="rwf-hero-belege" aria-label="Bewertungen">
+          <li>
+            <span class="rwf-sterne" aria-hidden="true">{% for _ in "12345" %}<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01z"/></svg>{% endfor %}</span>
+            <span><b>{{ bewertung.wert_anzeige }}</b> bei Google · {{ bewertung.anzahl }} Google-Bewertungen</span>
+          </li>
+          <li><img class="rw-tl-icon" src="{% static trustlocal.rang_icon_pfad %}" alt="" width="18" height="18"> <span><b>Trustlocal {{ trustlocal.rang }}</b> · {{ trustlocal.name }}</span></li>
+        </ul>
+        {% include 'components/rw_bewertung_quelle.html' %}
+      </div>
+      <aside class="rwf-hero-calc" aria-label="Preisrechner">
+        {% comment %}
+          Der Rechner steht seit Upgrade Stufe 6b im Hero statt weiter unten
+          (Orchestrator-Befund Punkt 4) - genau EINE Einbindung je Seite,
+          IDs/JS unveraendert. rechner_stadtort belegt den Ort vor.
+        {% endcomment %}
+        {% comment %}
+          Ohne rechner_titel: in der schmalen Hero-Karte reicht die knappe
+          Kopfzeile der Komponente ("Richtpreis berechnen · in Xs · kostenlos"),
+          wie auf der Startseite - der ausfuehrliche Titel mit Stadtnamen
+          stand vorher in einer eigenen, breiteren Sektion weiter unten.
+        {% endcomment %}
+        {% include 'components/rw_rechner.html' with rechner_stadtort=city.name %}
+      </aside>
+    </div>
+  </section>
+
+  {% include 'components/rw_antwort.html' with antwort_frage=antwort_frage antwort_text=antwort_text %}
+
+  {# ════ LEISTUNGEN ════ #}
+  {% comment %}
+    IS21 (02.10.2026): Nur noch Name und Preis je Leistung. Die Beschreibungen
+    standen woertlich auf allen Stadtseiten und gehoeren auf die Leistungsseiten
+    (die Namen verlinken dorthin bzw. auf die Matrixseite der Stadt).
+  {% endcomment %}
+  <section class="rw-section rw-bg-2" style="padding:48px 0;" data-rw-reveal>
+    <div class="rw-container">
+      <h2 style="font-family:var(--rw-font-head);font-weight:500;font-size:clamp(1.75rem,3.2vw,2.625rem);color:var(--rw-text);text-align:center;margin-bottom:{% if raeum_wort %}12px{% else %}28px{% endif %};">
+        Entrümpelung in {{ city.name }} – unsere Leistungen
+      </h2>
+      {% if raeum_wort %}
+      <p style="text-align:center;color:var(--rw-text-2);max-width:580px;margin:0 auto 28px;">
+        {{ raeum_wort }} {{ city.name }}: Festpreis nach Besichtigung.
+      </p>
+      {% endif %}
+      {% comment %}
+        IS37 (02.10.2026): Den Ortsnamen trägt die Karte nur, wenn sie auf die
+        Matrixseite dieser Stadt führt - dort ist er Ankertext für das Ziel.
+        Führt sie auf /preisangebot/, wiederholte er nur die Überschrift.
+      {% endcomment %}
+      <div class="rw-svc-related">
+        <a href="{{ kat_urls.haushaltsaufloesung|default:'/preisangebot/' }}" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">Haushaltsauflösung{% if kat_urls.haushaltsaufloesung %} {{ city.name }}{% endif %}</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">ab {{ PREISE.haus.min_txt }} €</span>
+        </a>
+        <a href="{{ kat_urls.wohnungsaufloesung|default:'/preisangebot/' }}" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">Wohnungsauflösung{% if kat_urls.wohnungsaufloesung %} {{ city.name }}{% endif %}</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">ab {{ PREISE.wohnung.min_txt }} €</span>
+        </a>
+        <a href="{{ kat_urls.kellerentruempelung|default:'/preisangebot/' }}" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">Kellerentrümpelung{% if kat_urls.kellerentruempelung %} {{ city.name }}{% endif %}</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">ab {{ PREISE.keller.min_txt }} €</span>
+        </a>
+        <a href="{{ kat_urls.nachlassraeumung|default:'/preisangebot/' }}" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">Nachlassräumung{% if kat_urls.nachlassraeumung %} {{ city.name }}{% endif %}</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">ab {{ PREISE.wohnung.min_txt }} €</span>
+        </a>
+        <a href="{{ kat_urls.gewerbeentruempelung|default:'/preisangebot/' }}" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">Gewerbeentrümpelung{% if kat_urls.gewerbeentruempelung %} {{ city.name }}{% endif %}</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">ab {{ PREISE.gewerbe.min_txt }} €</span>
+        </a>
+        <a href="/dienstleistungen/" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">Sanierung & Renovierung</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">ab {{ PREIS_MODIFIKATOREN.maler_min }} €</span>
+        </a>
+      </div>
+      <p class="rw-kat-hinweis">
+        Mehr zur <a href="/haushaltsaufloesung/#ablauf">Haushaltsauflösung</a>.
+      </p>
+    </div>
+  </section>
+
+  {% comment %}
+    IS21 (02.10.2026): „Warum Rümpelwerk“ und der Sieben-Schritte-Ablauf stehen
+    nicht mehr auf den Stadtseiten. Beides war auf allen 57 Seiten fast
+    wortgleich (Ablauf 94 %, Gründe 96 %) und gehört auf die Leistungsseiten,
+    wo es steht (/haushaltsaufloesung/#ablauf). Mit dem sichtbaren Ablauf ist
+    auch das HowTo-Schema der Stadtseiten entfallen - ein Schema ohne
+    sichtbare Entsprechung waere ein Verstoss gegen Googles Regeln.
+  {% endcomment %}
+
+  {% if beispiele %}
+  {% comment %}
+    Durchgerechnete Ortsbeispiele (P1, 21.08.2026). Die Objektarten stammen aus
+    dem recherchierten Gebaeudebestand derselben Stadt (city_lokal 'bebauung'),
+    die Preise aus berechne_preis() - in den Daten steht keine einzige Zahl.
+
+    Warum das hier steht: Die Search Console zeigt fuer diese Seiten
+    Suchanfragen wie "haushaltsauflösung dresden kosten", "preise
+    haushaltsauflösung leipzig" und "günstige entrümpelung in halle" - alle
+    mit Impressionen und null Klicks. Die Seite beantwortete die Preisfrage
+    bisher nicht, sondern verlinkte sie.
+  {% endcomment %}
+  <section class="rw-section" style="padding:64px 0;" data-rw-reveal aria-labelledby="rw-bsp-titel">
+    <div class="rw-container" style="max-width:1000px;">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title" id="rw-bsp-titel">Was eine Entrümpelung in {{ city.name }} <em>kostet</em></h2>
+        <p class="rw-section-sub">
+          Typische Fälle vor Ort, mit Rechenweg.
+        </p>
+      </div>
+      <div class="rw-beispiele">
+        <div class="rw-beispiele-grid">
+          {% for b in beispiele %}
+          <div class="rw-beispiel">
+            <div class="rw-beispiel-kopf">{{ b.titel }}</div>
+            {% if b.beschreibung %}<p class="rw-beispiel-text">{{ b.beschreibung }}</p>{% endif %}
+            {% if b.schritte %}
+            <ol class="rw-beispiel-weg">
+              {% for s in b.schritte %}
+              <li><span class="rw-beispiel-weg-txt">{{ s.label }}</span><span class="rw-beispiel-weg-wert">{{ s.wert }}</span></li>
+              {% endfor %}
+            </ol>
+            {% endif %}
+            <div class="rw-beispiel-preis">{{ b.preis_txt }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        <p class="rw-beispiele-fuss">
+          Alle Beträge enthalten Entsorgung und Nachweis. Verbindlich ist erst der Festpreis nach der Besichtigung.
+          <a href="#rechner">Eigenen Fall durchrechnen →</a>
+        </p>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {% comment %}
+    PREISRECHNER: steht seit Upgrade Stufe 6b im Hero (Orchestrator-Befund
+    Punkt 4) - genau EINE Einbindung je Seite, keine zweite Instanz hier
+    unten. #rechner bleibt als Sprungziel gültig, weil die Komponente ihre
+    ID mit nach oben nimmt.
+  {% endcomment %}
+
+  {% if lokal %}
+  {# ════ VOR ORT: RECHERCHIERTE ANGABEN (F17) ════ #}
+  {% comment %}
+    Der Inhalt, der diese Seite von den 40 anderen Stadtseiten unterscheidet.
+    Quelle: apps/core/data/city_lokal.py - dort steht auch, warum nichts davon
+    geschaetzt werden darf. Fehlt ein Feld, faellt der Kasten weg.
+    Mehrzeilig MUSS {% comment %} sein - {# ... #} ist einzeilig und wuerde
+    woertlich ausgeliefert. Genau das hat check_seo hier gerade gemeldet.
+  {% endcomment %}
+  <section class="rw-section" style="padding:64px 0;" data-rw-reveal aria-labelledby="rw-lokal-titel">
+    <div class="rw-container" style="max-width:1000px;">
+      <h2 id="rw-lokal-titel" style="font-family:var(--rw-font-head);font-weight:500;font-size:clamp(1.5rem,2.4vw,1.875rem);color:var(--rw-text);text-align:center;margin-bottom:12px;">
+        Selbst entsorgen in <span style="color:var(--rw-orange);">{{ city.name }}</span> – was geht und was es kostet
+      </h2>
+      <p style="text-align:center;color:var(--rw-text-2);max-width:640px;margin:0 auto 34px;font-size:0.95rem;line-height:1.75;">
+        Die Regeln, die hier gelten.
+      </p>
+      <div class="rw-lokal-grid">
+        {% if lokal.hof %}
+        <article class="rw-lokal-karte">
+          <h3 class="rw-lokal-titel"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg> Wertstoffhof</h3>
+          <p>{{ lokal.hof }}</p>
+          <p class="rw-lokal-quelle">
+            {{ lokal.traeger }}, Stand
+            <time datetime="{{ lokal_stand_iso }}">{{ lokal_stand }}</time>.{% firstof lokal.hof_quelle lokal.quelle as hof_url %}{% if hof_url %}
+            <a href="{{ hof_url }}" target="_blank" rel="noopener">Quelle</a>{% endif %}
+          </p>
+        </article>
+        {% endif %}
+        {% if lokal.sperrmuell %}
+        <article class="rw-lokal-karte">
+          <h3 class="rw-lokal-titel"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 7h13v10H1z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="5.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/></svg> Sperrmüllabholung</h3>
+          <p>{{ lokal.sperrmuell }}</p>
+          <p class="rw-lokal-quelle">
+            {{ lokal.traeger }}, Stand
+            <time datetime="{{ lokal_stand_iso }}">{{ lokal_stand }}</time>.{% firstof lokal.sperrmuell_quelle lokal.quelle as sperr_url %}{% if sperr_url %}
+            <a href="{{ sperr_url }}" target="_blank" rel="noopener">Quelle</a>{% endif %}
+          </p>
+        </article>
+        {% endif %}
+        {% if lokal.parken %}
+        <article class="rw-lokal-karte">
+          <h3 class="rw-lokal-titel"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg> Halteverbot und Parken</h3>
+          <p>{{ lokal.parken }}</p>
+          <p class="rw-lokal-quelle">
+            {{ lokal.parken_stelle }}, Stand
+            <time datetime="{{ lokal_parken_stand_iso }}">{{ lokal_parken_stand }}</time>.{% if lokal.parken_quelle %}
+            <a href="{{ lokal.parken_quelle }}" target="_blank" rel="noopener">Quelle</a>{% endif %}
+          </p>
+        </article>
+        {% endif %}
+      </div>
+      {% if lokal.lokal_text %}
+      {% comment %}
+        IS21/IS22: je Stadt eigene, belegte Absätze (city_lokal.py, Feld lokal_text).
+        Jeder Absatz nennt seine Quellen und den Stand selbst - ein zitierter Absatz
+        ohne Beleg wäre ein undatiertes Fragment (G12). Städte ohne das Feld
+        bleiben unverändert.
+      {% endcomment %}
+      <div class="rw-lokal-notiz rw-lokal-text">
+        <h3 class="rw-lokal-notiz-titel">Weitere Angaben zu {{ city.name }}</h3>
+        {% for a in lokal.lokal_text %}
+        <p>{{ a.text }}</p>
+        <p class="rw-lokal-quelle">Nach {% for q in a.quellen %}<a href="{{ q.1 }}" target="_blank" rel="noopener">{{ q.0 }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}, Stand <time datetime="{{ lokal_stand_iso }}">{{ lokal_stand }}</time>.</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% if lokal.bebauung %}
+      <div class="rw-lokal-notiz">
+        <h3 class="rw-lokal-notiz-titel">Womit wir in {{ city.name }} rechnen</h3>
+        <p>{{ lokal.bebauung }}</p>{% if lokal.bebauung_quellen %}
+        <p class="rw-lokal-quelle">Nach {% for q in lokal.bebauung_quellen %}<a href="{{ q.1 }}" target="_blank" rel="noopener">{{ q.0 }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}, Stand <time datetime="{{ lokal_stand_iso }}">{{ lokal_stand }}</time>.</p>{% endif %}
+      </div>
+      {% endif %}
+      {% comment %}
+        Traeger, Stand und Quelle stehen seit G12 in JEDER Karte, nicht mehr
+        nur hier unten. Grund: Antwortmaschinen zitieren einen Absatz, nicht
+        eine Seite - und ein zitierter Absatz ohne Ort und Datum ist ein
+        undatiertes Fragment, das niemand nachpruefen kann. Hier bleibt nur
+        der Vorbehalt stehen, der sich auf alle Angaben zusammen bezieht.
+      {% endcomment %}
+      <p class="rw-lokal-fuss">
+        Alle Angaben ohne Gewähr.
+      </p>
+      {% if ratgeber_artikel %}
+      <p class="rw-lokal-fuss">
+        Mehr dazu im Ratgeber:
+        {% for r in ratgeber_artikel %}<a href="{{ r.url }}">{{ r.titel }}</a>{% if not forloop.last %} · {% endif %}{% endfor %}
+      </p>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% comment %}
+    Die Leistungsseiten dieser Stadt (A13). Steht bewusst im Fliesstext und
+    nicht in der Navigation: Nur kontextuelle Links zaehlen im Linkgraph von
+    check_seo --links - Navigation und Footer stehen auf jeder Seite und
+    machen jede Zahl gross. Genau diese Unterscheidung fehlte den entfernten
+    Landingpages, die "verlinkt" waren und trotzdem nie indexiert wurden.
+  {% endcomment %}
+  {% if matrix_seiten %}
+  <section class="rw-section" data-rw-reveal>
+    <div class="rw-container">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title">Einzelne Leistungen <em>in {{ city.name }}</em></h2>
+        <p class="rw-section-sub">
+          Jede dieser Seiten sagt, was bei dieser Leistung in {{ city.name }}
+          anders läuft – Gebäudebestand, Zufahrt und die kommunale Regelung.
+        </p>
+      </div>
+      <div class="rw-svc-related">
+        {% for ms in matrix_seiten %}
+        <a href="{{ ms.url }}" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">{{ ms.leistung.name }} {{ city.name }}</span>
+          <span class="rw-svc-related-text">{{ ms.hero_sub }}</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">Zur Seite →</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {# ════ EINZUGSGEBIET ════ #}
+  <section class="rw-section rw-bg-2" style="padding:56px 0;" data-rw-reveal>
+    <div class="rw-container">
+      <h2 style="font-family:var(--rw-font-head);font-weight:500;font-size:clamp(1.5rem,2.4vw,1.875rem);color:var(--rw-text);text-align:center;margin-bottom:12px;">
+        Unser Einzugsgebiet in <span style="color:var(--rw-orange);">{{ city.region }}</span>
+      </h2>
+      {% if lokal.ortsteile %}
+      {% comment %}
+        Die echten Orts- und Stadtteilnamen. Sie sind das einzige Vokabular,
+        das diese Seite mit keiner anderen Stadtseite teilt – und der Grund,
+        warum die Aehnlichkeit unter den Zielwert 0,80 gefallen ist (F17).
+        Nachgeschlagen, nicht geraten: ein erfundener Ortsteil ist so falsch
+        wie eine erfundene Gebuehr.
+        (Mehrzeilig muss der Kommentar diese Form haben – die kurze
+        Raute-Form ist einzeilig und landet sonst sichtbar auf der Seite.)
+      {% endcomment %}
+      <p class="rw-ortsteile">
+        Wir räumen in {{ city.name }} und Umgebung, unter anderem rund um
+        {% for t in lokal.ortsteile %}{% if forloop.last %} und {% elif not forloop.first %}, {% endif %}{{ t }}{% endfor %}.
+      </p>
+      {% endif %}
+      {% if startseite_link %}
+      <p class="rw-ortsteile">
+        Preise, Bewertungen und alle Leistungen auf einen Blick:
+        <a href="/">Entrümpelung {{ city.name }} und Leipzig</a>.
+      </p>
+      {% endif %}
+      {% if matrix_region %}
+      <p class="rw-ortsteile">
+        Einzelne Leistungen im Raum {{ matrix_region_stadt }}:
+        {% for ms in matrix_region %}<a href="{{ ms.url }}">{{ ms.h1 }}</a>{% if not forloop.last %} · {% endif %}{% endfor %}.
+      </p>
+      {% endif %}
+      <p style="text-align:center;color:var(--rw-text-2);max-width:560px;margin:0 auto 32px;font-size:0.95rem;">
+        Auch im Einsatz in:
+      </p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:760px;margin:0 auto 32px;">
+        {# Orte mit eigener Seite werden verlinkt, der Rest bleibt Text (F18). #}
+        {# Ein Link auf eine 404 waere schlechter als gar kein Link.           #}
+        {% for nc in nearby_links %}{% if nc.slug %}
+        <a href="/entrumpelung/{{ nc.slug }}/" class="rw-nachbar rw-nachbar--link"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Entrümpelung {{ nc.name }}</a>{% else %}
+        <span class="rw-nachbar"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> {{ nc.name }}</span>{% endif %}
+        {% endfor %}
+      </div>
+      <p style="text-align:center;font-size:0.88rem;color:var(--rw-text-3);">
+        {% if city.randgebiet %}Ihr Ort fehlt? Wir sagen ehrlich, ob sich die Anfahrt rechnet.{% else %}Ihr Ort fehlt?{% endif %}
+        <a href="/anfrage/" style="color:var(--rw-orange);text-decoration:underline;">Jetzt anfragen →</a>
+      </p>
+    </div>
+  </section>
+
+  {% include 'components/rw_ansprechpartner.html' %}
+
+  {% rw_termin_kurz %}
+
+  {# ════ FAQ ════ #}
+  <section class="rw-section" style="padding:64px 0;" data-rw-reveal>
+    <div class="rw-container" style="max-width:760px;">
+      <h2 style="font-family:var(--rw-font-head);font-weight:500;font-size:clamp(1.5rem,2.4vw,1.875rem);color:var(--rw-text);text-align:center;margin-bottom:36px;">
+        Häufige Fragen – Entrümpelung {{ city.name }}
+      </h2>
+      {% comment %}
+        Sichtbare FAQ und FAQPage-Schema kommen aus derselben Quelle
+        (schema.city_faq_paare). Vorher waren es zwei handgeschriebene Listen,
+        die auseinandergelaufen sind: Das Schema nannte 6 Fragen, die Seite
+        zeigte 5 - und drei davon in anderem Wortlaut. Google verlangt, dass
+        FAQ-Schema und sichtbarer Text uebereinstimmen.
+      {% endcomment %}
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        {% for frage, antwort in city_faq %}
+        {# G4: Fragment-Anker aus dem Fragetext, damit eine EINZELNE Antwort  #}
+        {# verlinkbar ist. Doppelte id faengt check_seo ab.                   #}
+        <details class="rw-faq-city" id="{{ frage|faq_anker }}">
+          <summary>
+            {{ frage }}
+            <span aria-hidden="true">+</span>
+          </summary>
+          {# audit-ok V02: Antwort aus schema.city_faq_paare() aus den Python-Konstanten cities.py und pricing.py, kein Nutzer-, CMS- oder DB-Eingang; trägt Links und strong #}
+          <p>{{ antwort|safe }}</p>
+        </details>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {# ════ INTERNAL LINKS ════ #}
+  <section class="rw-section rw-bg-2" style="padding:48px 0;" data-rw-reveal>
+    <div class="rw-container">
+      <h3 style="font-family:var(--rw-font-body);font-weight:600;font-size:0.875rem;color:var(--rw-text-2);text-align:center;margin-bottom:20px;text-transform:uppercase;letter-spacing:0.05em;">Entrümpelung in weiteren Städten</h3>
+      {% comment %}
+        Der Ankertext kommt aus w.anker, nicht aus w.name: Er haengt an DIESER
+        Seite, nicht am Ziel - alle Chips hier tragen dieselbe Form, ueber die
+        54 Stadtseiten verteilt sich das Signal auf vier (cities.anker_variante,
+        P1 vom 27.08.2026). Wer hier auf w.name zurueckstellt, macht die
+        Verteilung still wieder uniform.
+        Die Auswahl kommt aus cities.weitere_staedte() - die sechs Standorte
+        plus die geographisch naechsten Staedte. Bis zum 25.08.2026 standen
+        hier 30 hart getippte <a>-Tags; die uebrigen 24 Stadtseiten lagen
+        dadurch auf Klicktiefe 2 mit teils drei eingehenden Links (Befund W3).
+        Eine neue Stadt ist jetzt ein Eintrag in den Daten, kein Handgriff
+        in zwei Vorlagen.
+      {% endcomment %}
+      <div class="rw-ortchips">
+        <a class="rw-ortchip" href="/standorte/"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Alle Einsatzgebiete</a>
+        {% for w in weitere_staedte %}<a class="rw-ortchip" href="/entrumpelung/{{ w.slug }}/">{{ w.anker }}</a>
+        {% endfor %}<a class="rw-ortchip" href="/dienstleistungen/">Alle Leistungen →</a>
+      </div>
+    </div>
+  </section>
+
+  {# ════ CTA ════ #}
+  <section class="rw-cta" style="padding:60px 0;">
+    <div class="rw-container">
+      <div class="rw-cta-inner" data-rw-reveal style="text-align:center;max-width:640px;margin:0 auto;">
+        <h2 style="font-family:var(--rw-font-head);font-weight:500;font-size:clamp(1.75rem,3.2vw,2.625rem);color:var(--rw-text);margin-bottom:14px;">
+          Entrümpelung {{ city.name }} – <em style="color:var(--rw-orange);font-style:normal;">jetzt anfragen</em>
+        </h2>
+        <p style="font-size:1rem;color:var(--rw-text-2);margin-bottom:28px;">
+          Kostenlose Besichtigung {{ ZUSAGE_TERMIN_FRUEHESTENS }} buchbar, Festpreisangebot {{ ZUSAGE_ANGEBOT }}.
+          <strong style="color:var(--rw-orange);">{% if city.randgebiet %}Termin nach Absprache.{% else %}Termin vor Ort in {{ city.response_dativ }}.{% endif %}</strong>
+        </p>
+        <div class="rw-cta-actions">
+          <a href="/anfrage/" class="rw-btn-primary">Kostenlose Anfrage stellen</a>
+          <a href="#rechner" class="rw-btn-outline">Richtpreis berechnen</a>
+        </div>
+        {% comment %}
+          KV14 (02.10.2026): Seit IS21 fehlten den Stadtseiten im Inhalt die
+          anklickbare Nummer und eine Zeitzusage, die der Prüfer erkennt
+          („Termin vor Ort in 2–4 Stunden“ ist eine Spanne). Eine Zeile wie auf
+          den Leistungs- und Ratgeberseiten: Nummer aus firma.py, Antwortzeit
+          aus zusagen.ANTWORT (bestätigt, überall gleich).
+        {% endcomment %}
+        <p class="rw-tel-hint" style="justify-content:center;flex-wrap:wrap;margin-bottom:0;">
+          Lieber telefonisch? <a href="tel:{{ FIRMA_TELEFON }}" aria-label="{{ FIRMA_TELEFON_ANZEIGE }} anrufen">{{ FIRMA_TELEFON_ANZEIGE }}</a> · Antwort innerhalb von {{ ZUSAGE_ANTWORT_SPANNE }}.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+  {% comment %} Muss NACH rw_js.html stehen - das JS benutzt window.rwTrack. {% endcomment %}
+  {% include 'components/rw_rechner_js.html' %}
+
+</body>
+</html>

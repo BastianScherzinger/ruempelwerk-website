@@ -1,0 +1,21 @@
+{% load static %}{% comment %}
+── Schriften (selbst gehostet) ─────────────────────────────────────────
+Ersetzt die frueheren <link rel="preconnect"> auf die Google-Fonts-Hosts.
+Die Schriften liegen jetzt unter static/fonts/ und werden in
+static/css/ruempelwerk.css per @font-face eingebunden.
+
+Preload nur fuer die beiden latin-Dateien: das sind die einzigen Schnitte,
+die auf jeder Seite oberhalb der Falz gebraucht werden (Newsreader =
+Headlines/Hero, Hanken Grotesk = Fliesstext, seit Stufe 1 des Upgrades,
+28.09.2026). Sie werden so parallel zum CSS geladen statt erst nach dessen
+Parsing.
+Die latin-ext-Varianten werden bewusst NICHT vorgeladen – der Browser holt
+sie nur, falls ein Zeichen ausserhalb von latin vorkommt.
+
+Wird in den <head> jeder oeffentlichen Seite eingebunden.
+WICHTIG: {% templatetag openvariable %}# … #{% templatetag closevariable %}
+ist nur ein EINZEILIGER Kommentar – mehrzeilig muss es {% templatetag openblock %} comment {% templatetag closeblock %} sein,
+sonst landet der Kommentartext im ausgelieferten HTML.
+{% endcomment %}
+<link rel="preload" href="{% static 'fonts/newsreader-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{% static 'fonts/hankengrotesk-latin.woff2' %}" as="font" type="font/woff2" crossorigin>

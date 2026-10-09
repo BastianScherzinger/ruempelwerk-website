@@ -1,0 +1,66 @@
+<footer class="footer" role="contentinfo">
+  <div class="container">
+
+    <div class="footer-inner">
+      <!-- Brand Column -->
+      <div class="footer-brand">
+        <a href="{% url 'core:home' %}" class="footer-logo" aria-label="{{ SITE_NAME }}">
+          <div class="footer-logo-mark" aria-hidden="true">{{ SITE_NAME|first|upper }}</div>
+          <span class="footer-logo-name">{{ SITE_NAME }}</span>
+        </a>
+        <p class="footer-desc">
+          Professionelle Lösungen für moderne Unternehmen.
+          Gebaut mit Präzision. Designed für 2026.
+        </p>
+      </div>
+
+      <!-- Links Column 1 -->
+      <div>
+        <p class="footer-col-title">Navigation</p>
+        <nav class="footer-links" aria-label="Footer Navigation">
+          <a href="{% url 'core:home' %}" class="footer-link">Home</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'dashboard:index' %}" class="footer-link">Dashboard</a>
+            <a href="{% url 'accounts:profile' %}" class="footer-link">Profil</a>
+          {% endif %}
+        </nav>
+      </div>
+
+      <!-- Links Column 2 -->
+      <div>
+        <p class="footer-col-title">Account</p>
+        <nav class="footer-links" aria-label="Account Navigation">
+          {% if user.is_authenticated %}
+            <form action="{% url 'accounts:logout' %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="footer-link" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit;font-size:inherit;">
+                Abmelden
+              </button>
+            </form>
+          {% else %}
+            <a href="{% url 'accounts:login' %}" class="footer-link">Anmelden</a>
+          {% endif %}
+        </nav>
+      </div>
+
+      <!-- Links Column 3 -->
+      <div>
+        <p class="footer-col-title">Legal</p>
+        <nav class="footer-links" aria-label="Rechtliches">
+          <a href="#" class="footer-link">Impressum</a>
+          <a href="#" class="footer-link">Datenschutz</a>
+          <a href="#" class="footer-link">AGB</a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© {% now "Y" %} {{ SITE_NAME }}. Alle Rechte vorbehalten.</p>
+      <div class="footer-legal">
+        <a href="#">Datenschutz</a>
+        <a href="#">Impressum</a>
+      </div>
+    </div>
+
+  </div>
+</footer>

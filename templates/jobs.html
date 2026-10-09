@@ -1,0 +1,286 @@
+{% load static rw_antispam %}{# audit-ok V07: JSON-LD kommt über components/rw_seo.html (Tag rw_head_schema) - die Seite liefert genau einen ld+json-Block, check_seo prüft ihn #}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Offene Stellen als Entrümpelungshelfer, Teamleiter und Innendienst in Halle (Saale), Leipzig und Umgebung. Jetzt bewerben.">
+  <title>Jobs Entrümpelung: Einstieg ohne Erfahrung | Rümpelwerk</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {# LCP-Bild vorziehen: ohne Preload startet der Download erst, wenn #}
+  {# der Parser das Hero-Element im Body erreicht - also nach dem CSS. #}
+  <link rel="preload" as="image" href="{% static 'images/sprinter1.webp' %}" fetchpriority="high">
+  {% include 'components/rw_seo.html' with seo_title="Jobs Entrümpelung: Einstieg ohne Erfahrung | Rümpelwerk" seo_description="Offene Stellen als Entrümpelungshelfer, Teamleiter und Innendienst in Halle (Saale), Leipzig und Umgebung. Jetzt bewerben." seo_path="/jobs/" seo_breadcrumb_name="Jobs" seo_keywords="Jobs Entrümpelung, Arbeit Entrümpelung Leipzig, Stelle Haushaltsauflösung, Teamleiter Rümpelwerk, Fahrer Entrümpelung" seo_speakable="h1,.rw-antwort-text" %}
+  {% include 'components/rw_css.html' with crit_page='jobs.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt" class="rw-formseite">
+
+  {# ════════ PAGE HERO ════════ #}
+  <div class="rw-leistungen-hero rw-leistungen-hero--media">
+    <div class="rw-hero-media-bg"><img src="{% static 'images/sprinter1.webp' %}" alt="" width="900" height="675" fetchpriority="high"></div>
+    <div class="rw-hero-media-overlay"></div>
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>Jobs</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Wir wachsen – wachse mit uns</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(2rem,4vw,3rem);margin-bottom:14px;">
+          Jobs & <em>Karriere</em>
+        </h1>
+        <p data-rw-readmore style="font-size:1rem;color:var(--rw-text-2);max-width:600px;line-height:1.8;margin-bottom:28px;">
+          Drei offene Stellen bei Rümpelwerk Mitteldeutschland: anpacken als Helfer, ein Team führen
+          als Teamleiter oder im Büro in Halle (Saale) Anfragen und Einsätze koordinieren.
+        </p>
+        <div class="rw-promise-strip">
+          <span class="rw-promise-badge"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg> Festes Team</span>
+          <span class="rw-promise-badge green"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/></svg> Faire Bezahlung</span>
+          <span class="rw-promise-badge"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Mitteldeutschland</span>
+          <span class="rw-promise-badge"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17h4V5H2v12h3"/><path d="M15 8h4l3 3v6h-3"/><circle cx="7.5" cy="17.5" r="2"/><circle cx="17.5" cy="17.5" r="2"/></svg> Fahrzeuge gestellt</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'components/rw_antwort.html' with antwort_frage=antwort_frage antwort_text=antwort_text %}
+
+  {# ════════ TEAM INTRO ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg-2);padding:64px 0;">
+    <div class="rw-container">
+      <div data-rw-reveal style="max-width:780px;margin:0 auto;text-align:center;">
+        <div class="rw-section-badge" style="margin-bottom:20px;">Werde Teil unseres Teams</div>
+        <h2 style="font-family:var(--rw-font-head);font-weight:500;font-size:clamp(1.7rem,3vw,2.4rem);color:var(--rw-text);margin-bottom:28px;line-height:1.2;">
+          Wir wachsen – und suchen Menschen,<br><em style="color:var(--rw-orange);font-style:normal;">die mit uns wachsen wollen.</em>
+        </h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;text-align:left;margin-bottom:32px;">
+          <div class="rw-jobs-wert" data-rw-reveal data-rw-delay="1">
+            <div style="font-size:1.4rem;margin-bottom:10px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13c-1.5 1-2 5-2 6 1 0 5-.5 6-2M12 15l-3-3a14 14 0 0 1 8-8 14 14 0 0 1-2 8 5 5 0 0 1-3 3z"/><circle cx="15" cy="9" r="1.2"/></svg></div>
+            <p style="font-size:0.93rem;color:var(--rw-text-2);line-height:1.75;margin:0;">Du arbeitest in einem inhabergeführten Betrieb: Fragen klärst du direkt mit Oliver Pohl, nicht über mehrere Ebenen.</p>
+          </div>
+          <div class="rw-jobs-wert" data-rw-reveal data-rw-delay="2">
+            <div style="font-size:1.4rem;margin-bottom:10px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-3-3.87M9 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3"/><circle cx="16" cy="8" r="2.5"/></svg></div>
+            <p style="font-size:0.93rem;color:var(--rw-text-2);line-height:1.75;margin:0;">Ein Einsatz heißt Räumen, Sortieren, Laden und eine besenreine Übergabe – mit Fahrzeugen und Material, die der Betrieb stellt.</p>
+          </div>
+          <div class="rw-jobs-wert" data-rw-reveal data-rw-delay="3">
+            <div style="font-size:1.4rem;margin-bottom:10px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg></div>
+            <p style="font-size:0.93rem;color:var(--rw-text-2);line-height:1.75;margin:0;">Bei uns zählt nicht nur Erfahrung, sondern vor allem Einsatz, Motivation und Verlässlichkeit. Wenn du anpacken kannst, bist du genau richtig.</p>
+          </div>
+        </div>
+        <a href="#stellen" class="rw-jobs-sprung" style="display:inline-block;font-size:0.95rem;color:var(--rw-orange);font-weight:700;text-decoration:none;border:2px solid var(--rw-orange);border-radius:100px;padding:10px 28px;transition:background var(--rw-transition),color var(--rw-transition);" data-rw-hover="background:var(--rw-orange);color:#fff" data-rw-hover-aus="background:transparent;color:var(--rw-orange)">Zu den offenen Stellen ↓</a>
+      </div>
+    </div>
+  </section>
+
+  {# ════════ STELLENANGEBOTE ════════ #}
+  <section class="rw-section" id="stellen" style="background:var(--rw-bg);">
+    <div class="rw-container">
+
+      <div class="rw-section-header" data-rw-reveal style="margin-bottom:48px;">
+        <div class="rw-section-badge">Offene Stellen</div>
+        <h2 class="rw-section-title">Aktuelle <em>Stellenangebote</em></h2>
+        <p class="rw-section-sub">Bewerbung per E-Mail an <a href="mailto:{{ CONTACT_EMAIL }}" style="color:var(--rw-orange);">{{ CONTACT_EMAIL }}</a></p>
+      </div>
+
+      <ul style="display:grid;gap:24px;max-width:860px;margin:0 auto;">
+
+        {# Job 1 #}
+        <li class="rw-form-card" data-rw-reveal>
+          <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;">
+            <div class="rw-job-ico"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg></div>
+            <div style="flex:1;min-width:220px;">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+                <h3 class="rw-job-titel">
+                  Entrümpelungshelfer (m/w/d)
+                </h3>
+                <span class="rw-job-art">
+                  Vollzeit / Teilzeit
+                </span>
+              </div>
+              <p style="font-size:0.9rem;color:var(--rw-text-2);line-height:1.7;margin:0 0 16px;">
+                Unterstützung unserer Teams bei Entrümpelungen, Haushaltsauflösungen und Transporten.
+                Kein Vorwissen nötig – Tragen, Sortieren und Laden zeigen wir dir im Einsatz. Wichtig sind Zuverlässigkeit und Belastbarkeit.
+              </p>
+              <div style="display:flex;gap:8px 24px;flex-wrap:wrap;margin-bottom:20px;">
+                <span class="rw-job-merkmal"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Leipzig · Halle · Magdeburg</span>
+                <span class="rw-job-merkmal"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Flexibel</span>
+                <span class="rw-job-merkmal"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/></svg> Faire Vergütung</span>
+              </div>
+              <a href="/jobs/entruempelungshelfer/" aria-label="Entrümpelungshelfer (m/w/d) – mehr erfahren und bewerben"
+                 class="rw-btn-primary" style="display:inline-block;font-size:0.9rem;padding:10px 24px;">
+                Mehr erfahren & bewerben →
+              </a>
+            </div>
+          </div>
+        </li>
+
+        {# Job 2 #}
+        <li class="rw-form-card" data-rw-reveal data-rw-delay="1">
+          <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;">
+            <div class="rw-job-ico"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 0 0 12 0V3H6zM6 5H3v2a3 3 0 0 0 3 3M18 5h3v2a3 3 0 0 1-3 3M9 21h6M12 17v4"/></svg></div>
+            <div style="flex:1;min-width:220px;">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+                <h3 class="rw-job-titel">
+                  Teamleiter Entrümpelung (m/w/d)
+                </h3>
+                <span class="rw-job-art">
+                  Vollzeit
+                </span>
+              </div>
+              <p style="font-size:0.9rem;color:var(--rw-text-2);line-height:1.7;margin:0 0 16px;">
+                Du leitest ein 2–4-köpfiges Team vor Ort, koordinierst den Tagesablauf und stellst eine saubere Übergabe sicher.
+                Erfahrung in Entrümpelung oder Handwerk von Vorteil.
+              </p>
+              <div style="display:flex;gap:8px 24px;flex-wrap:wrap;margin-bottom:20px;">
+                <span class="rw-job-merkmal"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Mitteldeutschland</span>
+                <span class="rw-job-merkmal"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17h4V5H2v12h3"/><path d="M15 8h4l3 3v6h-3"/><circle cx="7.5" cy="17.5" r="2"/><circle cx="17.5" cy="17.5" r="2"/></svg> Firmenwagen</span>
+                <span class="rw-job-merkmal"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/></svg> Überdurchschnittlich</span>
+              </div>
+              <a href="/jobs/teamleiter/" aria-label="Teamleiter Entrümpelung (m/w/d) – mehr erfahren und bewerben"
+                 class="rw-btn-primary" style="display:inline-block;font-size:0.9rem;padding:10px 24px;">
+                Mehr erfahren & bewerben →
+              </a>
+            </div>
+          </div>
+        </li>
+
+        {# Job 3 #}
+        <li class="rw-form-card" data-rw-reveal data-rw-delay="2">
+          <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;">
+            <div class="rw-job-ico"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg></div>
+            <div style="flex:1;min-width:220px;">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+                <h3 class="rw-job-titel">
+                  Innendienst Mitarbeiter (m/w/d)
+                </h3>
+                <span class="rw-job-art">
+                  Vollzeit
+                </span>
+              </div>
+              <p style="font-size:0.9rem;color:var(--rw-text-2);line-height:1.7;margin:0 0 16px;">
+                Du bist kommunikativ, organisiert und behältst auch bei vielen Anfragen den Überblick?
+                Schnittstelle zwischen Kunden, Außendienst und Organisation. Einsatzort: Halle (Saale).
+              </p>
+              <div style="display:flex;gap:8px 24px;flex-wrap:wrap;margin-bottom:20px;">
+                <span class="rw-job-merkmal"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Halle (Saale)</span>
+                <span class="rw-job-merkmal"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 6h2M13 6h2M9 10h2M13 10h2M9 14h2M13 14h2M10 22v-4h4v4"/></svg> Büro & Organisation</span>
+                <span class="rw-job-merkmal"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg> Eintritt nach Absprache</span>
+              </div>
+              <a href="/jobs/innendienst/" aria-label="Innendienst Mitarbeiter (m/w/d) Kundenservice – mehr erfahren und bewerben"
+                 class="rw-btn-primary" style="display:inline-block;font-size:0.9rem;padding:10px 24px;">
+                Mehr erfahren & bewerben →
+              </a>
+            </div>
+          </div>
+        </li>
+
+      </ul>
+
+      {# Spontanbewerbung #}
+      <div style="max-width:640px;margin:56px auto 0;" data-rw-reveal>
+        <div style="text-align:center;margin-bottom:32px;">
+          <div class="rw-section-badge" style="margin-bottom:16px;">Kein passendes Angebot dabei?</div>
+          <h3 class="rw-jobs-spont-titel">
+            Spontanbewerbung jederzeit willkommen
+          </h3>
+          <p style="font-size:0.95rem;color:var(--rw-text-2);max-width:520px;margin:0 auto;line-height:1.7;">
+            Schreib uns kurz, wer du bist und als was du dich bewerben möchtest – wir melden uns.
+          </p>
+        </div>
+
+        <div class="rw-form-card" style="padding:32px 36px;">
+
+          {% if messages %}
+            {% for message in messages %}
+              <div class="{% if message.level_tag == 'error' %}rw-alert-error{% else %}rw-alert-success{% endif %}"{% if message.level_tag == 'error' %} role="alert"{% endif %}>
+                <span>{% if message.level_tag == 'error' %}<svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg>{% else %}<svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>{% endif %}</span>
+                <span>{{ message }}</span>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+            {# Honeypot, Zeitmessung und JavaScript-Nachweis - s. apps/core/antispam.py #}
+            {% rw_antispam %}
+
+            <div class="rw-form-grid" style="margin-bottom:20px;">
+              <div class="rw-form-group">
+                <label for="bew-name" class="rw-form-label">Name <span style="color:var(--rw-orange);">*</span></label>
+                {# BF24: Kennung am Fehlertext, aria-describedby am Feld - ohne die Bindung nennt der Screenreader beim Feld nur das Label. #}
+                {% if errors.name %}<p class="rw-form-error" id="bew-name-fehler" role="alert">{{ errors.name }}</p>{% endif %}
+                <input type="text" id="bew-name" name="name" maxlength="200" autocomplete="name"
+                  class="rw-form-input{% if errors.name %} rw-form-input--error{% endif %}"
+                  {% if errors.name %}aria-invalid="true" aria-describedby="bew-name-fehler"{% endif %}
+                  placeholder="Vor- und Nachname" value="{{ post.name|default:'' }}" required>
+              </div>
+              <div class="rw-form-group">
+                <label for="bew-email" class="rw-form-label">E-Mail <span style="color:var(--rw-orange);">*</span></label>
+                {% if errors.email %}<p class="rw-form-error" id="bew-email-fehler" role="alert">{{ errors.email }}</p>{% endif %}
+                <input type="email" id="bew-email" name="email" maxlength="200" autocomplete="email"
+                  class="rw-form-input{% if errors.email %} rw-form-input--error{% endif %}"
+                  {% if errors.email %}aria-invalid="true" aria-describedby="bew-email-fehler"{% endif %}
+                  placeholder="deine@email.de" value="{{ post.email|default:'' }}" required>
+              </div>
+            </div>
+
+            <div class="rw-form-group" style="margin-bottom:20px;">
+              <label for="bew-telefon" class="rw-form-label">Telefonnummer <span style="color:var(--rw-orange);">*</span></label>
+              {% if errors.telefon %}<p class="rw-form-error" id="bew-telefon-fehler" role="alert">{{ errors.telefon }}</p>{% endif %}
+              <input type="tel" id="bew-telefon" name="telefon" maxlength="50" autocomplete="tel"
+                class="rw-form-input{% if errors.telefon %} rw-form-input--error{% endif %}"
+                {% if errors.telefon %}aria-invalid="true" aria-describedby="bew-telefon-fehler"{% endif %}
+                placeholder="+49 …" value="{{ post.telefon|default:'' }}" required>
+            </div>
+
+            <div class="rw-form-group" style="margin-bottom:20px;">
+              <label for="bew-stelle" class="rw-form-label">Als was möchtest du dich bewerben? <span style="color:var(--rw-orange);">*</span></label>
+              {% if errors.stelle %}<p class="rw-form-error" id="bew-stelle-fehler" role="alert">{{ errors.stelle }}</p>{% endif %}
+              <input type="text" id="bew-stelle" name="stelle" maxlength="300" autocomplete="off"
+                class="rw-form-input{% if errors.stelle %} rw-form-input--error{% endif %}"
+                {% if errors.stelle %}aria-invalid="true" aria-describedby="bew-stelle-fehler"{% endif %}
+                placeholder="z.B. Entrümpelungshelfer, Fahrer, Teamleiter …"
+                value="{{ post.stelle|default:'' }}" required>
+            </div>
+
+            <div class="rw-form-group" style="margin-bottom:28px;">
+              <label for="bew-nachricht" class="rw-form-label">Kurze Nachricht (optional)</label>
+              <textarea id="bew-nachricht" name="nachricht" class="rw-form-textarea" maxlength="2000"
+                placeholder="Deine Fähigkeiten, Verfügbarkeit, Erfahrung …" style="min-height:110px;">{{ post.nachricht|default:'' }}</textarea>
+            </div>
+
+            <button type="submit" class="rw-btn-primary rw-form-submit">
+              <svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg> Jetzt bewerben →
+            </button>
+
+            <div class="rw-anfrage-promise" style="margin-top:16px;">
+              <span class="rw-anfrage-promise-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+              <span>Wir melden uns bei dir.</span>
+            </div>
+
+            <p style="font-size:0.78rem;color:var(--rw-text-3);text-align:center;margin-top:12px;">
+              Wir verwenden deine Angaben nur für das Bewerbungsverfahren und geben sie nur an die in der Datenschutzerklärung genannten Dienstleister weiter.
+              <a href="/datenschutz/" style="color:var(--rw-text-3);">Datenschutz</a>
+            </p>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>

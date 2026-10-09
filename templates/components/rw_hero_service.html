@@ -1,0 +1,61 @@
+{% load static %}
+{% comment %}
+  Hero MIT Rechner-Spalte fuer service.html und service_city.html (Upgrade
+  Stufe 6b, Bauplan §4). Für /entruempelung-kosten/ (Rechner unten in
+  grossem Format statt im Hero, siehe service_kosten.html) NICHT dieses
+  Include verwenden, sondern rw_hero_service_solo.html: build_critical_css
+  expandiert {% include %}-Tags rein textuell, ohne {% if %}/{% with %} zu
+  werten (_INCLUDE_RE in build_critical_css.py) - ein gemeinsames Template
+  mit einem "split"-Flag wuerde die Rechner-CSS in JEDEM Fall ins Critical
+  CSS ziehen, auch wenn split=False uebergeben wird. Deshalb zwei getrennte
+  Dateien statt eines Flags.
+
+  Erwartet: l (Leistung), rechner_objektart/-titel/-titel_em/-sub. Genau
+  EINE Rechner-Einbindung entsteht hier.
+{% endcomment %}
+<section class="rw-hero rw-hero--banner rw-hero--service rw-hero--split">
+  {# AVIF zuerst, WebP als zweite Quelle, JPEG im img-Element als Rueckfall - 06.09.2026, P8/E3. #}
+  {# AVIF und WebP stehen bewusst auf EINER Zeile: build_critical_css nimmt die ersten 160 #}
+  {# Zeilen nach <body (Regel 28). Als eigene Zeile hat die AVIF-Quelle auf der Startseite #}
+  {# .rw-rechner-teaser aus dem kritischen CSS verdraengt - gemessen: -762 Byte (Regel 26). #}
+  <picture class="rw-hero-media">
+    <source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif"><source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.webp' %}" type="image/webp">
+    <source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.jpg' %}">
+    <source srcset="{% static 'images/hero-banner.avif' %}" type="image/avif"><source srcset="{% static 'images/hero-banner.webp' %}" type="image/webp">
+    <img src="{% static 'images/hero-banner.jpg' %}" width="1915" height="821" fetchpriority="high"
+         alt="Besenrein geräumter, heller Wohnraum nach einer {{ l.name }} durch Rümpelwerk Mitteldeutschland">
+  </picture>
+  <div class="rw-hero-overlay"></div>
+  <div class="rw-hero-inner">
+    <div class="rw-hero-content">
+      <nav class="rw-brotkrumen rw-brotkrumen--hell" aria-label="Brotkrumen">
+        <a href="/">Startseite</a> <span aria-hidden="true">›</span>
+        <a href="/dienstleistungen/">Dienstleistungen</a> <span aria-hidden="true">›</span>
+        {{ l.label }}
+      </nav>
+      <h1>{{ l.h1 }}<br><em>{{ l.h1_em }}</em></h1>
+      <p class="rw-hero-sub">{{ l.hero_sub }}</p>
+      <div class="rwf-hero-knoepfe">
+        <a class="knopf knopf-hell knopf-gross" href="#rechner">Richtangebot berechnen
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="knopf knopf-rand-hell knopf-gross" href="/anfrage/">Kostenlos anfragen</a>
+      </div>
+      <ul class="rwf-hero-belege" aria-label="Bewertungen">
+        <li>
+          <span class="rwf-sterne" aria-hidden="true">{% for _ in "12345" %}<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01z"/></svg>{% endfor %}</span>
+          <span><b>{{ bewertung.wert_anzeige }}</b> bei Google · {{ bewertung.anzahl }} Google-Bewertungen</span>
+        </li>
+        <li><img class="rw-tl-icon" src="{% static trustlocal.rang_icon_pfad %}" alt="" width="18" height="18"> <span><b>Trustlocal {{ trustlocal.rang }}</b> · {{ trustlocal.name }}</span></li>
+      </ul>
+      {% include 'components/rw_bewertung_quelle.html' %}
+    </div>
+    <div class="rwf-hero-calc">
+      {% comment %}
+        Genau EINE Einbindung des Rechners je Seite, IDs/JS unveraendert.
+        'rechner_objektart' belegt Schritt 1 vor, wie zuvor.
+      {% endcomment %}
+      {% include 'components/rw_rechner.html' with rechner_objektart=l.objektart rechner_titel='' %}
+    </div>
+  </div>
+</section>

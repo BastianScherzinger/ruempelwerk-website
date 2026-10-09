@@ -1,0 +1,429 @@
+{% load static rw_schema %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Firmensitz Halle (Saale), Ansprechpartner für Leipzig, Magdeburg, Hannover, Dresden und Chemnitz. Servicegebiet und Termin vor Ort je Stadt.">
+  <title>{{ seo_title }}</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {# LCP-Bild vorziehen: ohne Preload startet der Download erst, wenn #}
+  {# der Parser das Hero-Element im Body erreicht - also nach dem CSS. #}
+  <link rel="preload" as="image" href="{% static 'images/lkw1.webp' %}" fetchpriority="high">
+  {% include 'components/rw_seo.html' with seo_title=seo_title seo_description="Firmensitz Halle (Saale), Ansprechpartner für Leipzig, Magdeburg, Hannover, Dresden und Chemnitz. Servicegebiet und Termin vor Ort je Stadt." seo_path="/standorte/" seo_breadcrumb_name="Standorte" seo_keywords="Entrümpelung Leipzig, Entrümpelung Halle, Haushaltsauflösung Leipzig, Entrümpelung Magdeburg, Entrümpelung Hannover, Entrümpelung Dresden, Entrümpelung Chemnitz, Haushaltsauflösung Magdeburg, Nachlassräumung Hannover, Kellerentrümpelung Dresden" seo_speakable="h1,.rw-antwort-text" %}
+  {% include 'components/rw_css.html' with crit_page='standorte.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  {# ════════ PAGE HERO ════════ #}
+  <div class="rw-leistungen-hero rw-leistungen-hero--media">
+    <div class="rw-hero-media-bg"><img src="{% static 'images/lkw1.webp' %}" alt="" width="900" height="778" fetchpriority="high"></div>
+    <div class="rw-hero-media-overlay"></div>
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>Einsatzgebiet</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Einsatzgebiet</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(2rem,4vw,3rem);margin-bottom:14px;">
+          Unser <em>Einsatzgebiet</em>
+        </h1>
+        <p data-rw-readmore style="font-size:1rem;color:var(--rw-text-2);max-width:620px;line-height:1.8;margin-bottom:28px;">
+          Firmensitz ist Halle (Saale). Entrümpelungen, Haushaltsauflösungen und Räumungen übernehmen wir in {{ REGIONEN_ANZAHL }} Regionen, jede mit einem persönlichen Ansprechpartner.
+        </p>
+        {% comment %}
+          Orchestrator-Befund Punkt 3: Icon-Chip-Vertrauensreihe raus, reiner
+          Text wie im homepage-Beleg (rwf-hero-belege).
+        {% endcomment %}
+        <ul class="rwf-hero-belege" aria-label="Zusagen">
+          <li><span>Festpreis nach Besichtigung</span></li>
+          <li><span>Ansprechpartner je Region</span></li>
+          <li><span>{{ ZUSAGE_REAKTION }}</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  {% include 'components/rw_antwort.html' with antwort_frage=antwort_frage antwort_text=antwort_text %}
+
+  {% include 'components/rw_trustbar.html' %}
+
+  {% comment %}
+    Zwei-Klick-Karte (P8, Befund A5). Die vier Karten laden erst auf Klick;
+    das Verhalten steckt in static/js/rw_karte.js, das Aussehen hier.
+
+    WARUM DIE REGELN HIER STEHEN UND NICHT IN ruempelwerk.css: Die Klassen
+    gehören zu genau einer Seite. Sie in die 202-KB-Datei zu legen, die alle
+    85 Seiten laden, hiesse, 84 Seiten Regeln mittragen zu lassen, die sie nie
+    brauchen - dasselbe Argument, mit dem der gemeinsame Critical-CSS-Block
+    seinerzeit je Seite aufgeteilt wurde. Vorbild ist der bereits vorhandene
+    <style>-Block für .rw-person-trigger weiter unten in dieser Datei.
+
+    Der Block steht VOR den Karten, nicht am Seitenende: So ist er geparst,
+    bevor der erste Platzhalter gezeichnet wird. Am Ende der Datei sähe man
+    beim ersten Aufruf kurz einen unformatierten Knopf.
+
+    Die Masse sind aus .rw-standort-map iframe (ruempelwerk.css:1578) und der
+    480-px-Regel (:1617) übernommen - der Platzhalter muss genau so gross sein
+    wie die Karte, die ihn ablöst, sonst springt das Layout beim Klick.
+  {% endcomment %}
+  <style>
+    .rw-karte-platzhalter {
+      width: 100%; flex: 1; min-height: 300px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px;
+      padding: 28px 22px; text-align: center;
+      /* Keine eigene Unterkante: .rw-standort-map-link darunter bringt schon
+         ein border-top mit, zusammen waere das eine 2 px starke Linie. */
+      background: var(--rw-bg-2); border: none;
+      cursor: pointer; font-family: inherit;
+      transition: background var(--rw-transition);
+    }
+    .rw-karte-platzhalter:hover { background: rgba(22,163,74,0.06); }
+    .rw-karte-platzhalter:focus-visible {
+      outline: 2px solid var(--rw-orange); outline-offset: -4px;
+    }
+    .rw-karte-platzhalter-ico {
+      width: 30px; height: 30px; color: var(--rw-orange);
+      fill: none; stroke: currentColor; stroke-width: 1.7;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+    .rw-karte-platzhalter-titel {
+      font-family: var(--rw-font-head); font-weight: 800;
+      font-size: 1rem; color: var(--rw-text);
+    }
+    .rw-karte-platzhalter-text {
+      font-size: 0.8rem; color: var(--rw-text-3);
+      line-height: 1.6; max-width: 30ch;
+    }
+    .rw-karte-platzhalter-cta {
+      margin-top: 6px; padding: 10px 20px;
+      border: 1px solid var(--rw-border); border-radius: var(--rw-radius);
+      font-family: var(--rw-font-head); font-weight: 700; font-size: 0.85rem;
+      color: var(--rw-text);
+      transition: border-color var(--rw-transition), color var(--rw-transition);
+    }
+    .rw-karte-platzhalter:hover .rw-karte-platzhalter-cta {
+      border-color: var(--rw-orange); color: var(--rw-orange);
+    }
+    @media (max-width: 480px) {
+      .rw-karte-platzhalter { min-height: 220px; }
+    }
+  </style>
+
+  {# ════════ STANDORTE ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      <div class="rw-standorte-list">
+
+        {# ── Standort 1: Leipzig & Halle ── #}
+        <div class="rw-standort-card" id="leipzig" data-rw-reveal>
+          <div class="rw-standort-info">
+            <div class="rw-standort-badge">Firmensitz Halle</div>
+            <h2 class="rw-standort-title">Leipzig <span>&amp;</span> Halle</h2>
+            <p class="rw-standort-cities"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Leipzig · Halle (Saale) · Merseburg · Weißenfels · Naumburg (Saale) · Zeitz · Bitterfeld-Wolfen · Köthen (Anhalt) · Delitzsch · Eilenburg · Torgau · Grimma · Sangerhausen · u.v.m.</p>
+            <p class="rw-standort-desc">
+              Hier liegt unser <strong>Firmensitz</strong>. Entrümpelung Leipzig, Halle
+              und dem gesamten Einzugsgebiet – <strong>Haushaltsauflösung, Wohnungsauflösung,
+              Kellerentrümpelung, Nachlassräumung und Gewerbeentrümpelung</strong> zum Festpreis
+              nach Besichtigung. Besichtigungstermine {{ ZUSAGE_TERMIN_FRUEHESTENS }} buchbar.
+            </p>
+            <div class="rw-standort-tags">
+              <span class="rw-standort-tag"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Kostenlose Besichtigung</span>
+              <span class="rw-standort-tag"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Termin nach Absprache</span>
+              <span class="rw-standort-tag"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Firmensitz Halle</span>
+            </div>
+            <div class="rw-person-trigger" data-rw-click="rwOpenPerson" role="button" tabindex="0" aria-haspopup="dialog"
+                 data-name="Oliver Pohl"
+                 data-title="Inhaber · Leipzig &amp; Halle"
+                 data-role="Gründer &amp; Inhaber · Rümpelwerk Mitteldeutschland"
+                 data-img="{% static 'images/regionalleiter_leipzig.webp' %}"
+                 data-bio="Oliver Pohl gründete Rümpelwerk Mitteldeutschland und ist als Inhaber der direkte Ansprechpartner für Kunden in Leipzig, Halle und Umgebung – von der ersten Anfrage bis zur besenreinen Übergabe."
+                 data-quote="Jeder Auftrag ist für mich Vertrauenssache. Ich gebe mein Bestes, damit unsere Kunden sich keine Sorgen machen müssen."
+                 style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--rw-bg-2);border-radius:var(--rw-radius-lg);border:1px solid var(--rw-border);margin-top:20px;cursor:pointer;transition:border-color 220ms,box-shadow 220ms;">
+              <img width="128" height="125" src="{% static 'images/regionalleiter_leipzig_sm.webp' %}" alt="Porträt von Oliver Pohl, Inhaber, zuständig für Leipzig und Halle" style="width:60px;height:60px;border-radius:50%;object-fit:cover;object-position:center 20%;flex-shrink:0;border:2px solid var(--rw-orange);" loading="lazy" decoding="async">
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:0.7rem;color:var(--rw-text-3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Ihr Ansprechpartner</div>
+                <div style="font-family:var(--rw-font-head);font-weight:900;font-size:0.95rem;color:var(--rw-text);margin-bottom:2px;">Oliver Pohl</div>
+                <div style="font-size:0.8rem;color:var(--rw-orange);font-weight:700;">Inhaber · Leipzig &amp; Halle</div>
+              </div>
+              <span style="font-size:0.72rem;color:var(--rw-text-3);font-weight:700;white-space:nowrap;flex-shrink:0;" aria-hidden="true">Profil ansehen →</span>
+            </div>
+            <a href="/anfrage/" class="rw-btn-primary" style="margin-top:20px;align-self:flex-start;">Jetzt anfragen →</a>
+          </div>
+          <div class="rw-standort-map">
+            <button type="button" class="rw-karte-platzhalter"
+                    data-rw-karte="https://www.openstreetmap.org/export/embed.html?bbox=11.8,51.2,12.6,51.6&amp;layer=mapnik&amp;marker=51.3397,12.3731"
+                    data-rw-karte-titel="Karte Leipzig &amp; Halle"
+                    aria-label="Karte Leipzig &amp; Halle laden – dabei wird Ihre IP-Adresse an OpenStreetMap übertragen">
+              <svg class="rw-karte-platzhalter-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span class="rw-karte-platzhalter-titel">Karte laden</span>
+              <span class="rw-karte-platzhalter-text">Dabei wird Ihre IP-Adresse an OpenStreetMap übertragen.</span>
+              <span class="rw-karte-platzhalter-cta">Karte anzeigen</span>
+            </button>
+            <a href="https://www.openstreetmap.org/?mlat=51.3397&mlon=12.3731#map=11/51.3397/12.3731" target="_blank" rel="noopener" aria-label="Karte Leipzig & Halle in OpenStreetMap öffnen" class="rw-standort-map-link">Größere Karte ansehen ↗</a>
+          </div>
+        </div>
+
+        {# ── Standort 2: Magdeburg ── #}
+        <div class="rw-standort-card rw-standort-card--reverse" id="magdeburg" data-rw-reveal data-rw-delay="1">
+          <div class="rw-standort-info">
+            <div class="rw-standort-badge">Einsatzgebiet</div>
+            <h2 class="rw-standort-title">Magdeburg</h2>
+            <p class="rw-standort-cities"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Magdeburg · Dessau-Roßlau · Lutherstadt Wittenberg · Stendal · Quedlinburg · Aschersleben · Bernburg (Saale) · u.v.m.</p>
+            <p class="rw-standort-desc">
+              <strong>Entrümpelung Magdeburg</strong> – Wohnungsauflösung, Kellerentrümpelung,
+              Gewerberäumung und Nachlassräumung im Raum Sachsen-Anhalt.
+              Besichtigungstermine {{ ZUSAGE_TERMIN_FRUEHESTENS }} buchbar.
+            </p>
+            <div class="rw-standort-tags">
+              <span class="rw-standort-tag"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Kostenlose Besichtigung</span>
+              <span class="rw-standort-tag"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> {{ ZUSAGE_ANTWORT }}</span>
+              <span class="rw-standort-tag"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Entsorgungsnachweis auf Wunsch</span>
+            </div>
+            <div class="rw-person-trigger" data-rw-click="rwOpenPerson" role="button" tabindex="0" aria-haspopup="dialog"
+                 data-name="Christoph Regner"
+                 data-title="Regionalleiter Magdeburg"
+                 data-role="Entrümpelung Magdeburg &amp; Sachsen-Anhalt"
+                 data-img=""
+                 data-bio="Christoph Regner ist Regionalleiter für Magdeburg und Sachsen-Anhalt. Als persönlicher Ansprechpartner steht er Kunden in der Region vom ersten Kontakt bis zur besenreinen Übergabe zur Seite."
+                 data-quote="Wir sind für Sie da – schnell, zuverlässig und mit vollem Einsatz in Magdeburg und Umgebung."
+                 style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--rw-bg-2);border-radius:var(--rw-radius-lg);border:1px dashed var(--rw-border);margin-top:20px;cursor:pointer;transition:border-color 220ms,box-shadow 220ms;">
+              <div style="width:60px;height:60px;border-radius:50%;background:var(--rw-bg-2);border:2px dashed var(--rw-border);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--rw-text-3);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+              </div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:0.7rem;color:var(--rw-text-3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Ihr Ansprechpartner</div>
+                <div style="font-family:var(--rw-font-head);font-weight:900;font-size:0.95rem;color:var(--rw-text);margin-bottom:2px;">Christoph Regner</div>
+                <div style="font-size:0.8rem;color:var(--rw-orange);font-weight:700;">Regionalleiter Magdeburg</div>
+              </div>
+              <span style="font-size:0.72rem;color:var(--rw-text-3);font-weight:700;white-space:nowrap;flex-shrink:0;" aria-hidden="true">Profil ansehen →</span>
+            </div>
+            <a href="/anfrage/" class="rw-btn-primary" style="margin-top:20px;align-self:flex-start;">Jetzt anfragen →</a>
+          </div>
+          <div class="rw-standort-map">
+            <button type="button" class="rw-karte-platzhalter"
+                    data-rw-karte="https://www.openstreetmap.org/export/embed.html?bbox=11.4,51.9,12.0,52.4&amp;layer=mapnik&amp;marker=52.1205,11.6276"
+                    data-rw-karte-titel="Karte Magdeburg"
+                    aria-label="Karte Magdeburg laden – dabei wird Ihre IP-Adresse an OpenStreetMap übertragen">
+              <svg class="rw-karte-platzhalter-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span class="rw-karte-platzhalter-titel">Karte laden</span>
+              <span class="rw-karte-platzhalter-text">Dabei wird Ihre IP-Adresse an OpenStreetMap übertragen.</span>
+              <span class="rw-karte-platzhalter-cta">Karte anzeigen</span>
+            </button>
+            <a href="https://www.openstreetmap.org/?mlat=52.1205&mlon=11.6276#map=11/52.1205/11.6276" target="_blank" rel="noopener" aria-label="Karte Magdeburg in OpenStreetMap öffnen" class="rw-standort-map-link">Größere Karte ansehen ↗</a>
+          </div>
+        </div>
+
+        {# ── Standort 3: Hannover ── #}
+        <div class="rw-standort-card" id="hannover" data-rw-reveal data-rw-delay="2">
+          <div class="rw-standort-info">
+            <div class="rw-standort-badge">Einsatzgebiet</div>
+            <h2 class="rw-standort-title">Hannover</h2>
+            <p class="rw-standort-cities"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Hannover · Niedersachsen · Umgebung</p>
+            <p class="rw-standort-desc">
+              <strong>Entrümpelung Hannover</strong> – Haushaltsauflösung, Wohnungsübergabe,
+              Nachlassräumung und Gewerbeentrümpelung in Niedersachsen.
+              Termin nach Absprache und ein Festpreis nach Besichtigung – auch in der
+              Region Hannover.
+            </p>
+            <div class="rw-standort-tags">
+              <span class="rw-standort-tag"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Kostenlose Besichtigung</span>
+              <span class="rw-standort-tag"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg> Angebot {{ ZUSAGE_ANGEBOT }}</span>
+              <span class="rw-standort-tag"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg> Entsorgungsnachweis auf Wunsch</span>
+            </div>
+            <a href="/anfrage/" class="rw-btn-primary" style="margin-top:20px;align-self:flex-start;">Jetzt anfragen →</a>
+          </div>
+          <div class="rw-standort-map">
+            <button type="button" class="rw-karte-platzhalter"
+                    data-rw-karte="https://www.openstreetmap.org/export/embed.html?bbox=9.5,52.2,10.1,52.6&amp;layer=mapnik&amp;marker=52.3759,9.7320"
+                    data-rw-karte-titel="Karte Hannover"
+                    aria-label="Karte Hannover laden – dabei wird Ihre IP-Adresse an OpenStreetMap übertragen">
+              <svg class="rw-karte-platzhalter-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span class="rw-karte-platzhalter-titel">Karte laden</span>
+              <span class="rw-karte-platzhalter-text">Dabei wird Ihre IP-Adresse an OpenStreetMap übertragen.</span>
+              <span class="rw-karte-platzhalter-cta">Karte anzeigen</span>
+            </button>
+            <a href="https://www.openstreetmap.org/?mlat=52.3759&mlon=9.7320#map=11/52.3759/9.7320" target="_blank" rel="noopener" aria-label="Karte Hannover in OpenStreetMap öffnen" class="rw-standort-map-link">Größere Karte ansehen ↗</a>
+          </div>
+        </div>
+
+        {# ── Standort 4: Dresden & Chemnitz ── #}
+        <div class="rw-standort-card rw-standort-card--reverse" id="dresden" data-rw-reveal data-rw-delay="3">
+          <div class="rw-standort-info">
+            <div class="rw-standort-badge">Einsatzgebiet</div>
+            <h2 class="rw-standort-title">Dresden <span>&amp;</span> Chemnitz</h2>
+            <p class="rw-standort-cities"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Dresden · Chemnitz · Zwickau · Plauen · Görlitz · Bautzen · Riesa · Meißen · Pirna · Freital · u.v.m.</p>
+            <p class="rw-standort-desc">
+              <strong>Entrümpelung Dresden & Chemnitz</strong> – Haushaltsauflösung,
+              Nachlassräumung, Kellerentrümpelung und Erbschaftsräumung in Sachsen.
+              Großes Einsatzgebiet – Termin nach Absprache und besenreine Übergabe.
+            </p>
+            <div class="rw-standort-tags">
+              <span class="rw-standort-tag"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Kostenlose Besichtigung</span>
+              <span class="rw-standort-tag"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> {{ ZUSAGE_ANTWORT }}</span>
+              <span class="rw-standort-tag"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg> Festpreis nach Besichtigung</span>
+            </div>
+            <div class="rw-person-trigger" data-rw-click="rwOpenPerson" role="button" tabindex="0" aria-haspopup="dialog"
+                 data-name="Viktor Grebe"
+                 data-title="Regionalleiter Dresden &amp; Chemnitz"
+                 data-role="Entrümpelung Dresden, Chemnitz &amp; Sachsen"
+                 data-img="{% static 'images/regionalleiter_dresden.webp' %}"
+                 data-bio="Viktor Grebe ist Regionalleiter für Dresden &amp; Chemnitz und persönlicher Ansprechpartner für Kunden im Raum Sachsen – von der ersten Anfrage bis zur besenreinen Übergabe."
+                 data-quote="Professionalität und Verlässlichkeit – das ist unser Anspruch bei jedem Einsatz in Dresden, Chemnitz und Umgebung."
+                 style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--rw-bg-2);border-radius:var(--rw-radius-lg);border:1px solid var(--rw-border);margin-top:20px;cursor:pointer;transition:border-color 220ms,box-shadow 220ms;">
+              <img width="128" height="178" src="{% static 'images/regionalleiter_dresden_sm.webp' %}" alt="Porträt von Viktor Grebe, Regionalleiter für Dresden und Chemnitz" style="width:60px;height:60px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid var(--rw-orange);" loading="lazy" decoding="async">
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:0.7rem;color:var(--rw-text-3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Ihr Ansprechpartner</div>
+                <div style="font-family:var(--rw-font-head);font-weight:900;font-size:0.95rem;color:var(--rw-text);margin-bottom:2px;">Viktor Grebe</div>
+                <div style="font-size:0.8rem;color:var(--rw-orange);font-weight:700;">Regionalleiter Dresden &amp; Chemnitz</div>
+              </div>
+              <span style="font-size:0.72rem;color:var(--rw-text-3);font-weight:700;white-space:nowrap;flex-shrink:0;" aria-hidden="true">Profil ansehen →</span>
+            </div>
+            <a href="/anfrage/" class="rw-btn-primary" style="margin-top:20px;align-self:flex-start;">Jetzt anfragen →</a>
+          </div>
+          <div class="rw-standort-map">
+            <button type="button" class="rw-karte-platzhalter"
+                    data-rw-karte="https://www.openstreetmap.org/export/embed.html?bbox=12.7,50.6,13.9,51.2&amp;layer=mapnik&amp;marker=51.0509,13.7383"
+                    data-rw-karte-titel="Karte Dresden &amp; Chemnitz"
+                    aria-label="Karte Dresden &amp; Chemnitz laden – dabei wird Ihre IP-Adresse an OpenStreetMap übertragen">
+              <svg class="rw-karte-platzhalter-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span class="rw-karte-platzhalter-titel">Karte laden</span>
+              <span class="rw-karte-platzhalter-text">Dabei wird Ihre IP-Adresse an OpenStreetMap übertragen.</span>
+              <span class="rw-karte-platzhalter-cta">Karte anzeigen</span>
+            </button>
+            <a href="https://www.openstreetmap.org/?mlat=51.0509&mlon=13.7383#map=10/51.0509/13.7383" target="_blank" rel="noopener" aria-label="Karte Dresden & Chemnitz in OpenStreetMap öffnen" class="rw-standort-map-link">Größere Karte ansehen ↗</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {# ════════ ALLE STÄDTE ════════ #}
+  {% comment %}
+    Bis F18 verlinkte diese Seite keine einzige der 53 Stadtseiten. 23 davon
+    hatten null eingehende interne Links und standen in der Search Console
+    auf "Gefunden - zurzeit nicht indexiert".
+    {# ... #} ist einzeilig - mehrzeilig braucht es {% comment %}.
+  {% endcomment %}
+  <section class="rw-section" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      <h2 class="rw-section-title" style="margin-bottom:12px;">Alle Städte im Servicegebiet</h2>
+      <p style="text-align:center;color:var(--rw-text-2);max-width:640px;margin:0 auto 36px;font-size:0.95rem;">
+        {{ staedte_gesamt }} Städte mit eigener Seite – Preise, Ablauf und Ansprechpartner für die Region.
+        <a href="/entrumpelung/" style="color:var(--rw-orange);font-weight:600;">Übersicht mit Preistabelle →</a>
+      </p>
+
+      <div class="rw-staedte-grid">
+        {% for g in standort_gruppen %}
+        <div class="rw-staedte-gruppe" data-rw-reveal>
+          <h3 class="rw-staedte-gruppe-titel">
+            Region {{ g.standort }}
+            <span class="rw-staedte-anzahl">{{ g.staedte|length }}</span>
+          </h3>
+          {% if g.randgebiet %}
+          <p class="rw-staedte-hinweis">
+            Außerhalb des Kerngebiets: Wir fahren dorthin bei größeren Aufträgen
+            ab einer kompletten Wohnungs- oder Hausauflösung, Termin nach Absprache.
+          </p>
+          {% endif %}
+          <ul class="rw-staedte-liste">
+            {% for st in g.staedte %}
+            <li><a href="/entrumpelung/{{ st.slug }}/">{{ st.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {# ════════ ANDERE STANDORTE CTA ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg-2);">
+    <div class="rw-container">
+      <div class="rw-standort-cta" data-rw-reveal>
+        <div class="rw-standort-cta-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 3-6 3v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/></svg></div>
+        <div>
+          <h2 class="rw-standort-cta-title">Ihr Ort ist nicht dabei?</h2>
+          <p class="rw-standort-cta-sub">
+            Unser Kerngebiet sind die Regionen oben – in Sachsen-Anhalt, Sachsen und rund um
+            Hannover. Darüber hinaus fahren wir
+            bei größeren Aufträgen auch weiter – fragen Sie einfach nach, wir sagen Ihnen
+            ehrlich, ob es sich für Sie rechnet.
+          </p>
+        </div>
+        <a href="/anfrage/" class="rw-btn-primary rw-btn-lg">Jetzt anfragen →</a>
+      </div>
+    </div>
+  </section>
+
+
+  {# ════════ PERSON MODAL ════════ #}
+  <div id="rw-person-modal" role="dialog" aria-modal="true" aria-labelledby="rw-modal-name"
+       style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;"
+       data-rw-click="rwClosePerson" data-rw-self>
+    <div style="background:var(--rw-bg-card);border-radius:var(--rw-radius-xl);max-width:400px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,0.22);position:relative;overflow:hidden;">
+
+      {# Green top accent bar #}
+      <div style="height:4px;background:linear-gradient(90deg,var(--rw-orange),var(--rw-orange-2));"></div>
+
+      {# Close button #}
+      <button data-rw-click="rwClosePerson" aria-label="Schließen"
+              style="position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;border:none;background:var(--rw-bg-2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--rw-text-2);transition:background 200ms,color 200ms;z-index:1;"
+              data-rw-hover="background:var(--rw-orange);color:#fff"
+              data-rw-hover-aus="background:var(--rw-bg-2);color:var(--rw-text-2)"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+
+      <div style="padding:32px 28px 28px;">
+
+        {# Photo + Name #}
+        <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:24px;">
+          <div id="rw-modal-photo-wrap" style="margin-bottom:16px;"></div>
+          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--rw-orange);font-weight:800;margin-bottom:6px;" id="rw-modal-title"></div>
+          <div id="rw-modal-name" style="font-family:var(--rw-font-head);font-weight:900;font-size:1.25rem;color:var(--rw-text);line-height:1.2;margin-bottom:4px;"></div>
+          <div id="rw-modal-role" style="font-size:0.82rem;color:var(--rw-text-3);"></div>
+        </div>
+
+        {# Divider #}
+        <div style="height:1px;background:var(--rw-border);margin-bottom:20px;"></div>
+
+        {# Bio #}
+        <p id="rw-modal-bio" style="font-size:0.9rem;color:var(--rw-text-2);line-height:1.75;margin:0 0 18px;"></p>
+
+        {# Quote #}
+        <blockquote id="rw-modal-quote" style="margin:0;padding:14px 16px;background:var(--rw-bg-2);border-left:3px solid var(--rw-orange);border-radius:0 var(--rw-radius) var(--rw-radius) 0;font-style:italic;font-size:0.88rem;color:var(--rw-text-2);line-height:1.7;"></blockquote>
+
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .rw-person-trigger:hover {
+      border-color: var(--rw-orange) !important;
+      box-shadow: 0 4px 18px rgba(22,163,74,0.15);
+      transform: translateY(-1px);
+    }
+  </style>
+
+<script src="{% static 'js/rw_standorte.js' %}" defer></script>
+{# Zwei-Klick-Karte (P8/A5). Hier und nicht in components/rw_js.html: Das #}
+{# Skript gehört zu dieser einen Seite, rw_js.html steht auf allen 85.    #}
+<script src="{% static 'js/rw_karte.js' %}" defer></script>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>
+

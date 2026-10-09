@@ -1,0 +1,137 @@
+{% load static rw_schema %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="{{ seo_description }}">
+  <title>{{ seo_title }}</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% include 'components/rw_seo.html' with seo_title=seo_title seo_description=seo_description seo_path="/entrumpelung/" seo_breadcrumb_name="Entrümpelung" seo_speakable="h1,.rw-antwort-text" %}
+  {% include 'components/rw_css.html' with crit_page='entrumpelung_hub.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  {# ════════ KOPF ════════ #}
+  <section class="rw-section rw-hub-kopf">
+    <div class="rw-container">
+      <nav class="rw-brotkrumen" aria-label="Brotkrumen">
+        <a href="/">Startseite</a> <span aria-hidden="true">›</span> Entrümpelung
+      </nav>
+      <h1 class="rw-hub-titel">Entrümpelung in Mitteldeutschland: <em>{{ staedte_gesamt }} Städte, ein Preismodell</em></h1>
+
+      {% comment %}
+        Antwort-Absatz ganz oben: Generative Suchmaschinen ziehen bevorzugt den
+        ersten zusammenhängenden Absatz, der die Frage direkt beantwortet.
+      {% endcomment %}
+      <p class="rw-hub-antwort">
+        Wir entrümpeln in <strong>{{ staedte_gesamt }} Städten</strong> in
+        Sachsen-Anhalt, Sachsen und Niedersachsen — vom Keller bis zur kompletten
+        Haushaltsauflösung; {{ staedte_kern }} davon bilden unser Kerngebiet. Eine Kellerentrümpelung beginnt bei
+        <strong>{{ PREISE.keller.min_txt }} €</strong>, eine Wohnungsauflösung bei
+        <strong>{{ PREISE.wohnung.min_txt }} €</strong>, eine Haushaltsauflösung bei
+        <strong>{{ PREISE.haus.min_txt }} €</strong>, jeweils inkl. MwSt. Den Festpreis erhalten Sie
+        {{ ZUSAGE_ANGEBOT }}, verbindlich im Angebot. Wir melden uns in {{ ZUSAGE_ANTWORT_SPANNE }}
+        zurück – der Termin vor Ort richtet sich nach dem Ort.
+      </p>
+
+      <div class="rw-hub-cta">
+        <a href="/entruempelung-kosten/#rechner" class="rw-btn-primary">Kosten in {{ ZUSAGE_RECHNER }} berechnen</a>
+        <a href="/anfrage/" class="rw-btn-outline">Kostenlose Besichtigung anfragen</a>
+      </div>
+    </div>
+  </section>
+
+  {% include 'components/rw_antwort.html' with antwort_frage=antwort_frage antwort_text=antwort_text %}
+
+  {# ════════ PREISTABELLE ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg-2);" data-rw-reveal>
+    <div class="rw-container">
+      {% include 'components/rw_preistabelle.html' %}
+    </div>
+  </section>
+
+  {# ════════ STANDORTE ════════ #}
+  <section class="rw-section rw-svc-text-sec" data-rw-reveal>
+    <div class="rw-container rw-svc-text">
+      <article class="rw-svc-block" id="stadtseiten">
+        <h2>Was auf jeder Stadtseite steht</h2>
+        <p>
+          Der Preis folgt überall derselben Rechnung: Fläche mal Quadratmetersatz der
+          Objektart, mindestens der Mindestpreis, dazu Füllgrad, Stockwerk ohne Aufzug
+          und Sonderabfall. Was sich von Stadt zu Stadt unterscheidet, steht auf der
+          jeweiligen Stadtseite – der zuständige kommunale Entsorger mit Adresse des
+          Wertstoffhofs, die örtliche Sperrmüllregelung mit Menge, Kosten und Wartezeit,
+          der typische Gebäudebestand und durchgerechnete Beispiele aus diesem
+          Bestand.
+        </p>
+        <p>
+          Die Angaben der Entsorger sind recherchiert und mit Quelle verlinkt. Ob sich
+          für einzelne Möbel eher die kommunale Abholung lohnt als eine Firma, vergleicht
+          der Ratgeber-Artikel
+          <a href="/ratgeber/sperrmuell-container-oder-entruempelungsfirma/">Sperrmüll, Container oder Entrümpelungsfirma?</a>
+          Weitere Fragen – von der Steuer bis zur besenreinen Übergabe – beantwortet der
+          <a href="/ratgeber/">Ratgeber</a>.
+        </p>
+        <p>
+          Sechs Städte im Überblick:
+          {% for s in standort_links %}<a href="{{ s.url }}">{{ s.name }}</a>{% if forloop.revcounter == 2 %} und {% elif not forloop.last %}, {% endif %}{% endfor %}.
+          Die Tabelle zeigt, welcher Entsorger dort zuständig ist und wie schnell ein
+          Termin vor Ort möglich ist.
+        </p>
+      </article>
+      {% include 'components/rw_vergleich.html' with vergleiche=vergleiche %}
+    </div>
+  </section>
+
+  {# ════════ ALLE STÄDTE ════════ #}
+  <section class="rw-section" data-rw-reveal>
+    <div class="rw-container">
+      <h2 class="rw-section-title" style="margin-bottom:12px;">Alle Städte</h2>
+      <p style="text-align:center;color:var(--rw-text-2);max-width:620px;margin:0 auto 36px;font-size:0.95rem;">
+        {{ staedte_gesamt }} Städte mit eigener Seite — Preise, Ablauf und
+        Ansprechpartner.
+      </p>
+
+      <div class="rw-staedte-grid">
+        {% for g in gruppen %}
+        <div class="rw-staedte-gruppe">
+          <h3 class="rw-staedte-gruppe-titel">
+            {{ g.state }}
+            <span class="rw-staedte-anzahl">{{ g.staedte|length }}</span>
+          </h3>
+          {% if g.randgebiet %}
+          <p class="rw-staedte-hinweis">
+            Außerhalb des Kerngebiets: Wir fahren dorthin bei größeren Aufträgen
+            ab einer kompletten Wohnungs- oder Hausauflösung, Termin nach Absprache.
+          </p>
+          {% endif %}
+          <ul class="rw-staedte-liste">
+            {% for st in g.staedte %}
+            <li><a href="/entrumpelung/{{ st.slug }}/">{{ st.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
+      </div>
+
+      <p style="text-align:center;margin-top:32px;font-size:0.9rem;color:var(--rw-text-2);">
+        Ihr Ort ist nicht dabei? <a href="/anfrage/" style="color:var(--rw-orange);font-weight:600;">Fragen Sie an →</a>
+        Wir sagen Ihnen ehrlich, ob sich die Anfahrt rechnet.
+      </p>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+</body>
+</html>

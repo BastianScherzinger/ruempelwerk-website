@@ -1,0 +1,49 @@
+{% load static %}
+{% comment %}
+  Einspaltiger Hero OHNE Rechner-Include, nur fuer /entruempelung-kosten/
+  (service_kosten.html). Bewusst eine eigene Datei statt eines "split"-
+  Flags auf rw_hero_service.html: build_critical_css expandiert
+  {% include %}-Tags rein textuell (_INCLUDE_RE), ohne {% if %} auszuwerten
+  - ein gemeinsames Template mit Flag wuerde 'components/rw_rechner.html'
+  in JEDEM Fall in die Critical-CSS-Sammlung ziehen, egal welcher Wert
+  uebergeben wird. Der Rechner steht auf dieser Seite laut Bauplan §4 in
+  grossem Format unterhalb der Preistabelle (dort eingebunden).
+
+  Erwartet: l (Leistung).
+{% endcomment %}
+<section class="rw-hero rw-hero--banner rw-hero--service">
+  {# AVIF zuerst, WebP als zweite Quelle, JPEG im img-Element als Rueckfall - 06.09.2026, P8/E3. #}
+  <picture class="rw-hero-media">
+    <source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif"><source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.webp' %}" type="image/webp">
+    <source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.jpg' %}">
+    <source srcset="{% static 'images/hero-banner.avif' %}" type="image/avif"><source srcset="{% static 'images/hero-banner.webp' %}" type="image/webp">
+    <img src="{% static 'images/hero-banner.jpg' %}" width="1915" height="821" fetchpriority="high"
+         alt="Besenrein geräumter, heller Wohnraum nach einer {{ l.name }} durch Rümpelwerk Mitteldeutschland">
+  </picture>
+  <div class="rw-hero-overlay"></div>
+  <div class="rw-hero-inner">
+    <div class="rw-hero-content">
+      <nav class="rw-brotkrumen rw-brotkrumen--hell" aria-label="Brotkrumen">
+        <a href="/">Startseite</a> <span aria-hidden="true">›</span>
+        <a href="/dienstleistungen/">Dienstleistungen</a> <span aria-hidden="true">›</span>
+        {{ l.label }}
+      </nav>
+      <h1>{{ l.h1 }}<br><em>{{ l.h1_em }}</em></h1>
+      <p class="rw-hero-sub">{{ l.hero_sub }}</p>
+      <div class="rwf-hero-knoepfe">
+        <a class="knopf knopf-hell knopf-gross" href="#rechner">Richtangebot berechnen
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="knopf knopf-rand-hell knopf-gross" href="/anfrage/">Kostenlos anfragen</a>
+      </div>
+      <ul class="rwf-hero-belege" aria-label="Bewertungen">
+        <li>
+          <span class="rwf-sterne" aria-hidden="true">{% for _ in "12345" %}<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01z"/></svg>{% endfor %}</span>
+          <span><b>{{ bewertung.wert_anzeige }}</b> bei Google · {{ bewertung.anzahl }} Google-Bewertungen</span>
+        </li>
+        <li><img class="rw-tl-icon" src="{% static trustlocal.rang_icon_pfad %}" alt="" width="18" height="18"> <span><b>Trustlocal {{ trustlocal.rang }}</b> · {{ trustlocal.name }}</span></li>
+      </ul>
+      {% include 'components/rw_bewertung_quelle.html' %}
+    </div>
+  </div>
+</section>

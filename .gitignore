@@ -1,0 +1,88 @@
+# ── Python ─────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-link
+MANIFEST
+
+# ── Virtual Environments ───────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.env.bak
+
+# ── SECRETS – niemals committen! ──────────────────
+.env
+*.env
+!.env.example
+
+# ── Django ─────────────────────────────────────────
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+media/
+/logs/
+
+# ── Migrations – nur lokale DB-Snapshots ignorieren
+# Achtung: Migrations NICHT ignorieren – werden committet!
+
+# ── Docker ─────────────────────────────────────────
+.dockerignore
+
+# ── IDE ────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+.DS_Store
+Thumbs.db
+*.iml
+
+# ── Coverage ───────────────────────────────────────
+.coverage
+htmlcov/
+.pytest_cache/
+
+# ── Node (falls später verwendet) ─────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Misc ───────────────────────────────────────────
+*.bak
+*.tmp
+*.orig
+.cache/
+
+# Bericht von seo-geo-plan/tools/seo_snippets.py – wird bei jedem Lauf neu
+# erzeugt und gehoert nicht in die Versionierung.
+seo-snippets.txt
+seo-snippets.txt.json
+
+# ── Lokale Skills/Tooling (nicht deployen) ─────────
+.agents/
+# Nicht '.claude/': Git steigt in ein ausgeschlossenes VERZEICHNIS gar
+# nicht erst hinab, ein spaeteres '!' darin bleibt dann wirkungslos.
+# Deshalb den Inhalt ausschliessen und die Commands zurueckholen -
+# sie gehoeren ins Repo, sonst kennt sie nur dieser eine Rechner.
+.claude/*
+!.claude/commands/
+skills-lock.json
+.claude-ads/

@@ -1,0 +1,61 @@
+# Abhaengigkeiten dieses Projekts - festgenagelt, nicht als Spanne (PJ11).
+#
+# Bis zum 08.09.2026 stand hier "Django>=5.2,<7.0" und zehnmal dasselbe Muster.
+# Damit baut jedes Deploy das, was an seinem Tag gerade neu ist: Der Container,
+# der abends hochfaehrt, kann eine andere Django-Fassung tragen als der, gegen
+# den morgens 490 Tests gruen waren. Faellt danach etwas aus, ist die Ursache
+# nicht im Diff zu finden - es hat sich ja nichts geaendert.
+#
+# Deshalb steht in jeder Zeile "==". Die Fassungen sind die, die am 08.09.2026
+# installiert waren und gegen die die Testsuite gruen lief; sie entsprechen
+# zugleich dem, was die alten Spannen an diesem Tag aufgeloest haetten - der
+# Umstieg ist also kein Versionssprung, sondern nur das Festhalten des Standes.
+#
+# **Diese Datei IST das Lockfile.** Railway baut per NIXPACKS und installiert
+# genau sie; ein zweites, danebenliegendes lock-File wuerde von niemandem
+# gelesen und nur so aussehen, als sei der Bau reproduzierbar. Aus demselben
+# Grund stehen unten auch die mitgezogenen Abhaengigkeiten - ohne sie waere die
+# Haelfte des Baums weiterhin frei beweglich.
+#
+# AKTUALISIEREN: Fassung hier aendern, dann lokal installieren und
+#   python manage.py check ; python manage.py test ; python manage.py check_seo
+# laufen lassen. ``PinsPassenZurUmgebung`` in apps/core/tests/test_requirements.py
+# wird rot, solange die installierte Fassung von der eingetragenen abweicht -
+# das ist der Zweck, nicht ein Fehler.
+#
+# WAS DIESE DATEI NICHT LEISTET: Sie prueft keine Pruefsummen (kein --hash) und
+# sagt nichts ueber Sicherheitsluecken. Eine festgenagelte Fassung ist eine
+# bekannte Fassung, keine gute - wer nie aktualisiert, bleibt auf alten Luecken
+# sitzen.
+
+# ── Direkt benutzt ───────────────────────────────────────────────────────────
+Django==6.0.8
+gunicorn==26.0.0
+whitenoise==6.12.0
+python-decouple==3.8
+dj-database-url==3.1.2
+psycopg2-binary==2.9.12
+Pillow==12.3.0
+cloudinary==1.44.2
+django-cloudinary-storage==0.3.0
+django-axes==8.3.1
+rcssmin==1.2.2
+# Fehler-Monitoring (VL19). Wird nur importiert, wenn SENTRY_DSN gesetzt ist
+# - config/sentry.py. Zieht urllib3 und certifi, beide unten schon fest.
+sentry-sdk==2.69.2
+
+# ── Mitgezogen (Huelle der elf oben, aufgeloest fuer Linux/Python 3.13) ──────
+# Keine dieser Zeilen wird importiert; sie stehen hier, damit ein Bau von
+# gestern und einer von morgen dieselben Dateien enthalten.
+asgiref==3.11.1
+certifi==2026.4.22
+charset-normalizer==3.4.7
+idna==3.15
+packaging==26.2
+requests==2.34.2
+six==1.17.0
+sqlparse==0.6.0
+urllib3==2.8.0
+# Nur unter Windows - Django zieht es dort selbst nach, weil zoneinfo sonst
+# keine Zeitzonendaten findet. Auf Railway (Linux) wird die Zeile uebersprungen.
+tzdata==2026.2 ; sys_platform == "win32"

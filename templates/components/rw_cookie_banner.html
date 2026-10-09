@@ -1,0 +1,41 @@
+{% load static %}
+{# ════════ COOKIE-CONSENT-BANNER (DSGVO, Consent Mode v2) ════════ #}
+<div class="rw-cc" id="rw-cc" role="dialog" aria-modal="false" aria-labelledby="rw-cc-title" aria-describedby="rw-cc-text" hidden>
+  <div class="rw-cc-card">
+    <div class="rw-cc-main">
+      <span class="rw-cc-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5z"/><circle cx="9.5" cy="11.5" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="15" r="1" fill="currentColor" stroke="none"/><circle cx="9" cy="16" r="1" fill="currentColor" stroke="none"/></svg>
+      </span>
+      <div class="rw-cc-body">
+        <div class="rw-cc-title" id="rw-cc-title">Wir respektieren Ihre Privatsphäre</div>
+        <p class="rw-cc-text" id="rw-cc-text">
+          Wir verwenden <strong>notwendige Cookies</strong> für den Betrieb der Website und – nur mit Ihrer
+          Einwilligung – <strong>Statistik und Werbemessung</strong> (Google Analytics, anonymisierte
+          Besucherstatistik und das Conversion-Tracking von Google Ads und ChatGPT Ads), um unser Angebot und unsere
+          Anzeigen zu verbessern. Mehr dazu in unserer
+          <a href="/datenschutz/" class="rw-cc-link">Datenschutzerklärung</a>.
+        </p>
+      </div>
+    </div>
+
+    <div class="rw-cc-detail" id="rw-cc-detail" hidden>
+      <label class="rw-cc-opt">
+        <span class="rw-cc-opt-txt"><strong>Notwendig</strong><span>Erforderlich für Betrieb &amp; Sicherheit (z. B. CSRF-Schutz, Sitzung). Immer aktiv.</span></span>
+        <input type="checkbox" checked disabled aria-label="Notwendige Cookies (immer aktiv)">
+      </label>
+      <label class="rw-cc-opt">
+        <span class="rw-cc-opt-txt"><strong>Statistik &amp; Werbemessung</strong><span>Google Analytics, anonymisierte Besucherstatistik und Conversion-Tracking von Google Ads und ChatGPT Ads – damit wir sehen, welche Anzeige zu einer Anfrage geführt hat.</span></span>
+        <input type="checkbox" id="rw-cc-stat" aria-label="Cookies für Statistik und Werbemessung erlauben">
+      </label>
+    </div>
+
+    <div class="rw-cc-actions">
+      <button class="rw-cc-btn rw-cc-btn--ghost" id="rw-cc-settings" type="button" aria-expanded="false">Einstellungen</button>
+      <button class="rw-cc-btn rw-cc-btn--outline" id="rw-cc-necessary" type="button">Nur notwendige</button>
+      <button class="rw-cc-btn rw-cc-btn--primary" id="rw-cc-accept" type="button">Alle akzeptieren</button>
+      <button class="rw-cc-btn rw-cc-btn--primary" id="rw-cc-save" type="button" hidden>Auswahl speichern</button>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/rw_cookie_banner.js' %}" defer></script>

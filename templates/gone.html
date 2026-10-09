@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  {# Antwort ist HTTP 410 Gone. Bewusst KEIN rw_seo.html: eine entfernte Seite #}
+  {# braucht weder canonical noch hreflang noch Analytics – nur ein klares      #}
+  {# noindex, damit Google den Eintrag zuegig aus dem Index nimmt.              #}
+  <title>Seite nicht mehr verfügbar – Rümpelwerk Mitteldeutschland</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Diese Seite gibt es nicht mehr. Unser Einsatzgebiet und alle Städte finden Sie auf der Seite zum Einsatzgebiet.">
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% include 'components/rw_head_fonts.html' %}
+  {% include 'components/rw_css.html' with crit_page='gone.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  <section class="rw-section" style="padding-top:clamp(120px,18vh,190px);">
+    <div class="rw-container">
+      <div style="max-width:640px;margin:0 auto;text-align:center;">
+
+        <div class="rw-section-badge" style="margin-bottom:18px;">Seite entfernt</div>
+
+        <h1 class="rw-section-title" style="margin-bottom:18px;">
+          {% if city_name %}<em>{{ city_name }}</em> liegt nicht in unserem Einsatzgebiet{% else %}Diese Seite gibt es <em>nicht mehr</em>{% endif %}
+        </h1>
+
+        <p class="rw-section-sub" style="margin-bottom:14px;">
+          {% if city_name %}
+            Diese Seite haben wir entfernt, weil {{ city_name }} nicht zu unserem Einsatzgebiet gehört.
+            Wir arbeiten in Sachsen, Sachsen-Anhalt und Niedersachsen – dort nennen wir Ihnen
+            den Festpreis bei der Besichtigung.
+          {% else %}
+            Diese Seite wurde entfernt. Auf unserer Seite zum Einsatzgebiet finden Sie alle Städte,
+            in denen wir für Sie arbeiten.
+          {% endif %}
+        </p>
+
+        <p class="rw-section-sub" style="margin-bottom:30px;">
+          Größere Aufträge übernehmen wir auf Anfrage auch außerhalb – schreiben Sie uns
+          einfach kurz, was zu tun ist.
+        </p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+          <a href="/standorte/" class="rw-btn-primary">
+            <svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg>
+            Unser Einsatzgebiet
+          </a>
+          <a href="{{ FIRMA_WHATSAPP_LINK_KURZ }}"
+             target="_blank" rel="noopener" class="rw-btn-primary"
+             aria-label="Anfrage per WhatsApp an {{ FIRMA_TELEFON_ANZEIGE }} senden">
+            <svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.541 5.877L.057 23.386a.5.5 0 0 0 .611.601l5.647-1.525A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+            Per WhatsApp anfragen
+          </a>
+        </div>
+
+        <p style="margin-top:26px;">
+          <a href="/" style="color:var(--rw-text-2);text-decoration:underline;">Zur Startseite</a>
+        </p>
+
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>

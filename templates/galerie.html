@@ -1,0 +1,142 @@
+{% load static %}{# audit-ok V07: JSON-LD kommt über components/rw_seo.html (Tag rw_head_schema) - die Seite liefert genau einen ld+json-Block, check_seo prüft ihn #}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  {# rw_seo.html rendert weder <title> noch description – beides gehört hierher. #}
+  <title>Galerie: Entrümpelung vorher & nachher, Festpreis | Rümpelwerk</title>
+  <meta name="description" content="Vorher-Nachher-Bilder abgeschlossener Entrümpelungen, Haushaltsauflösungen und Sanierungen aus echten Aufträgen. Angebot anfordern.">
+  {# Ohne diese beiden Zeilen fragt der Browser /favicon.ico an und bekommt 404. #}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {# noindex faellt automatisch weg, sobald Bilder da sind (F9). #}
+  {% with galerie_leer=hat_bilder|yesno:",True" %}
+  {% include 'components/rw_seo.html' with seo_title="Galerie: Entrümpelung vorher & nachher, Festpreis | Rümpelwerk" seo_description="Vorher-Nachher-Bilder abgeschlossener Entrümpelungen, Haushaltsauflösungen und Sanierungen aus echten Aufträgen. Angebot anfordern." seo_path="/galerie/" seo_breadcrumb_name="Galerie" seo_noindex=galerie_leer seo_speakable="h1,.rw-antwort-text" %}
+  {% endwith %}
+  {# Blaettern ueber ?seite= (P8/D4). rel=prev/next verkettet die Folgeseiten; #}
+  {# das canonical aus rw_seo.html zeigt weiter auf /galerie/ - die Folgeseiten #}
+  {# sind Blaetterwerk, kein eigenes Thema, und stehen in keiner Sitemap. #}
+  {% if seite_vorher %}<link rel="prev" href="/galerie/{{ seite_vorher }}">{% endif %}
+  {% if seite_naechste %}<link rel="next" href="/galerie/{{ seite_naechste }}">{% endif %}
+  {% include 'components/rw_head_fonts.html' %}
+  {# LCP-Bild vorziehen: ohne Preload startet der Download erst, wenn #}
+  {# der Parser das Hero-Element im Body erreicht - also nach dem CSS. #}
+  <link rel="preload" as="image" href="{% static 'images/vorhernachherfirma.webp' %}" fetchpriority="high">
+  {% include 'components/rw_css.html' with crit_page='galerie.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  <div class="rw-leistungen-hero rw-leistungen-hero--media">
+    <div class="rw-hero-media-bg"><img src="{% static 'images/vorhernachherfirma.webp' %}" alt="" width="1000" height="546" fetchpriority="high"></div>
+    <div class="rw-hero-media-overlay"></div>
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>Galerie</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Bilder & Referenzen</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(2rem,4vw,3rem);margin-bottom:14px;">
+          Unsere <em>Galerie</em>
+        </h1>
+        <p data-rw-readmore style="font-size:1rem;color:var(--rw-text-2);max-width:600px;line-height:1.8;">
+          {% if hat_bilder %}Bilder aus unseren abgeschlossenen Aufträgen – Vorher-Nachher-Vergleiche,{% else %}Hier zeigen wir bald Bilder unserer abgeschlossenen Aufträge – Vorher-Nachher-Vergleiche,{% endif %}
+          Entrümpelungen, Haushaltsauflösungen und Sanierungsarbeiten.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {% include 'components/rw_antwort.html' with antwort_frage=antwort_frage antwort_text=antwort_text %}
+
+  <section class="rw-section" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      {% if hat_bilder %}
+      <div class="rw-galerie-grid">
+        {% for b in bilder %}
+        <figure class="rw-galerie-item">
+          {# width/height = Rahmenverhältnis 4/3 (Cloudinary, keine gespeicherten Maße); CSS: aspect-ratio + height:auto #}
+          <img src="{{ b.url }}"{% if b.url.srcset %} srcset="{{ b.url.srcset }}"
+               sizes="(max-width:480px) 94vw, (max-width:900px) 46vw, 390px"{% endif %}
+               alt="{{ b.alt }}" width="800" height="600" loading="lazy" decoding="async">
+          <figcaption>
+            {% if b.typ == 'vor' %}<span class="rw-galerie-marke">Vorher</span>
+            {% elif b.typ == 'nach' %}<span class="rw-galerie-marke rw-galerie-marke--nach">Nachher</span>
+            {% endif %}
+            {{ b.titel }}
+          </figcaption>
+        </figure>
+        {% endfor %}
+      </div>
+
+      {% if seiten_gesamt > 1 %}
+      {% comment %}
+        Bis zum 06.09.2026 rendete diese Seite JEDES freigegebene Bild -
+        gemessen 212,2 KiB bei 600 Bildern, gegen eine Schwelle von 170.
+        check_seo konnte das nie melden, weil es gegen die leere lokale
+        Datenbank misst. Geblaettert wird ueber einen Query-Parameter, damit
+        der City-Catch-All in urls.py unberuehrt bleibt (Regel 5).
+      {% endcomment %}
+      <nav aria-label="Weitere Bilder" style="display:flex;align-items:center;justify-content:center;gap:20px;margin-top:40px;flex-wrap:wrap;">
+        {% if seite_vorher %}<a href="{{ seite_vorher }}" rel="prev" class="rw-btn-outline" style="font-weight:700;">&larr; Neuere Bilder</a>{% endif %}
+        <span style="color:var(--rw-text-2);font-size:0.95rem;">Seite {{ seite.number }} von {{ seiten_gesamt }} · {{ eintraege_gesamt }} Bilder</span>
+        {% if seite_naechste %}<a href="{{ seite_naechste }}" rel="next" class="rw-btn-outline" style="font-weight:700;">Ältere Bilder &rarr;</a>{% endif %}
+      </nav>
+      {% endif %}
+      {% else %}
+      {% comment %}
+        Solange nichts da ist: ehrlich sagen, dass nichts da ist - und die
+        Seite bleibt ueber seo_noindex aus dem Index.
+      {% endcomment %}
+      <div style="max-width:640px;margin:0 auto;text-align:center;padding:60px 0;">
+        <h2 style="font-family:var(--rw-font-head);font-size:1.5rem;font-weight:500;color:var(--rw-text);margin-bottom:12px;">
+          Noch keine Bilder freigegeben
+        </h2>
+        <p style="color:var(--rw-text-2);line-height:1.8;margin-bottom:28px;">
+          Wir dokumentieren gerade unsere abgeschlossenen Aufträge. Bis dahin
+          zeigen wir Ihnen gern Referenzen im persönlichen Gespräch.
+        </p>
+        <a href="/anfrage/" class="rw-btn-primary">Kostenlose Besichtigung anfragen</a>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="rw-section" style="background:var(--rw-bg-2);" aria-labelledby="galerie-erklaert">
+    <div class="rw-container">
+      <div class="rw-section-header" data-rw-reveal>
+        <div class="rw-section-badge">Worauf Sie achten können</div>
+        <h2 class="rw-section-title" id="galerie-erklaert">Was sagen Vorher-Nachher-Bilder <em>über eine Räumung</em>?</h2>
+        <p class="rw-section-sub">Ein Foto nach der Räumung zeigt, wie gründlich gearbeitet wurde – eines davor, wie viel Arbeit darin steckte.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;" data-rw-reveal>
+        <div class="rw-form-card" style="padding:24px 26px;">
+          <h3 style="font-family:var(--rw-font-head);font-weight:800;font-size:1.05rem;color:var(--rw-text);margin:0 0 10px;">Vorher: der Zustand bei der Besichtigung</h3>
+          <p style="font-size:0.93rem;color:var(--rw-text-2);line-height:1.75;margin:0;">Menge, Zugänglichkeit und Art des Räumguts bestimmen den Aufwand. Genau das sehen wir uns bei der kostenlosen Besichtigung an, und daraus entsteht der Festpreis – schriftlich, {{ ZUSAGE_ANGEBOT }}.</p>
+        </div>
+        <div class="rw-form-card" style="padding:24px 26px;">
+          <h3 style="font-family:var(--rw-font-head);font-weight:800;font-size:1.05rem;color:var(--rw-text);margin:0 0 10px;">Nachher: besenrein übergeben</h3>
+          <p style="font-size:0.93rem;color:var(--rw-text-2);line-height:1.75;margin:0;">Leere Räume, gefegte Böden, keine Reste in Ecken und Nebenräumen. Wertstoffe, Sperrmüll und Sonderabfälle werden getrennt und fachgerecht entsorgt; Transport und Gebühren sind im Preis enthalten.</p>
+        </div>
+        <div class="rw-form-card" style="padding:24px 26px;">
+          <h3 style="font-family:var(--rw-font-head);font-weight:800;font-size:1.05rem;color:var(--rw-text);margin:0 0 10px;">Der Bericht zum Bild</h3>
+          <p style="font-size:0.93rem;color:var(--rw-text-2);line-height:1.75;margin:0;">Jedes Foto gehört zu einem Einsatzbericht unter <a href="/aktuelles/" style="color:var(--rw-orange);font-weight:600;">Aktuelles</a>. Was eine vergleichbare Räumung bei Ihnen kostet, zeigt der <a href="/preisangebot/" style="color:var(--rw-orange);font-weight:600;">Preisrechner</a> in {{ ZUSAGE_RECHNER }}; die Leistungen im Einzelnen stehen unter <a href="/dienstleistungen/" style="color:var(--rw-orange);font-weight:600;">Dienstleistungen</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>

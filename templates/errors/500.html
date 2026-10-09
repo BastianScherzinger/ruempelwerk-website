@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  {# Antwort ist HTTP 500. Wie bei 404 und 410 bewusst KEIN rw_seo.html. #}
+  <title>Serverfehler – Rümpelwerk Mitteldeutschland</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% include 'components/rw_head_fonts.html' %}
+  {% comment %}
+    Umgestellt am 06.09.2026 (Befund A1), aus demselben Grund wie 404.html:
+    ueber base.html kam Inter per @import von Google Fonts, und damit
+    ging bei jedem Serverfehler die IP des Besuchers an Google.
+
+    **Diese Seite wird ausgeliefert, wenn etwas kaputt ist.** Sie darf deshalb
+    nichts rendern, was eine Datenbank braucht. Nachgesehen am 06.09.2026:
+      · rw_nav.html   – liest LEISTUNGEN_NAV (aus data/services.py) und
+                        request.resolver_match. Keine Abfrage.
+      · rw_footer.html – liest STANDORTE_NAV (data/cities.py) und die
+                        FIRMA_*-Werte (data/firma.py). Keine Abfrage.
+      · rw_js.html    – Cookie-Banner und WhatsApp-Popup, beide rein statisch.
+    Die einzige Stelle, die ueberhaupt an die Datenbank geht, ist der
+    Context-Processor `bewertung` (reviews.stand() -> GoogleBewertung) – der
+    laeuft bei jedem render() mit, unabhaengig von dieser Vorlage, und faengt
+    seine Ausnahme selbst ab (reviews.py:195). Deshalb NICHT eingebunden:
+    rw_trustbar.html und alles andere, was `bewertung` sichtbar macht – eine
+    Bewertungszahl auf einer Fehlerseite waere ohnehin fehl am Platz.
+
+    Kein `crit_page`: build_critical_css durchsucht nur templates/*.html,
+    nicht templates/errors/. Der gemeinsame Rueckfall greift.
+  {% endcomment %}
+  {% include 'components/rw_css.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  <section class="rw-section rw-fehler">
+    <div class="rw-container">
+      <div class="rw-fehler-inner rw-fehler-inner--mitte">
+
+        <div class="rw-fehler-code">500</div>
+
+        <h1 class="rw-section-title rw-fehler-titel">
+          Interner <em>Serverfehler</em>
+        </h1>
+
+        <p class="rw-section-sub rw-fehler-sub rw-fehler-sub--eng">
+          Ein unerwarteter Fehler ist aufgetreten. Unser Team wurde benachrichtigt.
+        </p>
+
+        {# Der zweite Weg fuer den Fall, dass die Seite selbst nicht hilft.  #}
+        {# Nummer und WhatsApp-Link aus data/firma.py (Regel 25), nicht      #}
+        {# getippt – und beide brauchen keine Datenbank.                     #}
+        <p class="rw-section-sub rw-fehler-sub">
+          Wenn es eilt, erreichen Sie uns direkt unter
+          <a href="tel:{{ FIRMA_TELEFON }}" aria-label="{{ FIRMA_TELEFON_ANZEIGE }} anrufen">{{ FIRMA_TELEFON_ANZEIGE }}</a>.
+        </p>
+
+        <div class="rw-fehler-aktionen">
+          <a href="/" class="rw-btn-primary">
+            <svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Zurück zur Startseite
+          </a>
+          <a href="{{ FIRMA_WHATSAPP_LINK_KURZ }}"
+             target="_blank" rel="noopener" class="rw-btn-outline"
+             aria-label="Anfrage per WhatsApp an {{ FIRMA_TELEFON_ANZEIGE }} senden">
+            <svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.541 5.877L.057 23.386a.5.5 0 0 0 .611.601l5.647-1.525A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+            Per WhatsApp schreiben
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>

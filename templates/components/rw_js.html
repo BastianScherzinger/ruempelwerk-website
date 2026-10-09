@@ -1,0 +1,26 @@
+{% load static %}
+{% include 'components/rw_cookie_banner.html' %}
+{% include 'components/rw_wa_popup.html' %}
+
+{% comment %}
+Conversion-Labels aus GOOGLE_ADS_LABELS. Als application/json-Block und nicht
+als JS-Literal – dasselbe Muster wie PREISE_JS im Preisrechner. Ohne gesetzte
+Env-Variable ist das ein leeres Objekt und rwTrack meldet nichts an Google Ads.
+Der Block bleibt im HTML: er haengt an einer Env-Variablen, nicht am Code.
+
+Das Basis-JS selbst liegt seit dem 26.08.2026 in static/js/rw_basis.js
+(Befund W4). `defer` statt eines blockierenden Skripts: Die Datei wird beim
+Parsen entdeckt, laedt nebenher und laeuft vor DOMContentLoaded — in der
+Reihenfolge, in der die Tags im Dokument stehen. Darauf verlaesst sich
+components/rw_rechner_js.html, das window.rwTrack braucht.
+
+rw_handler.js ist seit dem 08.09.2026 dazugekommen (SI32): dort steht die
+Ereignisbindung, die vorher in 29 on…="…"-Attributen im Markup stand. Es
+haengt seine Listener ans document und loest die Funktionsnamen erst beim
+Ereignis auf — die Reihenfolge zu rw_basis.js und rw_rechner.js ist deshalb
+gleichgueltig, obwohl es die Funktionen aus beiden aufruft.
+{% endcomment %}
+{{ GOOGLE_ADS_LABELS|json_script:"rw-ads-labels" }}
+
+<script src="{% static 'js/rw_handler.js' %}" defer></script>
+<script src="{% static 'js/rw_basis.js' %}" defer></script>

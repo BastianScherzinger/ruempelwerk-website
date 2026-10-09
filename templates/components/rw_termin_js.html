@@ -1,0 +1,9 @@
+{% load static %}
+{% comment %}
+  Gehoert IMMER zusammen mit {% templatetag openblock %} rw_termin {% templatetag closeblock %}
+  auf derselben Seite und IMMER NACH components/rw_js.html (Regel 26: JS aus
+  static/js/, mit defer - die Dokumentreihenfolge haelt die Ladereihenfolge ein).
+  Schaltet nur zwischen den drei Buchungsstufen um; ohne dieses Skript bleibt
+  das Formular als eine lange Seite bedienbar (Bauplan §5: "Funktioniert ohne JS").
+{% endcomment %}
+<script src="{% static 'js/rw_termin.js' %}" defer></script>

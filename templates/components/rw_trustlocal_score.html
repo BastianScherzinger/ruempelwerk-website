@@ -1,0 +1,83 @@
+{% load static %}{% comment %}
+  TrustLocal-Score-Widget (eingebaut 01.09.2026, auf Wunsch des Inhabers).
+
+  Das ist NICHT das Bewertungs-Widget von /ueber-uns/ (rw_trustlocal.html,
+  widget_review.js, Karten mit Rezensionstexten), sondern die kleine
+  Score-Kachel (widget_v2.js): Trustlocal-Score plus Bewertungszahl, als
+  Karte. Der Inhaber hat den Code am 31.08.2026 zweimal geschickt - einmal
+  ueber Trustlocals "An Webbuilder senden"-Funktion (kundendienst@trustlocal.de,
+  data-id xojhTaGU...), einmal direkt aus dem eigenen Postfach
+  (data-id mlZWhI3z...). Beide IDs rendern dieselbe Kachel (am 01.09.2026 auf
+  einer lokalen Testseite geprueft). Hier steht die ID aus der Trustlocal-Mail.
+
+  Vier Dinge, die man wissen muss, bevor man diese Komponente verschiebt:
+
+  1. **data-google="hidden" ist Absicht (Regel 2).** Mit "default" haengt die
+     Kachel eine zweite Karte "Google Reviews 5.0 - 23 Bewertungen" an. Diese
+     Zahl kommt von Trustlocal, nicht aus reviews.stand(), und hinkt: Am
+     01.09.2026 zeigte die Website 27 Google-Bewertungen, Trustlocal 23. Zwei
+     Google-Zahlen fuer denselben Betrieb waeren ein sichtbarer Widerspruch.
+     Der Trustlocal-Score ist dagegen eine eigene Quelle mit eigener Skala
+     (x von 10) - er widerspricht der Google-Zahl nicht, er ergaenzt sie.
+
+  2. **Braucht KEIN 'unsafe-eval'** - anders als widget_review.js auf
+     /ueber-uns/. Am 01.09.2026 unter einer CSP ohne 'unsafe-eval' geprueft:
+     Kachel rendert, kein application/ld+json wird eingefuegt, kein
+     localStorage. Die Hosts static.trustlocal.de / trustlocal.de stehen seit
+     dem 27.08. in script-src, connect-src, img-src und font-src. Wer die
+     Komponente auf eine Seite legt, muss also nichts an der CSP aendern.
+
+  3. **Sie steht auf den Leistungs- und Matrixseiten, im CTA-Block, unterhalb
+     der Falz.** Das sind die Landingpages der Google-Ads-Kampagnen (Regel 23):
+     Dort, wo der Besucher sich zwischen WhatsApp, Formular und Anruf
+     entscheidet, ist ein nachpruefbarer Bewertungsstand die staerkste Luecke
+     im Halle-Markt (Wettbewerbsanalyse vom 20.08.: andere zeigen Siegel ohne
+     Zahl). Unterhalb der Falz, damit build_critical_css nicht anfassen muss.
+     Nicht auf der Startseite: Die traegt aggregateRating aus reviews.stand()
+     und die Google-Karten - dort zeigt schon die Seite selbst die Zahl.
+
+  4. **Regel 11 gilt: kein rankingrelevanter Inhalt.** Die Kachel rendert per
+     JavaScript; Crawler ohne JS sehen nur den Textlink zum Profil. Die
+     zitierfaehige Bewertungszahl bleibt server-gerendert auf der Startseite.
+
+  Seit dem 26.09.2026 laedt die Kachel erst auf Klick (Rechtspruefung,
+  Befund 5): Der Knopf traegt die Skript-Adresse, static/js/rw_trustlocal.js
+  haengt das Skript erst nach dem Klick ein. Vorher geht keine Anfrage an
+  TrustLocal.
+
+  Datenschutzerklaerung Abschnitt 9 nennt die Seiten, auf denen Trustlocal
+  kontaktiert wird - wer die Komponente auf weitere Seiten legt, zieht den
+  Abschnitt nach. Die Profil-URL unten ist am 01.09.2026 geprueft (HTTP 200,
+  Name und Strasse zeichengenau wie in data/firma.py).
+
+  min-height auf dem Wrapper faengt den Layoutsprung ab (CLS): Die kleine
+  Landscape-Kachel ist rund 125 px hoch; bis das Skript geladen hat, haelt der
+  Wrapper den Platz.
+{% endcomment %}
+<div class="rw-tl-score" style="display:flex;flex-direction:column;align-items:center;gap:10px;margin:32px auto 0;min-height:150px;">
+  <div class="trustlocal-widget"
+       data-id="xojhTaGU3UK6Ai8GQyNw6g4CEqkMBZtuK1b9pYKe9nlgGw"
+       data-language-code="de"
+       data-country-code="DE"
+       data-badge="hidden"
+       data-quote="default"
+       data-size="small"
+       data-type="landscape"
+       data-border="shadow"
+       data-theme="light"
+       data-background="default"
+       data-google="hidden"></div>
+  <div data-rw-trustlocal-rahmen style="display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;">
+    <button type="button" class="rw-btn-outline" hidden
+            data-rw-trustlocal="https://static.trustlocal.de/widget/widget_v2.js"
+            aria-describedby="rw-tl-hinweis-score">TrustLocal-Bewertungen anzeigen</button>
+    <p id="rw-tl-hinweis-score" class="rw-svc-cta-belege" style="margin:0;">
+      Dabei werden Daten, darunter Ihre IP-Adresse, an TrustLocal übertragen.
+    </p>
+  </div>
+  <p class="rw-svc-cta-belege" style="margin:0;">
+    Unabhängig gesammelt von TrustLocal –
+    <a href="https://trustlocal.de/sachsen-anhalt/halle-sachsen-anhalt/entrumpelung/r%C3%BCmpelwerk-mitteldeutschland/" target="_blank" rel="noopener">Profil ansehen</a>.
+  </p>
+</div>
+<script src="{% static 'js/rw_trustlocal.js' %}" defer></script>

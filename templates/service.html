@@ -1,0 +1,359 @@
+{% load static rw_schema %}{# audit-ok V06: wird von views.service_page ausgeliefert, der Name steht dort in einer Bedingung statt als Literal #}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="{{ seo_description }}">
+  <title>{{ seo_title }}</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% comment %}
+    Das Hero-Foto ist das LCP-Element. Ohne Preload startet der Download erst,
+    wenn der Parser den Body erreicht – dieselbe Vorkehrung wie auf den
+    Stadtseiten und der Startseite.
+  {% endcomment %}
+  <link rel="preload" as="image" media="(max-width:640px)" href="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif" fetchpriority="high">
+  <link rel="preload" as="image" media="(min-width:641px)" href="{% static 'images/hero-banner.avif' %}" type="image/avif" fetchpriority="high">
+  {% comment %}
+    seo_path kommt aus der View, nie hart "/". Und bewusst OHNE
+    seo_breadcrumb_name: Der Breadcrumb dieser Seite ist dreistufig
+    (Startseite › Dienstleistungen › Leistung) und steckt schon in
+    schema_bloecke. Beides zusammen ergäbe zwei BreadcrumbList je Seite.
+  {% endcomment %}
+  {% include 'components/rw_seo.html' with seo_title=seo_title seo_description=seo_description seo_path=seo_path seo_keywords=seo_keywords seo_speakable="h1,.rw-antwort-text" %}
+  {% include 'components/rw_css.html' with crit_page='service.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  {% include 'components/rw_hero_service.html' with split=True %}
+
+  {% comment %}
+    ANTWORT ZUERST (G2). Der erste zusammenhängende Absatz beantwortet die
+    Suchanfrage ohne Vorrede – das ist der Absatz, den AI Overviews, ChatGPT
+    und Perplexity zitieren. Er steht deshalb server-gerendert im HTML und
+    nicht hinter einem Aufklapper: Generative Crawler führen kein JavaScript aus.
+  {% endcomment %}
+  {% include 'components/rw_antwort.html' with antwort_frage=l.answer_frage antwort_text=l.answer antwort_cta_url="#rechner" %}
+
+  {# ════════ FLIESSTEXT ════════ #}
+  <section class="rw-section rw-svc-text-sec" data-rw-reveal>
+    <div class="rw-container rw-svc-text">
+      {% for a in l.abschnitte %}
+      <article class="rw-svc-block" id="{{ a.id }}">
+        <h2>{{ a.titel }}</h2>
+        {% comment %}
+          Der safe-Filter ist hier zulässig und nötig: Der Text steht in
+          apps/core/data/services.py, stammt also aus dem Quelltext und nicht
+          aus einem Formular oder dem CMS. Er enthält bewusst <strong>/<em>.
+        {% endcomment %}
+        {# audit-ok V02: Text aus apps/core/data/services.py (Python-Konstante, kein Nutzereingang), trägt a, strong, em #}
+        {% for p in a.absaetze %}<p>{{ p|safe }}</p>{% endfor %}
+        {% if a.liste %}
+        <ul class="rw-svc-punkte">
+          {# audit-ok V02: Text aus apps/core/data/services.py (Python-Konstante, kein Nutzereingang), trägt a, strong, em #}
+          {% for p in a.liste %}<li>{{ p|safe }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </article>
+
+      {% if a.id == 'unterschied' and l.vergleiche %}{% include 'components/rw_vergleich.html' with vergleiche=l.vergleiche %}
+      {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+
+  {# ════════ UMFANG & ABGRENZUNG ════════ #}
+  <section class="rw-section rw-svc-band" data-rw-reveal>
+    <div class="rw-container">
+      <div class="rw-svc-umfang">
+        <div class="rw-svc-karte rw-svc-karte--ja">
+          <h2 class="rw-svc-karte-titel">
+            <svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>
+            Im Festpreis enthalten
+          </h2>
+          <ul class="rw-svc-liste">
+            {# audit-ok V02: Text aus apps/core/data/services.py (Python-Konstante, kein Nutzereingang), trägt a, strong, em #}
+            {% for p in l.leistungsumfang %}<li>{{ p|safe }}</li>{% endfor %}
+          </ul>
+        </div>
+        <div class="rw-svc-karte rw-svc-karte--nein">
+          <h2 class="rw-svc-karte-titel">
+            <svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+            Nicht enthalten – und warum
+          </h2>
+          <ul class="rw-svc-liste rw-svc-liste--nein">
+            {# audit-ok V02: Text aus apps/core/data/services.py (Python-Konstante, kein Nutzereingang), trägt a, strong, em #}
+            {% for p in l.abgrenzung %}<li>{{ p|safe }}</li>{% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# ════════ PREISE ════════ #}
+  <section class="rw-section" id="preise" data-rw-reveal>
+    <div class="rw-container">
+      {% comment %}
+        Zwei Preistabellen, weil es zwei Preislogiken gibt: die Objektart-Staffel
+        der Entrümpelung und die Flächen-/Positionspreise der Renovierung. Welche
+        gilt, entscheidet 'preistabelle' im Datensatz – nicht das Template.
+      {% endcomment %}
+      {% if l.preistabelle == 'sanierung' %}
+        {% include 'components/rw_preistabelle_sanierung.html' with ueberschrift=preistabelle_titel %}
+      {% else %}
+        {% include 'components/rw_preistabelle.html' with ueberschrift=preistabelle_titel %}
+      {% endif %}
+
+      {% if l.modifikatoren %}{% include 'components/rw_modifikatoren.html' %}{% endif %}
+
+      {% if beispiele %}
+      <div class="rw-beispiele">
+        <h3 class="rw-beispiele-titel">Drei durchgerechnete Beispiele</h3>
+        <p class="rw-beispiele-intro">
+          Gerechnet mit demselben Code, den auch der Preisrechner benutzt –
+          nicht geschätzt. Der Rechenweg steht
+          jeweils darunter. Verbindlich wird der Preis nach der kostenlosen
+          Besichtigung. Preisstand:
+          <time datetime="{{ PREISSTAND_ISO }}">{{ PREISSTAND }}</time>.
+        </p>
+        <div class="rw-beispiele-grid">
+          {% for b in beispiele %}
+          <div class="rw-beispiel">
+            <div class="rw-beispiel-kopf">{{ b.titel }}</div>
+            <p class="rw-beispiel-text">{{ b.beschreibung }}</p>
+            {% comment %}
+              Der sichtbare Rechenweg (A12). Er entsteht in berechne_preis()
+              während der Rechnung selbst, ist also zwangsläufig der Weg zu genau
+              diesem Preis – und nicht eine zweite, nachgebaute Darstellung.
+              Er steht server-gerendert im HTML: Genau diese Art Aufstellung
+              zitieren generative Suchmaschinen, und die führen kein JavaScript aus.
+            {% endcomment %}
+            {% if b.schritte %}
+            <ol class="rw-beispiel-weg">
+              {% for s in b.schritte %}
+              <li><span class="rw-beispiel-weg-txt">{{ s.label }}</span><span class="rw-beispiel-weg-wert">{{ s.wert }}</span></li>
+              {% endfor %}
+            </ol>
+            {% endif %}
+            <div class="rw-beispiel-preis">{{ b.preis_txt }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        <p class="rw-beispiele-fuss">
+          Im Servicegebiet ziehen wir zusätzlich {{ PREIS_MODIFIKATOREN.rabatt_prozent }}&nbsp;% ab.
+          <a href="#rechner">Eigenen Fall durchrechnen →</a>
+        </p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  {% comment %}
+    PREISRECHNER: steht seit Upgrade Stufe 6b im Hero (Bauplan §4) - genau
+    EINE Einbindung je Seite, keine zweite Instanz hier unten.
+  {% endcomment %}
+
+  {# ════════ ABLAUF ════════ #}
+  <section class="rw-section rw-svc-band" id="ablauf" data-rw-reveal>
+    <div class="rw-container">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title">So läuft eine <em>{{ l.name }}</em> ab</h2>
+        <p class="rw-section-sub">Von der ersten Nachricht bis zur Übergabe – {{ l.ablauf|length }} Schritte. Keiner davon kostet Sie etwas, bevor der Preis feststeht.</p>
+      </div>
+      <ol class="rw-ablauf">
+        {% for s in l.ablauf %}
+        <li class="rw-ablauf-schritt">
+          <span class="rw-ablauf-nr" aria-hidden="true">{{ forloop.counter }}</span>
+          <div>
+            <h3 class="rw-ablauf-titel">{{ s.titel }}</h3>
+            <p class="rw-ablauf-text">{{ s.text }}</p>
+          </div>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </section>
+
+  {% if referenzen %}
+  {# ════════ REFERENZEN AUS DEM CMS ════════ #}
+  <section class="rw-section" data-rw-reveal>
+    <div class="rw-container">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title">Aus der <em>Praxis</em></h2>
+        <p class="rw-section-sub">Echte Aufträge, fotografiert vor und nach der Räumung.</p>
+      </div>
+      <div class="rw-svc-ref-grid">
+        {% for post in referenzen %}
+        <article class="rw-svc-ref">
+          <div class="rw-news-vn">
+            {% if post.vor_gallery_urls %}<figure class="rw-news-vn-fig"><img src="{{ post.vor_gallery_urls.0 }}" width="600" height="600"{% if post.vor_gallery_urls.0.srcset %} srcset="{{ post.vor_gallery_urls.0.srcset }}" sizes="(max-width:480px) 47vw, (max-width:900px) 23vw, 195px"{% endif %} alt="{{ post.vor_gallery_urls.0.alt|default:post.titel }}" loading="lazy"><figcaption class="rw-news-vn-cap vor">Vorher</figcaption></figure>{% endif %}
+            {% if post.nach_gallery_urls %}<figure class="rw-news-vn-fig"><img src="{{ post.nach_gallery_urls.0 }}" width="600" height="600"{% if post.nach_gallery_urls.0.srcset %} srcset="{{ post.nach_gallery_urls.0.srcset }}" sizes="(max-width:480px) 47vw, (max-width:900px) 23vw, 195px"{% endif %} alt="{{ post.nach_gallery_urls.0.alt|default:post.titel }}" loading="lazy"><figcaption class="rw-news-vn-cap nach">Nachher</figcaption></figure>{% endif %}
+          </div>
+          <h3 class="rw-svc-ref-titel">{{ post.titel }}</h3>
+          {% if post.inhalt %}<p class="rw-svc-ref-text">{{ post.inhalt|truncatewords:38 }}</p>{% endif %}
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {# ════════ FAQ ════════ #}
+  {% comment %}
+    Farbbaender wechseln sich ab, ueberspringen aber den Referenz-Abschnitt:
+    Der faellt weg, solange im CMS kein Vorher/Nachher-Beitrag steht. Laege
+    hier ein Band, staende es dann direkt am Band des Ablaufs – zwei
+    Abschnitte ohne sichtbare Trennung.
+  {% endcomment %}
+  <section class="rw-section" data-rw-reveal>
+    <div class="rw-container rw-svc-faq">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title">Häufige Fragen zur <em>{{ l.name }}</em></h2>
+      </div>
+      {% comment %}
+        Sichtbare FAQ und FAQPage-Schema kommen aus derselben Quelle
+        (l.faq → S.faq_schema in der View). Auf den Stadtseiten waren es
+        einmal zwei handgeschriebene Listen, die auseinandergelaufen sind.
+        <details> ist nativ – der Text steht auch ohne JavaScript im DOM.
+      {% endcomment %}
+      <div class="rw-svc-faq-liste">
+        {% for frage, antwort in l.faq %}
+        {# G4: Fragment-Anker aus dem Fragetext - siehe faq_anker. #}
+        <details class="rw-faq-city" id="{{ frage|faq_anker }}">
+          <summary>{{ frage }}<span aria-hidden="true">+</span></summary>
+          {# audit-ok V02: Antwort aus data/services.py (Python-Konstante), kein Nutzer-, CMS- oder DB-Eingang; trägt Links und strong #}
+          <p>{{ antwort|safe }}</p>
+        </details>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {% if staedte %}
+  {# ════════ STÄDTE ════════ #}
+  <section class="rw-section rw-svc-band" data-rw-reveal>
+    <div class="rw-container">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title">{{ l.name }} <em>in Ihrer Stadt</em></h2>
+        <p class="rw-section-sub">
+          Wir räumen in Leipzig, Halle, Magdeburg, Dresden, Chemnitz, Hannover und Umgebung.
+          Jede Stadtseite nennt den zuständigen Wertstoffhof, die kommunale
+          Sperrmüllregelung und die übliche Reaktionszeit.
+        </p>
+      </div>
+      <div class="rw-svc-staedte">
+        {% for s in staedte %}
+        <a href="{{ s.url }}" class="rw-nachbar rw-nachbar--link">
+          <svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          {{ l.name }} {{ s.name }}
+        </a>
+        {% endfor %}
+      </div>
+      <p class="rw-svc-staedte-fuss">
+        Ihr Ort ist nicht dabei? <a href="/entrumpelung/">Alle Städte ansehen</a> oder
+        <a href="/anfrage/">direkt anfragen</a> – wir sagen Ihnen ehrlich, ob sich die
+        Anfahrt rechnet.
+      </p>
+    </div>
+  </section>
+  {% endif %}
+
+  {% if ratgeber_artikel %}
+  {# ════════ RATGEBER ════════ #}
+  {% comment %}
+    Der Rueckweg zu den Artikeln, die auf diese Leistung verweisen - dieselbe
+    Liste ('leistungen' in data/ratgeber.py) speist beide Richtungen.
+  {% endcomment %}
+  <section class="rw-section rw-svc-band" data-rw-reveal>
+    <div class="rw-container">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title">Mehr im <em>Ratgeber</em></h2>
+      </div>
+      <div class="rw-svc-related">
+        {% for r in ratgeber_artikel %}
+        <a href="{{ r.url }}" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">{{ r.titel }}</span>
+          <span class="rw-svc-related-text">{{ r.teaser }}</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">Artikel lesen →</span>
+        </a>
+        {% endfor %}
+      </div>
+      <p class="rw-svc-staedte-fuss">
+        Alle Artikel und ein Glossar der wichtigsten Begriffe stehen im
+        <a href="/ratgeber/">Ratgeber zu Entrümpelung und Haushaltsauflösung</a>.
+      </p>
+    </div>
+  </section>
+  {% endif %}
+
+  {% if verwandte %}
+  {# ════════ VERWANDTE LEISTUNGEN ════════ #}
+  <section class="rw-section" data-rw-reveal>
+    <div class="rw-container">
+      <div class="rw-section-header">
+        <h2 class="rw-section-title">Passt <em>dazu</em></h2>
+      </div>
+      <div class="rw-svc-related">
+        {% for v in verwandte %}
+        <a href="{{ v.url }}" class="rw-svc-related-karte">
+          <span class="rw-svc-related-name">{{ v.name }}</span>
+          <span class="rw-svc-related-text">{{ v.text }}</span>
+          <span class="rw-svc-related-mehr" aria-hidden="true">{% if v.eigen %}Zur Leistungsseite →{% else %}Auf der Übersicht ansehen →{% endif %}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {# ════════ CTA ════════ #}
+  <section class="rw-cta rw-svc-cta">
+    <div class="rw-container">
+      <div class="rw-cta-inner" data-rw-reveal>
+        <h2>{{ l.name }} anfragen – <em>kostenlos und unverbindlich</em></h2>
+        <p>
+          Schicken Sie uns ein paar Fotos, wir melden uns mit einer Einschätzung.
+          Der Festpreis folgt nach der kostenlosen Besichtigung.
+        </p>
+        <div class="rw-cta-actions">
+          <a href="{{ FIRMA_WHATSAPP_LINK }}" target="_blank" rel="noopener" class="rw-btn-wa" data-rw-track="whatsapp_click">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.541 5.877L.057 23.386a.5.5 0 0 0 .611.601l5.647-1.525A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+            Fotos per WhatsApp senden
+          </a>
+          <a href="/anfrage/" class="rw-btn-outline">Anfrageformular</a>
+        </div>
+        <p class="rw-tel-hint">
+          Lieber telefonisch? <a href="tel:{{ FIRMA_TELEFON }}" aria-label="{{ FIRMA_TELEFON_ANZEIGE }} anrufen">{{ FIRMA_TELEFON_ANZEIGE }}</a>
+        </p>
+        {% include 'components/rw_trustlocal_score.html' %}
+        {% comment %}
+          Steht ausserhalb des Referenz-Abschnitts, weil der an CMS-Inhalten
+          haengt und auf einer frischen Datenbank ganz wegfaellt. Diese drei
+          Links sollen aber auf jeder Leistungsseite stehen — sie sind der
+          Beleg zur Behauptung darueber (A14).
+        {% endcomment %}
+        <p class="rw-svc-cta-belege">
+          Fotos abgeschlossener Auftraege stehen in der
+          <a href="/galerie/">Bildergalerie</a>, aktuelle Baustellen unter
+          <a href="/aktuelles/">Aktuelles</a>. Wer bei Ihnen klingelt, steht
+          <a href="/ueber-uns/">auf der Team-Seite</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+  {% include 'components/rw_rechner_js.html' %}
+
+</body>
+</html>

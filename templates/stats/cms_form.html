@@ -1,0 +1,725 @@
+{% load static %}<!DOCTYPE html>
+<!-- data-rw-no-consent: interne Seite, nie ein Cookie-Banner (siehe components/rw_cookie_banner.html) -->
+<html lang="de" data-rw-no-consent>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>// CMS · {{ action|upper }} · RÜMPELWERK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --g:    #00ff88;
+      --g2:   #16a34a;
+      --g3:   rgba(0,255,136,0.08);
+      --blue: #38bdf8;
+      --amber:#fbbf24;
+      --purple:#c084fc;
+      --red:  #f87171;
+      --bg:   #030712;
+      --bg2:  #080f1f;
+      --card: rgba(255,255,255,0.025);
+      --bdr:  rgba(0,255,136,0.12);
+      --bdr2: rgba(255,255,255,0.06);
+      --text: #e2e8f0;
+      --muted:#475569;
+      --font: 'JetBrains Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,255,136,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,136,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .bg-glow {
+      position: fixed; z-index: 0; pointer-events: none;
+      width: 800px; height: 800px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,255,136,0.04) 0%, transparent 65%);
+      top: -200px; right: -200px;
+      animation: glow-drift 8s ease-in-out infinite;
+    }
+    @keyframes glow-drift {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50% { transform: translate(-30px,40px) scale(1.05); }
+    }
+    .scanlines {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px
+      );
+    }
+
+    /* Topbar */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      height: 56px;
+      background: rgba(3,7,18,0.85);
+      border-bottom: 1px solid var(--bdr);
+      backdrop-filter: blur(20px);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .status-indicator {
+      display: flex; align-items: center; gap: 7px;
+      font-family: var(--font);
+      font-size: 0.65rem;
+      color: var(--g);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .pulse-dot {
+      width: 7px; height: 7px;
+      background: var(--g);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--g);
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { box-shadow: 0 0 4px var(--g); }
+      50% { box-shadow: 0 0 14px var(--g), 0 0 28px rgba(0,255,136,0.3); }
+    }
+    .divider { width: 1px; height: 20px; background: var(--bdr2); }
+    .topbar-date {
+      font-family: var(--font);
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .logout-form button {
+      background: transparent;
+      border: 1px solid var(--bdr2);
+      border-radius: 2px;
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: border-color 150ms, color 150ms;
+    }
+    .logout-form button:hover { border-color: var(--red); color: var(--red); }
+    .subnav { background:rgba(3,7,18,0.9);border-bottom:1px solid rgba(255,255,255,0.06);padding:0 24px;display:flex;gap:4px; }
+    .subnav-link { display:inline-flex;align-items:center;gap:6px;padding:10px 16px;font-family:var(--font);font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(71,85,105,1);text-decoration:none;border-bottom:2px solid transparent;transition:color 150ms,border-color 150ms; }
+    .subnav-link:hover { color:#e2e8f0; }
+    .subnav-link.active { color:#00ff88;border-bottom-color:#00ff88; }
+
+    /* Main */
+    .main {
+      position: relative; z-index: 10;
+      max-width: 780px; margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    .page-header { margin-bottom: 32px; }
+    .breadcrumb {
+      font-family: var(--font);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .breadcrumb a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 150ms;
+    }
+    .breadcrumb a:hover { color: var(--g); }
+    .breadcrumb span { color: var(--g); }
+    h1 {
+      font-family: var(--font);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+    h1 em { color: var(--g); font-style: normal; }
+    .page-sub {
+      font-family: var(--font);
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    /* Error */
+    .error-box {
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.3);
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      font-family: var(--font);
+      font-size: 0.72rem;
+      color: var(--red);
+    }
+    .error-box::before { content: '// ERROR: '; }
+
+    /* Beitrag ist gespeichert, aber einzelne Bilder fehlen */
+    .warn-box {
+      background: rgba(250,204,21,0.08);
+      border: 1px solid rgba(250,204,21,0.32);
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      font-family: var(--font);
+      font-size: 0.72rem;
+      line-height: 1.7;
+      color: #facc15;
+    }
+    .warn-box::before { content: '// HINWEIS'; display: block; margin-bottom: 6px; font-weight: 700; letter-spacing: 1px; }
+    .warn-box ul { margin: 0; padding-left: 18px; }
+
+    /* Form card */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--bdr2);
+      border-radius: 4px;
+      padding: 32px;
+      animation: card-in 0.5s ease 0.1s both;
+    }
+    @keyframes card-in {
+      from { opacity:0; transform: translateY(12px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-family: var(--font);
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+    }
+    label .req { color: var(--g); margin-left: 2px; }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="file"],
+    select,
+    textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--bdr2);
+      border-radius: 2px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.78rem;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color 150ms, background 150ms;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(0,255,136,0.4);
+      background: rgba(0,255,136,0.03);
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23475569' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+    select option { background: #0d1117; color: var(--text); }
+    textarea { resize: vertical; line-height: 1.6; }
+
+    input[type="file"] {
+      padding: 8px 12px;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    input[type="file"]::file-selector-button {
+      background: rgba(0,255,136,0.08);
+      border: 1px solid rgba(0,255,136,0.2);
+      border-radius: 2px;
+      color: var(--g);
+      font-family: var(--font);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: background 150ms;
+    }
+    input[type="file"]::file-selector-button:hover {
+      background: rgba(0,255,136,0.15);
+    }
+
+    .file-hint {
+      font-family: var(--font);
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+    .file-hint span {
+      color: #64748b;
+    }
+
+    /* Checkbox */
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--g);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .checkbox-group label {
+      font-size: 0.72rem;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 400;
+    }
+
+    /* Divider */
+    .form-divider {
+      grid-column: 1 / -1;
+      border: none;
+      border-top: 1px solid var(--bdr2);
+      margin: 4px 0;
+    }
+
+    /* Section label */
+    .form-section-label {
+      grid-column: 1 / -1;
+      font-family: var(--font);
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--g);
+      font-weight: 700;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(0,255,136,0.1);
+    }
+
+    /* Actions */
+    .form-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--bdr2);
+    }
+    .btn-save {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--g);
+      border: none;
+      border-radius: 2px;
+      padding: 10px 22px;
+      cursor: pointer;
+      transition: opacity 150ms, box-shadow 150ms;
+      box-shadow: 0 0 16px rgba(0,255,136,0.25);
+    }
+    .btn-save:hover {
+      opacity: 0.88;
+      box-shadow: 0 0 24px rgba(0,255,136,0.4);
+    }
+    .btn-cancel {
+      font-family: var(--font);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 10px 16px;
+      border: 1px solid var(--bdr2);
+      border-radius: 2px;
+      transition: border-color 150ms, color 150ms;
+    }
+    .btn-cancel:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+
+    @media (max-width: 640px) {
+      /* Kopfzeile: Datum und Trennstrich weg, sonst quetscht sich die Zeile
+         auf schmalen Geraeten und DISCONNECT rutscht aus dem Bild. */
+      .topbar { padding: 0 12px; gap: 8px; }
+      .topbar .divider, .topbar-date { display: none; }
+      /* Zwei Reiter passen nicht nebeneinander -> seitlich scrollbar */
+      .subnav { padding: 0 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .subnav::-webkit-scrollbar { display: none; }
+      .subnav-link { white-space: nowrap; padding: 10px 12px; }
+      .main { padding: 20px 12px 48px; }
+    }
+
+    @media (max-width: 500px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: 1; }
+      .form-section-label { grid-column: 1; }
+      .form-divider { grid-column: 1; }
+      .form-card { padding: 20px 16px; }
+      /* Speichern/Abbrechen untereinander und volle Breite: Auf dem Handy
+         waren die Knoepfe sonst schmale Ziele am unteren Rand. */
+      .form-actions { flex-direction: column-reverse; align-items: stretch; gap: 10px; }
+      .form-actions .btn-save { justify-content: center; padding: 14px 22px; }
+      .form-actions .btn-cancel { text-align: center; padding: 13px 16px; }
+    }
+  </style>
+</head>
+<body data-stats-path="{{ stats_path }}">
+  <!-- Bewusst OHNE components/rw_nav.html, components/rw_js.html und
+       static/css/ruempelwerk.css: Das ist der interne Bereich mit eigenem
+       Design. Die oeffentlichen Bausteine legten eine fixe Navbar (72px),
+       die Mobile-Bottom-Nav, den Cookie-Banner und das WhatsApp-Popup
+       ueber diese Seite und machten sie unbedienbar. Nicht wieder einfuegen. -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <div class="scanlines"></div>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="status-indicator">
+        <div class="pulse-dot"></div>
+        <span>RÜMPELWERK</span>
+      </div>
+      <div class="divider"></div>
+      <span class="topbar-date">CMS · {{ action|upper }}</span>
+    </div>
+    <div class="topbar-right">
+      <form class="logout-form" method="post" action="/{{ stats_path }}/logout/">
+        {% csrf_token %}
+        <button type="submit">DISCONNECT</button>
+      </form>
+    </div>
+  </header>
+
+  <nav class="subnav">
+    <a href="/{{ stats_path }}/data/" class="subnav-link">📊 Statistiken</a>
+    <a href="/{{ stats_path }}/anfragen/" class="subnav-link">📥 Anfragen</a>
+    <a href="/{{ stats_path }}/aktuelles/" class="subnav-link active">📰 Aktuelles verwalten</a>
+    <a href="/{{ stats_path }}/fehler/" class="subnav-link">🚨 Fehler</a>
+    <a href="/{{ stats_path }}/termine/" class="subnav-link">📅 Termine</a>
+  </nav>
+
+  <main class="main">
+
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="../../data/">ANALYTICS</a> /
+        <a href="../">AKTUELLES</a> /
+        <span>{{ action|upper }}</span>
+      </div>
+      <h1>// Post <em>{{ action }}</em></h1>
+      <p class="page-sub">
+        {% if post.pk %}Beitrag #{{ post.pk }} bearbeiten{% else %}Neuen Beitrag anlegen{% endif %}
+      </p>
+    </div>
+
+    {% if error %}
+    <div class="error-box">{{ error }}</div>
+    {% endif %}
+
+    {% if warnungen %}
+    <div class="warn-box" role="status">
+      <ul>{% for w in warnungen %}<li>{{ w }}</li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+
+    <div class="form-card">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-grid">
+
+          <!-- Section: Metadaten -->
+          <div class="form-section-label">» Metadaten</div>
+
+          <div class="form-group">
+            <label for="id_typ">Typ <span class="req">*</span></label>
+            <select name="typ" id="id_typ">
+              <option value="bericht" {% if post and post.typ == 'bericht' %}selected{% endif %}>Bericht</option>
+              <option value="zitat" {% if post and post.typ == 'zitat' %}selected{% endif %}>Zitat</option>
+              <option value="vorher_nachher" {% if post and post.typ == 'vorher_nachher' %}selected{% endif %}>Vorher / Nachher</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="id_datum">Datum <span class="req">*</span></label>
+            <input type="date" name="datum" id="id_datum"
+                   value="{% if post %}{{ post.datum|date:'Y-m-d' }}{% else %}{{ today }}{% endif %}">
+          </div>
+
+          <div class="form-group full">
+            <label for="id_titel">Titel <span class="req">*</span></label>
+            <input type="text" name="titel" id="id_titel" required maxlength="300"
+                   placeholder="Kurzer, prägnanter Titel…"
+                   value="{% if post %}{{ post.titel }}{% endif %}">
+          </div>
+
+          <hr class="form-divider">
+
+          <!-- Section: Inhalt -->
+          <div class="form-section-label">» Inhalt</div>
+
+          <div class="form-group full">
+            <label for="id_inhalt">Inhalt / Beschreibung</label>
+            <textarea name="inhalt" id="id_inhalt" rows="6"
+                      placeholder="Ausführlicher Beschreibungstext…">{% if post %}{{ post.inhalt }}{% endif %}</textarea>
+          </div>
+
+          <div class="form-group full">
+            <label for="id_zitat_autor">Zitat-Autor <span style="color:var(--muted);font-weight:400;">(nur bei Typ Zitat)</span></label>
+            <input type="text" name="zitat_autor" id="id_zitat_autor" maxlength="200"
+                   placeholder="z.B. Max Mustermann, Leipzig"
+                   value="{% if post %}{{ post.zitat_autor }}{% endif %}">
+          </div>
+
+          <hr class="form-divider">
+
+          <!-- Section: Autor -->
+          <div class="form-section-label">» Autor</div>
+          <div class="form-group full">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+              {% for slug, meta in autor_meta.items %}
+              <label style="cursor:pointer;">
+                <input type="radio" name="autor" value="{{ slug }}"
+                       {% if post and post.autor == slug %}checked{% endif %}
+                       style="display:none;" class="autor-radio">
+                <div class="autor-card" data-slug="{{ slug }}"
+                     style="border:2px solid rgba(255,255,255,0.06);border-radius:8px;padding:12px;text-align:center;transition:border-color 200ms,background 200ms;background:rgba(255,255,255,0.02);">
+                  {% if meta.foto %}
+                  <img src="/static/{{ meta.foto }}" alt="{{ meta.name }}" width="128" height="125" decoding="async"
+                       style="width:56px;height:56px;border-radius:50%;object-fit:cover;margin:0 auto 8px;display:block;border:2px solid rgba(0,255,136,0.2);">
+                  {% else %}
+                  <div style="width:56px;height:56px;border-radius:50%;background:#1e293b;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">👤</div>
+                  {% endif %}
+                  <div style="font-family:var(--font);font-size:0.7rem;font-weight:700;color:#e2e8f0;margin-bottom:2px;">{{ meta.name }}</div>
+                  <div style="font-size:0.6rem;color:var(--muted);">{{ meta.region }}</div>
+                </div>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <hr class="form-divider">
+
+          <!-- Section: Bilder (Vorher/Nachher – mehrere) -->
+          <div class="form-section-label" id="bilder-section">» Bilder</div>
+
+          <!-- Vorher: mehrere Bilder -->
+          <div class="form-group full" id="vorher-group">
+            <label style="margin-bottom:8px;">📷 <span style="color:#00ff88;">Vorher</span>-Bilder</label>
+            {% if gallery_vor %}
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:10px;">
+              {% for bild_pk, bild_url, bild_text in gallery_vor %}
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                {% if bild_url %}<img src="{{ bild_url }}" alt="{{ bild_text }}" width="160" height="160" style="width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid rgba(0,255,136,.2);" loading="lazy">{% endif %}
+                <button type="button" data-bild-pk="{{ bild_pk }}" data-post-pk="{{ post.pk }}" class="btn-bild-del"
+                        style="width:100%;min-height:36px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#fca5a5;font-family:var(--font);font-size:0.65rem;font-weight:700;cursor:pointer;"
+                        data-rw-hover="background:rgba(239,68,68,.28)" data-rw-hover-aus="background:rgba(239,68,68,.12)">🗑</button>
+              </div>
+                <input type="text" name="bildtext_{{ bild_pk }}" value="{{ bild_text }}"
+                       maxlength="180" placeholder="Was ist zu sehen? Mit Ort."
+                       title="Bildbeschreibung - wird als alt-Text ausgeliefert"
+                       style="width:100%;min-height:36px;box-sizing:border-box;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#e2e8f0;font-family:var(--font);font-size:0.68rem;padding:6px 8px;">
+              {% endfor %}
+            </div>
+            {% endif %}
+            <label style="display:block;position:relative;overflow:hidden;border:2px dashed rgba(0,255,136,.2);border-radius:10px;padding:18px;text-align:center;cursor:pointer;background:rgba(0,255,136,.02);">
+              <div style="font-size:1.6rem;pointer-events:none;">📸</div>
+              <div style="font-family:var(--font);font-size:0.75rem;font-weight:700;color:#00ff88;pointer-events:none;">Vorher-Bilder hochladen</div>
+              <div style="font-family:var(--font);font-size:0.6rem;color:var(--muted);pointer-events:none;">Mehrere möglich · max. 8 MB</div>
+              <input type="file" name="bilder_vor" id="id_bilder_vor" accept="image/*" multiple style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0;">
+            </label>
+            <div id="preview-vor" style="display:none;margin-top:8px;"></div>
+            <label style="display:block;margin:10px 0 0;">
+              <span style="display:block;font-family:var(--font);font-size:0.62rem;color:var(--muted);letter-spacing:0.5px;margin-bottom:4px;">BESCHREIBUNG FUER DIE NEUEN BILDER (Ort + Leistung)</span>
+              <input type="text" name="bildtext_neu_vor" maxlength="180"
+                     placeholder="z. B. Haushaltsaufloesung in Halle-Neustadt, Kueche vor der Raeumung"
+                     style="width:100%;min-height:38px;box-sizing:border-box;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#e2e8f0;font-family:var(--font);font-size:0.7rem;padding:7px 9px;">
+            </label>
+          </div>
+
+          <!-- Nachher: mehrere Bilder -->
+          <div class="form-group full" id="nachher-group">
+            <label style="margin-bottom:8px;">✅ <span style="color:#00ff88;">Nachher</span>-Bilder</label>
+            {% if gallery_nach %}
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:10px;">
+              {% for bild_pk, bild_url, bild_text in gallery_nach %}
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                {% if bild_url %}<img src="{{ bild_url }}" alt="{{ bild_text }}" width="160" height="160" style="width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid rgba(22,163,74,.4);" loading="lazy">{% endif %}
+                <button type="button" data-bild-pk="{{ bild_pk }}" data-post-pk="{{ post.pk }}" class="btn-bild-del"
+                        style="width:100%;min-height:36px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#fca5a5;font-family:var(--font);font-size:0.65rem;font-weight:700;cursor:pointer;"
+                        data-rw-hover="background:rgba(239,68,68,.28)" data-rw-hover-aus="background:rgba(239,68,68,.12)">🗑</button>
+              </div>
+                <input type="text" name="bildtext_{{ bild_pk }}" value="{{ bild_text }}"
+                       maxlength="180" placeholder="Was ist zu sehen? Mit Ort."
+                       title="Bildbeschreibung - wird als alt-Text ausgeliefert"
+                       style="width:100%;min-height:36px;box-sizing:border-box;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#e2e8f0;font-family:var(--font);font-size:0.68rem;padding:6px 8px;">
+              {% endfor %}
+            </div>
+            {% endif %}
+            <label style="display:block;position:relative;overflow:hidden;border:2px dashed rgba(22,163,74,.3);border-radius:10px;padding:18px;text-align:center;cursor:pointer;background:rgba(22,163,74,.02);">
+              <div style="font-size:1.6rem;pointer-events:none;">✅</div>
+              <div style="font-family:var(--font);font-size:0.75rem;font-weight:700;color:#22c55e;pointer-events:none;">Nachher-Bilder hochladen</div>
+              <div style="font-family:var(--font);font-size:0.6rem;color:var(--muted);pointer-events:none;">Mehrere möglich · max. 8 MB</div>
+              <input type="file" name="bilder_nach" id="id_bilder_nach" accept="image/*" multiple style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0;">
+            </label>
+            <div id="preview-nach" style="display:none;margin-top:8px;"></div>
+            <label style="display:block;margin:10px 0 0;">
+              <span style="display:block;font-family:var(--font);font-size:0.62rem;color:var(--muted);letter-spacing:0.5px;margin-bottom:4px;">BESCHREIBUNG FUER DIE NEUEN BILDER (Ort + Leistung)</span>
+              <input type="text" name="bildtext_neu_nach" maxlength="180"
+                     placeholder="z. B. Haushaltsaufloesung in Halle-Neustadt, Kueche vor der Raeumung"
+                     style="width:100%;min-height:38px;box-sizing:border-box;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#e2e8f0;font-family:var(--font);font-size:0.7rem;padding:7px 9px;">
+            </label>
+          </div>
+
+          <!-- Section: Galerie (Bericht / Zitat) -->
+          <div class="form-group full" id="galerie-group" style="display:none;">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+              <label style="margin:0;">Galerie-Bilder</label>
+              <span id="galerie-counter" style="font-family:var(--font);font-size:0.65rem;color:var(--muted);">{{ gallery|length }} Bilder gespeichert</span>
+            </div>
+
+            <!-- Bestehende Bilder – große Touch-Targets -->
+            {% if gallery %}
+            <div id="existing-gallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:16px;">
+              {% for bild_pk, bild_url, bild_text in gallery %}
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                {% if bild_url %}
+                <img src="{{ bild_url }}" alt="{{ bild_text }}" width="160" height="160" style="width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.08);" loading="lazy" data-rw-fehlerstil="background:#1e293b;outline:1px solid #f87171">
+                {% else %}
+                <div style="width:100%;aspect-ratio:1;background:#1e293b;border-radius:8px;border:1px solid rgba(255,0,0,0.2);display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#f87171;">✗ fehlt</div>
+                {% endif %}
+                <button type="button"
+                        data-bild-pk="{{ bild_pk }}"
+                        data-post-pk="{{ post.pk }}"
+                        class="btn-bild-del"
+                        style="width:100%;min-height:40px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#fca5a5;font-family:var(--font);font-size:0.68rem;font-weight:700;cursor:pointer;transition:background 150ms;letter-spacing:0.5px;"
+                        data-rw-hover="background:rgba(239,68,68,.28)"
+                        data-rw-hover-aus="background:rgba(239,68,68,.12)">
+                  🗑 Löschen
+                </button>
+              </div>
+                <input type="text" name="bildtext_{{ bild_pk }}" value="{{ bild_text }}"
+                       maxlength="180" placeholder="Was ist zu sehen? Mit Ort."
+                       title="Bildbeschreibung - wird als alt-Text ausgeliefert"
+                       style="width:100%;min-height:36px;box-sizing:border-box;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#e2e8f0;font-family:var(--font);font-size:0.68rem;padding:6px 8px;">
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Upload-Zone -->
+            {% if gallery_slots %}
+            <!-- Input liegt INNERHALB der Label und überdeckt sie vollflächig – einzige Methode die auf iOS Safari zuverlässig funktioniert -->
+            <label id="upload-zone"
+                 style="display:block;position:relative;overflow:hidden;border:2px dashed rgba(0,255,136,.25);border-radius:12px;padding:28px 16px;text-align:center;cursor:pointer;transition:border-color 200ms,background 200ms;background:rgba(0,255,136,.03);"
+                 data-rw-dragover="border-color:#00ff88;background:rgba(0,255,136,.08)"
+                 data-rw-dragleave="border-color:rgba(0,255,136,.25);background:rgba(0,255,136,.03)"
+                 data-rw-drop="handleDrop">
+              <div style="font-size:2.2rem;margin-bottom:10px;pointer-events:none;">📸</div>
+              <div style="font-family:var(--font);font-size:0.82rem;font-weight:700;color:#00ff88;margin-bottom:6px;pointer-events:none;">Antippen oder Bilder auswählen</div>
+              <div style="font-family:var(--font);font-size:0.65rem;color:var(--muted);pointer-events:none;">{{ gallery_slots }} Plätze frei · bis zu 50 Bilder · max. 8 MB pro Bild</div>
+              <input type="file" name="bilder" id="id_bilder" accept="image/*" multiple style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0;">
+            </label>
+
+            <!-- Live-Vorschau neuer Bilder -->
+            <div id="new-preview" style="display:none;margin-top:14px;">
+              <div style="font-family:var(--font);font-size:0.7rem;color:#00ff88;font-weight:700;margin-bottom:10px;" id="new-count-label"></div>
+            <label style="display:block;margin:10px 0 0;">
+              <span style="display:block;font-family:var(--font);font-size:0.62rem;color:var(--muted);letter-spacing:0.5px;margin-bottom:4px;">BESCHREIBUNG FUER DIE NEUEN BILDER (Ort + Leistung)</span>
+              <input type="text" name="bildtext_neu" maxlength="180"
+                     placeholder="z. B. Haushaltsaufloesung in Halle-Neustadt, Kueche vor der Raeumung"
+                     style="width:100%;min-height:38px;box-sizing:border-box;background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#e2e8f0;font-family:var(--font);font-size:0.7rem;padding:7px 9px;">
+            </label>
+              <div id="new-thumbs" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;"></div>
+              <div style="margin-top:10px;font-family:var(--font);font-size:0.62rem;color:var(--muted);">← Diese Bilder werden beim Speichern hochgeladen</div>
+            </div>
+            {% else %}
+            <div style="border:1px solid rgba(251,191,36,.25);border-radius:8px;padding:16px;background:rgba(251,191,36,.05);font-family:var(--font);font-size:0.72rem;color:#fbbf24;text-align:center;">
+              ⚠ Maximale Anzahl ({{ gallery|length }} Bilder) erreicht.<br>Einzelne Bilder löschen um neue hinzuzufügen.
+            </div>
+            {% endif %}
+          </div>
+
+          <hr class="form-divider">
+
+          <!-- Section: Veröffentlichung -->
+          <div class="form-section-label">» Veröffentlichung</div>
+
+          <div class="form-group full">
+            <div class="checkbox-group">
+              <input type="checkbox" name="veroeffentlicht" id="id_veroeffentlicht"
+                     {% if post and post.veroeffentlicht %}checked{% endif %}>
+              <label for="id_veroeffentlicht">Veröffentlicht — Beitrag ist auf der Website sichtbar</label>
+            </div>
+          </div>
+
+        </div><!-- /form-grid -->
+
+        <div class="form-actions">
+          <button type="submit" class="btn-save">Speichern</button>
+          <a href="/{{ stats_path }}/aktuelles/" class="btn-cancel">Abbrechen</a>
+        </div>
+      </form>
+    </div>
+
+  </main>
+
+  {% comment %}
+  SI09 (08.09.2026): Der Block, der hier stand, liegt jetzt in
+  static/js/rw_cms_form.js. Er liess sich nicht hashen, weil er
+  `{{ stats_path }}` in ein Template-Literal setzte – ein Inline-Skript, dessen
+  Inhalt mit der Umgebung wechselt, hat in jeder Umgebung einen anderen
+  SHA-256. Der Pfad kommt jetzt aus data-stats-path am <body>.
+  {% endcomment %}
+  {% comment %}
+  SI32: Ziehen-und-Ablegen, Zeigerwechsel und die Markierung fehlender Bilder
+  binden seit dem 08.09.2026 ueber data-rw-* statt ueber ondragover=/ondrop=.
+  handleDrop steht in rw_cms_form.js auf window – der Binder loest den Namen
+  erst beim Ereignis auf, die Reihenfolge der beiden Tags ist deshalb egal.
+  {% endcomment %}
+  <script src="{% static 'js/rw_handler.js' %}" defer></script>
+  <script src="{% static 'js/rw_cms_form.js' %}" defer></script>
+</body>
+</html>

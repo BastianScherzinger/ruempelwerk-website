@@ -1,0 +1,504 @@
+{% load static rw_schema %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Entrümpelung, Haushalts- und Wohnungsauflösung, Nachlassräumung, Messie-Wohnungen, Maler- und Sanierungsarbeiten. Preise vergleichen.">
+  <title>Leistungen & Preise: Entrümpelung bis Sanierung | Rümpelwerk</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {# LCP-Bild vorziehen: ohne Preload startet der Download erst, wenn #}
+  {# der Parser das Hero-Element im Body erreicht - also nach dem CSS. #}
+  <link rel="preload" as="image" media="(max-width:640px)" href="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif" fetchpriority="high">
+  <link rel="preload" as="image" media="(min-width:641px)" href="{% static 'images/hero-banner.avif' %}" type="image/avif" fetchpriority="high">
+  {% include 'components/rw_seo.html' with seo_title="Leistungen & Preise: Entrümpelung bis Sanierung | Rümpelwerk" seo_description="Entrümpelung, Haushalts- und Wohnungsauflösung, Nachlassräumung, Messie-Wohnungen, Maler- und Sanierungsarbeiten. Preise vergleichen." seo_path="/dienstleistungen/" seo_breadcrumb_name="Dienstleistungen" seo_keywords="Haushaltsauflösung, Wohnungsauflösung, Kellerentrümpelung, Nachlassräumung, Gewerbeentrümpelung, Erbschaftsräumung, Wohnungsübergabe, Entsorgung, Sperrmüll, Sanierung, Renovierung, Entrümpelung Festpreis" seo_speakable="h1,.rw-antwort-text" %}
+  {% include 'components/rw_css.html' with crit_page='dienstleistungen.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  {# ════════ PAGE HERO ════════ #}
+  <div class="rw-leistungen-hero rw-leistungen-hero--media">
+    {# AVIF zuerst, WebP als zweite Quelle, JPEG im img-Element als Rueckfall - 06.09.2026, P8/E3. #}
+    {# AVIF und WebP stehen bewusst auf EINER Zeile: build_critical_css nimmt die ersten 160 #}
+    {# Zeilen nach <body (Regel 28). Als eigene Zeile hat die AVIF-Quelle auf der Startseite #}
+    {# .rw-rechner-teaser aus dem kritischen CSS verdraengt - gemessen: -762 Byte (Regel 26). #}
+    <div class="rw-hero-media-bg"><picture>
+      <source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.avif' %}" type="image/avif"><source media="(max-width:640px)" srcset="{% static 'images/hero-banner-mobile.webp' %}" type="image/webp">
+      <source srcset="{% static 'images/hero-banner.avif' %}" type="image/avif"><source srcset="{% static 'images/hero-banner.webp' %}" type="image/webp">
+      <img src="{% static 'images/hero-banner.jpg' %}" alt="" width="1915" height="821" fetchpriority="high">
+    </picture></div>
+    <div class="rw-hero-media-overlay"></div>
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>Unsere Dienstleistungen</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Alles aus einer Hand</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(2rem,4vw,3rem);margin-bottom:14px;">
+          Entrümpelung, Haushaltsauflösung & <em>Sanierung aus einer Hand</em>
+        </h1>
+        <p data-rw-readmore style="font-size:1rem;color:var(--rw-text-2);max-width:620px;line-height:1.8;margin-bottom:28px;">
+          Wir schaffen Platz, wo Neues entstehen soll. Ob Entrümpelung, Haushaltsauflösung, Nachlassräumung oder Wohnungsfreimachung – wir begleiten Sie von der Besichtigung bis zur Übergabe. Auf Wunsch übergeben wir die besenreine Wohnung direkt an Vermieter oder Hausverwaltung. <strong style="color:var(--rw-text);">Transparent kalkuliert und mit Festpreisangebot {{ ZUSAGE_ANGEBOT }}.</strong>
+        </p>
+        {% comment %}
+          Orchestrator-Befund Punkt 3: Icon-Chip-Vertrauensreihe raus, reiner
+          Text wie im homepage-Beleg (rwf-hero-belege). Keine Inline-Stile
+          mehr - die "Ratenzahlung"-Pille hatte vorher eine eigene Hintergrund-
+          farbe per style-Attribut, die die Chip-CSS unten (Regel 16) nicht
+          erreichen konnte.
+        {% endcomment %}
+        <ul class="rwf-hero-belege" aria-label="Zusagen">
+          <li><span>{{ ZUSAGE_REAKTION }}</span></li>
+          <li><span>Angebot {{ ZUSAGE_ANGEBOT }}</span></li>
+          <li><span>Festpreis nach Besichtigung</span></li>
+          <li><span>Kein Zwischenhändler</span></li>
+          <li><span>Entsorgungsnachweis</span></li>
+          <li><span>Ratenzahlung auf Anfrage</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  {% include 'components/rw_antwort.html' with antwort_frage=antwort_frage antwort_text=antwort_text %}
+
+  {% comment %}
+    G11: die Orientierungstabelle ueber alle Leistungen, aus
+    services.hub_vergleich(). Bewusst NICHT die Dreier-Tabelle von
+    /haushaltsaufloesung/ - dieselbe Tabelle auf drei Seiten waere Duplikat.
+    Diese hier beantwortet dieselbe Frage auf der Achse, die der Hub braucht:
+    eine Zeile je Leistung. Wer hier landet, weiss noch nicht, welche er sucht.
+  {% endcomment %}
+  <section class="rw-section" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      {% include 'components/rw_vergleich.html' with vergleiche=vergleiche %}
+    </div>
+  </section>
+
+  {# ════════ SEKTION 1: ENTRÜMPELUNG ════════ #}
+  {% include 'components/rw_trustbar.html' %}
+
+  <section class="rw-section" id="entruempelung" style="background:var(--rw-bg);">
+    <div class="rw-container">
+
+      <div class="rw-section-header" data-rw-reveal>
+        <div class="rw-section-badge">Bereich 1</div>
+        <h2 class="rw-section-title">Entrümpelung & <em>Auflösung</em></h2>
+        <p class="rw-section-sub">Alle Entrümpelungsleistungen – zum Festpreis, besenrein übergeben.</p>
+      </div>
+
+      <div class="rw-leistungen-grid">
+
+        <div class="rw-leistung-detail" id="haushaltsaufloesung" data-rw-reveal>
+          <div class="rw-leistung-header">
+            <div class="rw-leistung-icon-big"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></div>
+            <div>
+              <div class="rw-leistung-title">Haushaltsauflösung</div>
+              <div class="rw-leistung-subtitle">Komplett aus einer Hand</div>
+            </div>
+          </div>
+          <p class="rw-leistung-desc">Komplette Auflösung von Häusern und Wohnungen – Möbel, Elektrogeräte, Hausrat, Kleidung, Gartengeräte. Verwertbares wird an soziale Einrichtungen weitergegeben, der Rest umweltgerecht entsorgt. Ablauf, Preise und der Unterschied zur Entrümpelung stehen ausführlich auf der Seite <a href="/haushaltsaufloesung/">Haushaltsauflösung</a>.</p>
+          <div class="rw-leistung-features">
+            <span class="rw-leistung-feature">Vollständige Räumung aller Zimmer & Nebenräume</span>
+            <span class="rw-leistung-feature">Wertgegenstände werden gesichert & übergeben</span>
+            <span class="rw-leistung-feature">Besenreine Übergabe an Eigentümer oder Vermieter</span>
+            <span class="rw-leistung-feature">Transport und Entsorgung im Angebot enthalten</span>
+            <span class="rw-leistung-feature">Entsorgungsnachweis auf Wunsch</span>
+            <span class="rw-leistung-feature">Auch Dachboden, Keller & Garage inklusive</span>
+          </div>
+          <div class="rw-service-card-actions">
+            <a href="/haushaltsaufloesung/" class="rw-btn-sm rw-btn-sm-primary">Mehr zur Haushaltsauflösung</a>
+            <a href="/anfrage/" class="rw-btn-sm rw-btn-sm-ghost"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true" style="font-size:0.95rem;"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>Jetzt anfragen</a>
+          </div>
+        </div>
+
+        <div class="rw-leistung-detail" id="wohnungsaufloesung" data-rw-reveal data-rw-delay="1">
+          <div class="rw-leistung-header">
+            <div class="rw-leistung-icon-big"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 6h2M13 6h2M9 10h2M13 10h2M9 14h2M13 14h2M10 22v-4h4v4"/></svg></div>
+            <div>
+              <div class="rw-leistung-title">Wohnungsauflösung</div>
+              <div class="rw-leistung-subtitle">Diskret & termingerecht</div>
+            </div>
+          </div>
+          <p class="rw-leistung-desc">Diskrete Räumung von Mietwohnungen nach Auszug, bei Erbschaft oder Mietende. Auf Wunsch stimmen wir uns direkt mit Vermieter oder Hausverwaltung ab. Fristen, Übergabeprotokoll und Preise stehen ausführlich auf der Seite <a href="/wohnungsaufloesung/">Wohnungsauflösung</a>.</p>
+          <div class="rw-leistung-features">
+            <span class="rw-leistung-feature">Räumung inkl. Einbauküche, Keller & Stellplatz</span>
+            <span class="rw-leistung-feature">Abstimmung mit Vermieter & Hausverwaltung</span>
+            <span class="rw-leistung-feature">Planung entlang Ihres Rückgabetermins</span>
+            <span class="rw-leistung-feature">Optional: Schlüsselübergabe durch uns</span>
+            <span class="rw-leistung-feature">Besenrein & protokolliert</span>
+            <span class="rw-leistung-feature">Entsorgungsnachweis auf Wunsch</span>
+            <span class="rw-leistung-feature">Besichtigungstermin {{ ZUSAGE_TERMIN_FRUEHESTENS }} buchbar</span>
+          </div>
+          <div class="rw-service-card-actions">
+            <a href="/wohnungsaufloesung/" class="rw-btn-sm rw-btn-sm-primary">Mehr zur Wohnungsauflösung</a>
+            <a href="/anfrage/" class="rw-btn-sm">Jetzt anfragen</a>
+          </div>
+        </div>
+
+        <div class="rw-leistung-detail" id="kellerentruempelung" data-rw-reveal>
+          <div class="rw-leistung-header">
+            <div class="rw-leistung-icon-big"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8"/><rect x="1" y="3" width="22" height="5" rx="1"/><path d="M10 12h4"/></svg></div>
+            <div>
+              <div class="rw-leistung-title">Kellerentrümpelung</div>
+              <div class="rw-leistung-subtitle">Vom Einzelraum bis zur ganzen Anlage</div>
+            </div>
+          </div>
+          <p class="rw-leistung-desc">Jahrelang angesammelter Kram, alte Möbel, Sperrmüll, Elektroschrott – wir schaffen Platz. Egal ob einzelner Kellerraum, Abstellkammer, Garage oder ganzes Kellerlager. Was ein Kellerabteil kostet und warum der Zugang mehr wiegt als die Menge, steht auf <a href="/kellerentruempelung/">Kellerentrümpelung</a>.</p>
+          <div class="rw-leistung-features">
+            <span class="rw-leistung-feature">Einzelne Kellerräume bis ganze Lagerflächen</span>
+            <span class="rw-leistung-feature">Sperrmüll, Schrott & Elektroschrott inklusive</span>
+            <span class="rw-leistung-feature">Manuelle Wertstofftrennung für Recycling</span>
+            <span class="rw-leistung-feature">Garagen, Dachböden & Abstellräume</span>
+            <span class="rw-leistung-feature">Entsorgungsnachweis auf Wunsch</span>
+            <span class="rw-leistung-feature">Termin nach Absprache</span>
+            <span class="rw-leistung-feature">Festpreis nach Besichtigung</span>
+          </div>
+          <div class="rw-service-card-actions">
+            <a href="/kellerentruempelung/" class="rw-btn-sm rw-btn-sm-primary">Mehr zur Kellerentrümpelung</a>
+            <a href="/anfrage/" class="rw-btn-sm">Jetzt anfragen</a>
+          </div>
+        </div>
+
+        <div class="rw-leistung-detail" id="gewerbeentruempelung" data-rw-reveal data-rw-delay="1">
+          <div class="rw-leistung-header">
+            <div class="rw-leistung-icon-big"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V11l5 3V11l5 3V11l5 3v7z"/><path d="M3 21h18M8 21v-4M13 21v-4"/></svg></div>
+            <div>
+              <div class="rw-leistung-title">Gewerbeentrümpelung</div>
+              <div class="rw-leistung-subtitle">Büros, Praxen, Hallen & mehr</div>
+            </div>
+          </div>
+          <p class="rw-leistung-desc">Büros, Praxen, Läden, Lager oder Produktionshallen – wir entrümpeln Gewerbeimmobilien jeder Größe. Zum vereinbarten Termin, mit festem Preis und getrennt ausgewiesenen Positionen. Stichtag, Aktenvernichtung und Nachweise stehen auf <a href="/gewerbeentruempelung/">Gewerbeentrümpelung</a>.</p>
+          <div class="rw-leistung-features">
+            <span class="rw-leistung-feature">Büros, Praxen, Einzelhandel & Industrie</span>
+            <span class="rw-leistung-feature">Abstimmung mit Nachmieter oder Verwalter</span>
+            <span class="rw-leistung-feature">Akten- & Datenträgervernichtung auf Wunsch</span>
+            <span class="rw-leistung-feature">Besichtigungstermin {{ ZUSAGE_TERMIN_FRUEHESTENS }} buchbar</span>
+            <span class="rw-leistung-feature">Entsorgungsnachweis & Dokumentation</span>
+            <span class="rw-leistung-feature">Festpreis nach Objektbesichtigung</span>
+          </div>
+          <div class="rw-service-card-actions">
+            <a href="/gewerbeentruempelung/" class="rw-btn-sm rw-btn-sm-primary">Mehr zur Gewerbeentrümpelung</a>
+            <a href="/anfrage/" class="rw-btn-sm">Jetzt anfragen</a>
+          </div>
+        </div>
+
+        <div class="rw-leistung-detail" id="nachlassraeumung" data-rw-reveal>
+          <div class="rw-leistung-header">
+            <div class="rw-leistung-icon-big"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3 5.5 5.5 0 0 0 12 5.5 5.5 5.5 0 0 0 7.5 3 5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7z"/></svg></div>
+            <div>
+              <div class="rw-leistung-title">Nachlassräumung</div>
+              <div class="rw-leistung-subtitle">Einfühlsam & diskret</div>
+            </div>
+          </div>
+          <p class="rw-leistung-desc">Der Verlust eines Angehörigen ist belastend genug. Wir übernehmen die komplette Nachlassräumung einfühlsam, diskret und zuverlässig – damit Sie sich auf das Wesentliche konzentrieren können. Wie das mit mehreren Erben und dem Nachlassgericht abläuft, steht auf <a href="/nachlassraeumung/">Nachlassräumung</a>.</p>
+          <div class="rw-leistung-features">
+            <span class="rw-leistung-feature">Respektvoller Umgang mit persönlichen Gegenständen</span>
+            <span class="rw-leistung-feature">Sicherung & Übergabe von Wertgegenständen</span>
+            <span class="rw-leistung-feature">Vollständige Dokumentation auf Wunsch</span>
+            <span class="rw-leistung-feature">Entsorgungsnachweis auf Wunsch</span>
+            <span class="rw-leistung-feature">Koordination mit Erben & Nachlassgericht</span>
+            <span class="rw-leistung-feature">Diskretion & persönliche Begleitung</span>
+            <span class="rw-leistung-feature">Festpreis nach Besichtigung, verbindlich im Angebot</span>
+          </div>
+          <div class="rw-service-card-actions">
+            <a href="/nachlassraeumung/" class="rw-btn-sm rw-btn-sm-primary">Mehr zur Nachlassräumung</a>
+            <a href="/anfrage/" class="rw-btn-sm">Jetzt anfragen</a>
+          </div>
+        </div>
+
+      </div>
+
+      {% comment %}
+        ALLE LEISTUNGSSEITEN (A14). Die fuenf Karten daruber decken die
+        haeufigsten Faelle ab; vier weitere Leistungen haben eine eigene Seite,
+        aber keine Karte — Messie-Wohnung, Sperrmuell, Renovierung und die
+        Kostenseite. Diese Liste kommt aus _SERVICE_DATA und ist deshalb immer
+        vollstaendig, auch nach der naechsten neuen Leistung.
+      {% endcomment %}
+      {% if leistungen_seiten %}
+      <div class="rw-leistung-seiten" data-rw-reveal>
+        <h3 class="rw-leistung-seiten-titel">Jede Leistung hat eine eigene Seite – mit Preisen, Ablauf und Antworten</h3>
+        <div class="rw-svc-related">
+          {% for le in leistungen_seiten %}
+          <a href="{{ le.url }}" class="rw-svc-related-karte">
+            <span class="rw-svc-related-name">{{ le.name }}</span>
+            <span class="rw-svc-related-text">{{ le.text|truncatewords:26 }}</span>
+            <span class="rw-svc-related-mehr" aria-hidden="true">Zur Leistungsseite →</span>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {# CTA Entrümpelung bestellen #}
+      <div class="rw-bestell-cta" data-rw-reveal>
+        <div class="rw-bestell-cta-text">
+          <h3>Entrümpelung beauftragen</h3>
+          <p>Kostenlose Besichtigung & verbindliches Festpreisangebot – unser Team meldet sich in {{ ZUSAGE_ANTWORT_SPANNE }}.</p>
+        </div>
+        <a href="/anfrage/" class="rw-btn-primary rw-btn-lg">Entrümpelung bestellen →</a>
+      </div>
+
+    </div>
+  </section>
+
+  {# ════════ RATENZAHLUNG ════════ #}
+  <section class="rw-section" id="ratenzahlung" style="background:var(--rw-bg-2);">
+    <div class="rw-container">
+      <div data-rw-reveal style="max-width:820px;margin:0 auto;">
+
+        <div class="rw-section-badge" style="margin-bottom:16px;">Für schwierige Lebenslagen</div>
+        <h2 class="rw-section-title" style="text-align:left;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;">
+          <svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true" style="font-size:1em;color:var(--rw-orange);flex-shrink:0;margin-top:0.1em;"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          <span><em>Ratenzahlung</em> auf Anfrage –<br>auch wenn das Budget gerade eng ist</span>
+        </h2>
+        <p style="font-size:0.95rem;color:var(--rw-text-3);margin-bottom:32px;line-height:1.7;">
+          Weil nicht jede schwierige Situation auch finanziell einfach ist.
+        </p>
+
+        <div style="background:var(--rw-bg-card);border-left:4px solid var(--rw-orange);border-radius:0 var(--rw-radius-lg) var(--rw-radius-lg) 0;padding:24px 28px;margin-bottom:28px;">
+          <p style="font-size:1rem;color:var(--rw-text-2);line-height:1.9;margin:0 0 14px;">
+            Wir wissen, dass eine Entrümpelung, Haushaltsauflösung oder Nachlassräumung oft in einer finanziell belastenden Lebenssituation notwendig wird. Deshalb prüfen wir auf Anfrage und unter bestimmten Voraussetzungen die Möglichkeit einer <strong style="color:var(--rw-text);">individuellen Ratenzahlung</strong>.
+          </p>
+          <p style="font-size:1rem;color:var(--rw-text-2);line-height:1.9;margin:0;">
+            Ob nach einem Umzug, einer Erbschaft, einer Trennung oder in einer wirtschaftlich schwierigen Phase – wir möchten helfen, notwendige Räumungsarbeiten umzusetzen, ohne dass die gesamte Summe sofort bezahlt werden muss. <strong style="color:var(--rw-text);">Jede Anfrage wird persönlich und vertraulich geprüft.</strong>
+          </p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-bottom:32px;">
+          <div style="display:flex;align-items:flex-start;gap:14px;background:var(--rw-bg-card);border-radius:var(--rw-radius-lg);padding:18px 20px;border:1px solid var(--rw-border);">
+            <span style="color:var(--rw-orange);flex-shrink:0;margin-top:1px;font-size:1.2rem;display:inline-flex;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-3-3.87M9 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3"/><circle cx="16" cy="8" r="2.5"/></svg></span>
+            <div>
+              <div style="font-size:0.9rem;font-weight:600;color:var(--rw-text);margin-bottom:3px;">Zahlungsmodell auf Anfrage</div>
+              <div style="font-size:0.8rem;color:var(--rw-text-3);line-height:1.6;">Nach individueller Vereinbarung – keine starren Vorgaben</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;background:var(--rw-bg-card);border-radius:var(--rw-radius-lg);padding:18px 20px;border:1px solid var(--rw-border);">
+            <span style="color:var(--rw-orange);flex-shrink:0;margin-top:1px;font-size:1.2rem;display:inline-flex;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+            <div>
+              <div style="font-size:0.9rem;font-weight:600;color:var(--rw-text);margin-bottom:3px;">Diskrete Prüfung</div>
+              <div style="font-size:0.8rem;color:var(--rw-text-3);line-height:1.6;">Jede Anfrage wird persönlich & vertraulich behandelt</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;background:var(--rw-bg-card);border-radius:var(--rw-radius-lg);padding:18px 20px;border:1px solid var(--rw-border);">
+            <span style="color:var(--rw-orange);flex-shrink:0;margin-top:1px;font-size:1.2rem;display:inline-flex;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 9.5a4 4 0 1 0 0 5M8 11h5M8 13h4"/></svg></span>
+            <div>
+              <div style="font-size:0.9rem;font-weight:600;color:var(--rw-text);margin-bottom:3px;">Transparente Kosten</div>
+              <div style="font-size:0.8rem;color:var(--rw-text-3);line-height:1.6;">Der Preis steht schriftlich im Angebot</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;background:var(--rw-bg-card);border-radius:var(--rw-radius-lg);padding:18px 20px;border:1px solid var(--rw-border);">
+            <span style="color:var(--rw-orange);flex-shrink:0;margin-top:1px;font-size:1.2rem;display:inline-flex;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3 5.5 5.5 0 0 0 12 5.5 5.5 5.5 0 0 0 7.5 3 5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7z"/></svg></span>
+            <div>
+              <div style="font-size:0.9rem;font-weight:600;color:var(--rw-text);margin-bottom:3px;">Faire Lösungen</div>
+              <div style="font-size:0.8rem;color:var(--rw-text-3);line-height:1.6;">Auch in finanziell herausfordernden Situationen prüfen wir gemeinsam, was möglich ist</div>
+            </div>
+          </div>
+        </div>
+
+        <div data-rw-reveal data-rw-delay="1" style="text-align:center;padding:30px 28px;background:rgba(22,163,74,0.05);border-radius:var(--rw-radius-xl);border:1px dashed rgba(22,163,74,0.38);">
+          <p style="font-size:1rem;font-weight:600;color:var(--rw-text);margin-bottom:6px;">Sprechen Sie uns einfach an.</p>
+          <p style="font-size:0.9rem;color:var(--rw-text-2);margin-bottom:22px;line-height:1.7;">Gerne prüfen wir, ob eine Ratenzahlung für Ihre Situation möglich ist – unverbindlich und vertraulich.</p>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <a href="/anfrage/?anliegen=ratenzahlung" class="rw-btn-primary"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>Ratenzahlung anfragen</a>
+            <a href="{{ FIRMA_WHATSAPP_LINK_RATENZAHLUNG }}" target="_blank" rel="noopener" class="rw-btn-outline"><svg viewBox="0 0 24 24" width="18" height="18" fill="#25D366" aria-hidden="true" style="flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.541 5.877L.057 23.386a.5.5 0 0 0 .611.601l5.647-1.525A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>Per WhatsApp fragen</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {# ════════ SEKTION 2: SONSTIGE LEISTUNGEN ════════ #}
+  <section class="rw-section" id="sonstige" style="background:var(--rw-bg-2);">
+    <div class="rw-container">
+
+      <div class="rw-section-header" data-rw-reveal>
+        <div class="rw-section-badge">Bereich 2</div>
+        <h2 class="rw-section-title">Sonstige <em>Leistungen</em></h2>
+        <p class="rw-section-sub">Wohnungsübergabe an den Vermieter, Entsorgung und Dokumentation – <strong style="color:var(--rw-orange);">im selben Festpreisangebot.</strong></p>
+      </div>
+
+      <div class="rw-leistungen-grid">
+
+        <div class="rw-leistung-detail" id="wohnungsuebergabe" data-rw-reveal>
+          <div class="rw-leistung-header">
+            <div class="rw-leistung-icon-big"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.5 12.5 21 2M16 7l3 3M14 9l2 2"/></svg></div>
+            <div>
+              <div class="rw-leistung-title">Wohnungsübergabe an Vermieter</div>
+              <div class="rw-leistung-subtitle">Räumen, übergeben, Protokoll</div>
+            </div>
+          </div>
+          <p class="rw-leistung-desc">
+            Sie ziehen aus und können beim Übergabetermin nicht dabei sein? Wir räumen die Wohnung, übergeben sie besenrein an Vermieter oder Hausverwaltung, notieren Zählerstände und Schlüssel und schicken Ihnen das Protokoll.
+            Was der Vermieter bei der Rückgabe verlangen darf, steht auf <a href="/wohnungsaufloesung/">Wohnungsauflösung</a>.
+          </p>
+          <div class="rw-leistung-features">
+            <span class="rw-leistung-feature">Übergabe an Vermieter oder Hausverwaltung</span>
+            <span class="rw-leistung-feature">Endreinigung zubuchbar</span>
+            <span class="rw-leistung-feature">Schlüsselübergabe & Übergabeprotokoll</span>
+            <span class="rw-leistung-feature">Zählerstände notiert</span>
+            <span class="rw-leistung-feature">Festpreis nach Besichtigung</span>
+          </div>
+          <div class="rw-service-card-actions">
+            <a href="/anfrage/" class="rw-btn-sm rw-btn-sm-primary"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true" style="font-size:0.95rem;"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>Jetzt anfragen</a>
+          </div>
+        </div>
+
+        <div class="rw-leistung-detail" data-rw-reveal data-rw-delay="1">
+          <div class="rw-leistung-header">
+            <div class="rw-leistung-icon-big"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+            <div>
+              <div class="rw-leistung-title">Entsorgung & Recycling</div>
+              <div class="rw-leistung-subtitle">Getrennt nach Abfallart</div>
+            </div>
+          </div>
+          <p class="rw-leistung-desc">Was wir räumen, sortieren wir nach Abfallart: Holz, Metall, Elektrogeräte, Restmüll. Asbest und andere Schadstoffe übernimmt ein zugelassener Fachbetrieb.</p>
+          <div class="rw-leistung-features">
+            <span class="rw-leistung-feature">Trennung nach Abfallart</span>
+            <span class="rw-leistung-feature">Elektrogeräte getrennt zur Annahmestelle</span>
+            <span class="rw-leistung-feature">Sperrmüll & Schrott inklusive</span>
+            <span class="rw-leistung-feature">Entsorgungsnachweis auf Wunsch</span>
+            <span class="rw-leistung-feature">Entsorgung im Angebot enthalten</span>
+          </div>
+          <div class="rw-service-card-actions">
+            <a href="/anfrage/" class="rw-btn-sm rw-btn-sm-primary"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true" style="font-size:0.95rem;"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>Jetzt anfragen</a>
+          </div>
+        </div>
+
+        <div class="rw-leistung-detail" data-rw-reveal>
+          <div class="rw-leistung-header">
+            <div class="rw-leistung-icon-big"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+            <div>
+              <div class="rw-leistung-title">Dokumentation & Protokolle</div>
+              <div class="rw-leistung-subtitle">Nachweise für Vermieter, Erben und Betriebe</div>
+            </div>
+          </div>
+          <p class="rw-leistung-desc">Übergabeprotokoll, Entsorgungsnachweis und auf Wunsch Fotos von Fundstücken – damit Vermieter, Erben oder Ihre Buchhaltung belegen können, was geräumt und wohin es gebracht wurde.</p>
+          <div class="rw-leistung-features">
+            <span class="rw-leistung-feature">Übergabeprotokoll</span>
+            <span class="rw-leistung-feature">Entsorgungsnachweis auf Wunsch</span>
+            <span class="rw-leistung-feature">Fundstücke auf Wunsch fotografiert</span>
+            <span class="rw-leistung-feature">Rechnung mit getrennt ausgewiesenen Arbeitskosten</span>
+          </div>
+          <div class="rw-service-card-actions">
+            <a href="/anfrage/" class="rw-btn-sm rw-btn-sm-primary"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true" style="font-size:0.95rem;"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>Jetzt anfragen</a>
+          </div>
+        </div>
+
+        <div class="rw-leistung-detail" data-rw-reveal data-rw-delay="1">
+          <div class="rw-leistung-header">
+            <div class="rw-leistung-icon-big"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-3-3.87M9 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3"/><circle cx="16" cy="8" r="2.5"/></svg></div>
+            <div>
+              <div class="rw-leistung-title">Renovierung im Anschluss</div>
+              <div class="rw-leistung-subtitle">Das Objekt ist dann schon leer</div>
+            </div>
+          </div>
+          <p class="rw-leistung-desc">Nach der Räumung streichen wir auf Wunsch, ersetzen Bodenbeläge und erledigen Kleinreparaturen – im selben Angebot, ohne zweite Anfahrt. Was in Leitungen oder Tragendes eingreift, gehört zu einem Fachbetrieb. Alles Weitere auf <a href="/sanierung-renovierung/">Sanierung und Renovierung</a>.</p>
+          <div class="rw-leistung-features">
+            <span class="rw-leistung-feature">Malerarbeiten ab {{ PREIS_MODIFIKATOREN.maler_min }}&nbsp;€</span>
+            <span class="rw-leistung-feature">Bodenbeläge und Kleinreparaturen</span>
+            <span class="rw-leistung-feature">Räumung und Renovierung in einem Angebot</span>
+          </div>
+          <div class="rw-service-card-actions">
+            <a href="/anfrage/" class="rw-btn-sm rw-btn-sm-primary"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true" style="font-size:0.95rem;"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>Jetzt anfragen</a>
+          </div>
+        </div>
+
+      </div>
+
+      {# CTA Sonstige Leistungen bestellen #}
+      <div class="rw-bestell-cta" data-rw-reveal>
+        <div class="rw-bestell-cta-text">
+          <h3>Sonstige Leistungen beauftragen</h3>
+          <p>Individuelle Anfrage – wir finden gemeinsam die passende Lösung für Ihre Situation.</p>
+        </div>
+        <a href="/anfrage/" class="rw-btn-primary rw-btn-lg">Jetzt bestellen →</a>
+      </div>
+
+    </div>
+  </section>
+
+  {# ════════ SEKTION 3: SANIERUNG & REPARATUR ════════ #}
+  <section class="rw-section rw-reno" id="sanierung" style="background:var(--rw-bg);">
+    <div class="rw-container">
+
+      <div class="rw-section-header" data-rw-reveal>
+        <div class="rw-section-badge">Bereich 3</div>
+        <h2 class="rw-section-title">Sanierung & Reparatur</h2>
+        <p class="rw-section-sub">Handwerkliche Leistungen rund um Ihre Immobilie – von kleinen Reparaturen bis zur Komplettrenovierung.</p>
+      </div>
+
+      <div class="rw-reno-grid">
+        <div class="rw-reno-card" data-rw-reveal data-rw-delay="1">
+          <div class="rw-reno-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="14" y="3" width="7" height="6" rx="1"/><path d="M14 6H4a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h8a2 2 0 0 1 2 2v1"/><path d="M9 21v-5a2 2 0 0 1 2-2"/><rect x="8" y="19" width="4" height="4" rx="1"/></svg></div>
+          <h3 class="rw-reno-title">Malerarbeiten</h3>
+          <p class="rw-reno-desc">Wände streichen, tapezieren, Decken neu gestalten. Ideal nach einer Entrümpelung oder vor der Neuvermietung.</p>
+        </div>
+        <div class="rw-reno-card" data-rw-reveal data-rw-delay="2">
+          <div class="rw-reno-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 9 4.5-9 4.5-9-4.5z"/><path d="m3 12 9 4.5 9-4.5M3 17l9 4.5 9-4.5"/></svg></div>
+          <h3 class="rw-reno-title">Bodenbeläge</h3>
+          <p class="rw-reno-desc">Laminat, Vinyl, Teppich – Verlegung und Austausch in Wohn- und Gewerberäumen.</p>
+        </div>
+        <div class="rw-reno-card" data-rw-reveal data-rw-delay="3">
+          <div class="rw-reno-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-2.4 2.6-2.6z"/></svg></div>
+          <h3 class="rw-reno-title">Kleinreparaturen</h3>
+          <p class="rw-reno-desc">Türen, Fenster, Schränke – kleine Schäden, die vor der Übergabe weg sein müssen.</p>
+        </div>
+        <div class="rw-reno-card" data-rw-reveal data-rw-delay="1">
+          <div class="rw-reno-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.7s6 5.4 6 9.3a6 6 0 0 1-12 0c0-3.9 6-9.3 6-9.3z"/></svg></div>
+          <h3 class="rw-reno-title">Sanitär & Bad</h3>
+          <p class="rw-reno-desc">Armaturen reparieren, Dusche und Badewanne abdichten. Was in die Wasserleitung eingreift, übernimmt ein zugelassener Fachbetrieb.</p>
+        </div>
+        <div class="rw-reno-card" data-rw-reveal data-rw-delay="2">
+          <div class="rw-reno-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 22V8l8-5 8 5v14"/><path d="M4 22h16M9 22v-6h6v6M9 11h.01M15 11h.01"/></svg></div>
+          <h3 class="rw-reno-title">Komplettrenovierung</h3>
+          <p class="rw-reno-desc">Entrümpelung, Renovierung und Übergabe nacheinander, in einem Angebot.</p>
+        </div>
+        <div class="rw-reno-card rw-reno-card--cta" data-rw-reveal data-rw-delay="3">
+          <div class="rw-reno-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3 class="rw-reno-title">Individuelles Angebot</h3>
+          <p class="rw-reno-desc">Spezifische Anforderung? Wir schauen uns alles an – kostenlos und unverbindlich.</p>
+          <a href="/anfrage/" class="rw-btn-reno">Angebot anfragen →</a>
+        </div>
+      </div>
+
+      {# CTA Sanierung #}
+      <div class="rw-bestell-cta rw-bestell-cta--green" data-rw-reveal>
+        <div class="rw-bestell-cta-text">
+          <h3>Sanierung & Reparatur anfragen</h3>
+          <p>Kostenlose Besichtigung – unser Team schaut sich alles persönlich an und erstellt ein individuelles Angebot.</p>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
+          <a href="/anfrage/" class="rw-btn-reno rw-btn-lg">Angebot für Sanierung →</a>
+          <a href="/sanierung-renovierung/" class="rw-btn-outline rw-btn-lg">Renovierung: Preise &amp; Ablauf →</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <section class="rw-section" style="background:var(--rw-bg-2);" data-rw-reveal>
+    <div class="rw-container">
+      {% include 'components/rw_preistabelle.html' %}
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>
+

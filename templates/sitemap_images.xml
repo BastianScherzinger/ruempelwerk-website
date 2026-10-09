@@ -1,0 +1,26 @@
+{% spaceless %}<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+{% comment %}
+  Bildsitemap (D5, 06.09.2026). Django liefert kein Template mit
+  image:-Namensraum mit; die Sammelroute sitemap-<section>.xml kennt nur
+  sitemap.xml, deshalb hat /sitemap-images.xml eine eigene View
+  (apps/core/sitemaps.py::image_sitemap), die dieses Template setzt.
+
+  url.item ist der Eintrag aus ImageSitemap.items() - Django reicht ihn in
+  jedem url-Datensatz mit durch. Darin liegt die Bilderliste; loc und lastmod
+  baut Django wie ueberall aus location()/lastmod().
+
+  KEIN eigenes Zeilenlayout: {% spaceless %} umschliesst die ganze Datei,
+  damit zwischen den Elementen kein Leerraum steht. XML ist an dieser Stelle
+  leerraumtolerant, aber die Datei waechst mit jedem Bild - und
+  HtmlEinrueckungMiddleware fasst sie nicht an, weil sie nicht text/html ist.
+{% endcomment %}
+{% for url in urlset %}<url>
+<loc>{{ url.location }}</loc>
+{% if url.lastmod %}<lastmod>{{ url.lastmod|date:"Y-m-d" }}</lastmod>{% endif %}
+{% for bild in url.item.bilder %}<image:image>
+<image:loc>{{ bild.loc }}</image:loc>
+<image:title>{{ bild.titel }}</image:title>
+</image:image>{% endfor %}
+</url>{% endfor %}
+</urlset>{% endspaceless %}

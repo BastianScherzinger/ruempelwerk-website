@@ -1,0 +1,751 @@
+{% load static %}{# audit-ok V07: JSON-LD kommt über components/rw_seo.html (Tag rw_head_schema) - die Seite liefert genau einen ld+json-Block, check_seo prüft ihn #}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  {% comment %}Titel und Beschreibung einmal setzen: Tag und rw_seo-Include lesen dieselben Variablen (Regel 7, EIG297).{% endcomment %}
+  {% with seo_titel="Datenschutz – Rümpelwerk Mitteldeutschland" seo_beschr="Datenschutzerklärung von Rümpelwerk Mitteldeutschland: Welche Daten wir erheben, wozu wir sie nutzen und welche Rechte Sie haben." %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{{ seo_titel }}</title>
+  <meta name="description" content="{{ seo_beschr }}">
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {% include 'components/rw_seo.html' with seo_noindex=True seo_title=seo_titel seo_description=seo_beschr seo_path="/datenschutz/" %}
+  {% include 'components/rw_css.html' with crit_page='datenschutz.html' %}
+  {% endwith %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt">
+
+  <div class="rw-leistungen-hero">
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>Datenschutz</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Rechtliches</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(2rem,4vw,3rem);margin-bottom:14px;">
+          Datenschutzerklärung
+        </h1>
+        <p style="font-size:1rem;color:var(--rw-text-2);max-width:600px;line-height:1.8;">
+          Gemäß DSGVO (EU) 2016/679 und BDSG
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <section class="rw-section" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      <div class="rw-legal-content">
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">1. Verantwortlicher</h2>
+          <p>
+            Verantwortlicher im Sinne der DSGVO ist:<br><br>
+            <strong>Rümpelwerk Mitteldeutschland</strong><br>
+            Inhaber: Oliver Pohl<br>
+            Cansteinstraße 14<br>
+            06110 Halle<br>
+            E-Mail: <a href="mailto:{{ CONTACT_EMAIL }}" style="color:var(--rw-orange);">{{ CONTACT_EMAIL }}</a><br>
+            Telefon: <a href="tel:{{ FIRMA_TELEFON }}" aria-label="{{ FIRMA_TELEFON_ANZEIGE }} anrufen" style="color:var(--rw-orange);">{{ FIRMA_TELEFON_ANZEIGE }}</a>
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">2. Allgemeines zur Datenverarbeitung</h2>
+          <p>
+            Wir verarbeiten personenbezogene Daten unserer Nutzer grundsätzlich nur, soweit dies zur
+            Bereitstellung einer funktionsfähigen Website sowie unserer Inhalte und Leistungen
+            erforderlich ist. Die Verarbeitung personenbezogener Daten erfolgt regelmäßig nur nach
+            Einwilligung des Nutzers. Eine Ausnahme gilt in solchen Fällen, in denen eine vorherige
+            Einholung einer Einwilligung aus tatsächlichen Gründen nicht möglich ist und die
+            Verarbeitung der Daten durch gesetzliche Vorschriften gestattet ist.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">3. Hosting & Server-Logfiles</h2>
+          <p>
+            Diese Website wird gehostet bei <strong>Railway (Railway Corp., San Francisco, USA)</strong>.
+            Beim Aufruf unserer Website werden durch den Hosting-Anbieter automatisch sogenannte
+            Server-Logfiles erfasst. Diese enthalten:
+          </p>
+          <ul class="rw-legal-list">
+            <li>IP-Adresse des anfragenden Rechners</li>
+            <li>Datum und Uhrzeit des Zugriffs</li>
+            <li>Name und URL der abgerufenen Datei</li>
+            <li>Browsertyp und Betriebssystem</li>
+            <li>Name des Internet-Zugangs-Providers</li>
+          </ul>
+          <p>
+            Die Verarbeitung erfolgt auf Basis von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse
+            an der sicheren und effizienten Bereitstellung der Website). Die Logfiles werden nach
+            spätestens 30 Tagen gelöscht.
+          </p>
+          <p>
+            Railway verarbeitet Daten gemäß ihrer Datenschutzrichtlinie. Weitere Informationen finden
+            Sie unter: <a href="https://railway.app/legal/privacy" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://railway.app/legal/privacy</a>
+          </p>
+
+          {% comment %}
+            Ergänzt am 06.09.2026 (P8, Befund A2). Die Anwendung führt neben den
+            Logfiles des Hosters ein zweites, eigenes Protokoll (Model PageVisit,
+            angelegt in apps/core/middleware.py bei jedem GET mit Status 200).
+            Es stand hier bis dahin nirgends – und eine nicht genannte
+            Verarbeitung ist nach Art. 13 DSGVO ein Informationsmangel,
+            unabhängig davon, wie harmlos die Daten sind.
+
+            Die 30 Tage sind dieselbe Zahl wie AUFBEWAHRUNG_TAGE in
+            apps/core/management/commands/pagevisit_aufraeumen.py. Wer eine der
+            beiden ändert, ändert die andere mit; apps/core/tests/test_commands.py
+            hält sie gegeneinander.
+          {% endcomment %}
+          <h3 style="font-family:var(--rw-font-head);font-weight:800;font-size:1rem;color:var(--rw-text);margin:28px 0 12px;">Eigenes Besuchsprotokoll</h3>
+          <p>
+            Zusätzlich zu den Logfiles des Hosters führt diese Website ein
+            <strong>eigenes Besuchsprotokoll</strong>. Bei jedem erfolgreichen Seitenaufruf
+            speichern wir:
+          </p>
+          <ul class="rw-legal-list">
+            <li>die aufgerufene Seite (Pfad)</li>
+            <li>Ihre <strong>gekürzte IP-Adresse</strong> – bei IPv4 wird das letzte Feld durch eine
+              Null ersetzt, aus „203.0.113.47" wird also „203.0.113.0"; bei IPv6 behalten wir nur die
+              ersten drei von acht Blöcken (48 Bit), aus „2001:db8:1:2:3:4:5:6" wird „2001:db8:1::"</li>
+            <li>die Browserkennung (User-Agent)</li>
+            <li>Datum und Uhrzeit</li>
+          </ul>
+          <p>
+            <strong>Die Kürzung der IP-Adresse ist der Grund, warum hierfür keine Einwilligung
+            nötig ist:</strong> Ein einzelner Aufruf lässt sich damit keiner Person mehr zuordnen.
+            Zweck ist die Reichweitenmessung (welche Seiten werden gelesen) und das Erkennen von
+            Missbrauch (etwa automatisierte Massenzugriffe). Rechtsgrundlage ist Art. 6 Abs. 1
+            lit. f DSGVO; unser berechtigtes Interesse liegt im Betrieb und in der Verbesserung
+            dieser Website.
+          </p>
+          <p>
+            Diese Einträge werden <strong>nach 30 Tagen gelöscht</strong> – automatisch, durch
+            einen nächtlichen Lauf. Es findet keine Zusammenführung mit anderen Daten statt, und
+            es wird kein Profil gebildet.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">4. Kontaktformular, Preisrechner und Kontakt per WhatsApp</h2>
+          <p>
+            Wenn Sie uns über unser Kontaktformular eine Anfrage zukommen lassen, werden die von
+            Ihnen eingegebenen Daten zum Zwecke der Bearbeitung der Anfrage und für den Fall von
+            Anschlussfragen bei uns gespeichert. Diese Daten umfassen:
+          </p>
+          <ul class="rw-legal-list">
+            <li>Name</li>
+            <li>E-Mail-Adresse</li>
+            <li>Telefonnummer (freiwillig)</li>
+            <li>Adresse des Objekts (freiwillig)</li>
+            <li>Gewünschte Leistungsart</li>
+            <li>Freitext / Auftragsbeschreibung (freiwillig)</li>
+          </ul>
+          <p>
+            {# EIG250 (25.09.2026): Formulare holen keine Einwilligung ein - Hinweistext in anfrage/kooperation/rw_rechner/jobs/job_detail passend dazu. #}
+            Die Verarbeitung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO
+            (Durchführung vorvertraglicher Maßnahmen auf Ihre Anfrage hin). Eine Einwilligung
+            ist dafür nicht nötig und wird mit dem Absenden des Formulars auch nicht eingeholt.
+            Zielt eine Anfrage nicht auf einen Vertrag, ist Rechtsgrundlage Art. 6 Abs. 1 lit. f
+            DSGVO; unser berechtigtes Interesse liegt in der Beantwortung Ihrer Anfrage.
+          </p>
+          <p>
+            Fordern Sie über unseren <strong>Preisrechner</strong> ein Angebot an, speichern wir Ihren
+            Namen, Ihre E-Mail-Adresse, die gewählte Leistung und Objektgröße sowie den berechneten
+            Richtpreis. Bei einer <strong>Kooperationsanfrage</strong> sind es Name, Firmenname,
+            E-Mail-Adresse, Telefonnummer (freiwillig), die Art der Kooperation und Ihre Nachricht.
+            Für beide gilt dasselbe wie für das Kontaktformular.
+          </p>
+          <p>
+            Die Daten werden zur Bearbeitung Ihrer Anfrage genutzt und nur an die in dieser
+            Datenschutzerklärung genannten Dienstleister weitergegeben, die wir für die
+            Speicherung, den E-Mail-Versand und die Benachrichtigung über Ihre Anfrage
+            einsetzen.
+            Sie werden gelöscht, sobald sie für den Zweck ihrer Erhebung nicht mehr erforderlich
+            sind, spätestens jedoch nach <strong>2 Jahren</strong>.
+          </p>
+          {# EIG213 (02.10.2026): Datenbankanbieter Supabase belegt (ADS.md, Durchgang 25.08.2026: Host der DATABASE_URL des Dienstes, Protokoll 2026-09-26_RTC-SEO-Analyse U1). Serverregion bewusst nicht genannt - nur der Pooler-Host ist belegt, nicht der Standort der Datenbank. #}
+          <p>
+            <strong>Speicherung.</strong> Ihre Angaben werden in der Datenbank dieser Website
+            gespeichert. Sie wird bei <strong>Supabase (Supabase Inc.)</strong> betrieben, einem externen
+            Dienstleister, der sie in unserem Auftrag hostet; die Website selbst läuft bei Railway
+            (siehe Abschnitt 3).
+            {# EIG249 (25.09.2026): Zaehler aus antispam.rate_limited, geloescht stuendlich durch antispam.abgelaufene_zaehler_loeschen (apps.py). #}
+            Zum Schutz vor massenhaften Einsendungen zählen wir außerdem, wie oft von Ihrer
+            IP-Adresse und von ihrem Adressbereich (bei IPv4 die ersten drei, bei IPv6 die ersten
+            vier Blöcke) aus ein Formular abgeschickt wird. Dieser Zähler enthält Ihre
+            vollständige IP-Adresse, gilt eine Stunde und wird nach spätestens zwei Stunden
+            automatisch gelöscht. Wird eine Einsendung als auffällig bewertet oder gebremst, steht
+            die IP-Adresse zusätzlich im Server-Protokoll (siehe Abschnitt 3).
+            Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; unser berechtigtes Interesse liegt im
+            Schutz unserer Formulare vor Missbrauch und automatisierten Massenzugriffen.
+          </p>
+
+          {% comment %}
+            Ergänzt am 06.09.2026 (P8, Befund A5). Resend ist der Dienst, über
+            den jede einzelne Formularanfrage tatsächlich läuft
+            (apps/core/emails.py, api.resend.com) – und er stand in dieser
+            Erklärung mit null Treffern. Von den drei verschwiegenen Empfängern
+            war das der gravierendste: Es geht nicht um eine IP-Adresse, sondern
+            um Name, Mail, Telefon und Freitext, die der Nutzer gerade erst
+            eingegeben hat.
+
+            Ob ein Auftragsverarbeitungsvertrag vorliegt, ist im Repository
+            nicht nachweisbar und gehört vom Betrieb geklärt (P8, F2). Der Satz
+            unten behauptet deshalb NICHT, dass einer besteht – er nennt den
+            Empfänger. Eine erfundene Zusage wäre schlimmer als keine.
+
+            Seit 27.09.2026 läuft der Versand nicht mehr über Resend, sondern
+            per SMTP über das IONOS-Postfach noreply@ (config/settings.py,
+            MAIL_WEG). Der Absatz nennt deshalb IONOS; wer den Versandweg
+            wieder wechselt, ändert ihn mit. Seit 01.10.2026 (B6) folgt der Absatz
+            dem tatsächlichen Versandweg: fällt die Seite auf Resend zurück
+            (kein SMTP-Passwort, aber RESEND_API_KEY), nennt er Resend – Wortlaut
+            vom 06.09.2026 – statt IONOS (View datenschutz, Variable mail_resend).
+          {% endcomment %}
+          <p>
+            <strong>Benachrichtigung per E-Mail.</strong> Über jede Anfrage werden wir per E-Mail
+            an unser Betriebspostfach
+            (<a href="mailto:{{ CONTACT_EMAIL }}" style="color:var(--rw-orange);">{{ CONTACT_EMAIL }}</a>)
+            benachrichtigt. Für den Versand – und für eine E-Mail an Sie, falls wir Ihnen eine
+            senden – nutzen wir den E-Mail-Dienst {% if mail_resend %}<strong>Resend (Resend, Inc., USA)</strong>{% else %}unseres Hosters
+            <strong>IONOS SE, Elgendorfer Str. 57, 56410 Montabaur</strong>{% endif %}.
+            Ihre Anfragedaten – Name, E-Mail-Adresse, gegebenenfalls Telefonnummer und Ihr
+            Freitext – werden dabei an den Dienst übertragen, weil sie Inhalt dieser E-Mails sind. {% if mail_resend %}Resend{% else %}IONOS{% endif %} verarbeitet
+            diese Daten ausschließlich in unserem Auftrag und zum Zweck des Versands.
+            Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Durchführung vorvertraglicher
+            Maßnahmen auf Ihre Anfrage hin).{% if mail_resend %} Eine Verarbeitung in den USA ist dabei nicht
+            auszuschließen.{% endif %} Weitere Informationen:
+            {% if mail_resend %}<a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://resend.com/legal/privacy-policy</a>{% else %}<a href="https://www.ionos.de/terms-gtc/datenschutzerklaerung/" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://www.ionos.de/terms-gtc/datenschutzerklaerung/</a>{% endif %}
+          </p>
+
+          {% comment %}
+            Ergänzt am 24.09.2026. Seitdem meldet apps/core/telegram.py jede
+            Einsendung der vier Formulare (Anfrage, Preisrechner, Kooperation,
+            Bewerbung) zusätzlich als Push an den Inhaber. Die Liste unten muss
+            zu telegram.nachricht() passen: keine E-Mail-Adresse, keine
+            Nachricht im Wortlaut, keine Straße. Wer dort ein Feld ergänzt,
+            ergänzt es hier. Der Text ist juristisch noch nicht gegengelesen.
+          {% endcomment %}
+          <h3 style="font-family:var(--rw-font-head);font-weight:800;font-size:1rem;color:var(--rw-text);margin:28px 0 12px;">Benachrichtigung per Telegram</h3>
+          <p>
+            Damit wir uns schnell bei Ihnen melden können, erhält unser Inhaber über jede Anfrage
+            zusätzlich eine <strong>Push-Nachricht über den Messenger Telegram</strong>. Das gilt für
+            Anfragen über das Kontaktformular, den Preisrechner und Kooperationsanfragen sowie für
+            Bewerbungen (Abschnitt 5). Die Nachricht wird über die Schnittstelle für automatische
+            Nachrichten („Bot“) von Telegram versendet. Anbieter ist die
+            <strong>Telegram Messenger Inc.</strong> bzw. die <strong>Telegram FZ-LLC</strong>
+            (Dubai, Vereinigte Arabische Emirate).
+          </p>
+          <p>Die Nachricht enthält nur, was wir für eine schnelle Rückmeldung brauchen:</p>
+          <ul class="rw-legal-list">
+            <li>Ihren Namen (bei Kooperationsanfragen zusätzlich den Firmennamen)</li>
+            <li>Ihre Telefonnummer, sofern Sie eine angegeben haben</li>
+            <li>Postleitzahl und Ort des Objekts – nicht die Straße</li>
+            <li>das Objekt bzw. die gewünschte Leistung, beim Preisrechner den berechneten
+              Richtpreis, bei Bewerbungen die Stelle</li>
+            <li>einen Wunschtermin, sofern Sie einen angegeben haben</li>
+          </ul>
+          <p>
+            <strong>Nicht</strong> übermittelt werden Ihre E-Mail-Adresse und Ihre Nachricht bzw.
+            Auftragsbeschreibung im Wortlaut; diese erhalten wir ausschließlich per E-Mail.
+          </p>
+          <p>
+            Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Durchführung vorvertraglicher
+            Maßnahmen auf Ihre Anfrage hin) sowie Art. 6 Abs. 1 lit. f DSGVO; unser berechtigtes
+            Interesse liegt darin, Anfragen auch unterwegs sofort zu sehen und Ihnen schnell
+            antworten zu können. Bei Bewerbungen gilt die in Abschnitt 5 genannte Rechtsgrundlage.
+          </p>
+          <p>
+            <strong>Übermittlung in ein Drittland.</strong> Telegram verarbeitet die Nachrichten auf
+            eigenen Servern, auch außerhalb der Europäischen Union. Für die Vereinigten Arabischen
+            Emirate und andere Staaten, in denen Telegram tätig ist, liegt kein
+            Angemessenheitsbeschluss der EU-Kommission vor; ein dem europäischen vergleichbares
+            Datenschutzniveau ist dort nicht sichergestellt, und Ihre Rechte lassen sich dort
+            möglicherweise schwerer durchsetzen. Nachrichten eines Bots sind nicht
+            Ende-zu-Ende-verschlüsselt. Wir begrenzen den Inhalt deshalb auf die oben genannten
+            Angaben. Weitere Informationen:
+            <a href="https://telegram.org/privacy" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://telegram.org/privacy</a>
+          </p>
+
+          {% comment %}
+            Ergänzt am 24.09.2026 (Paket 2). Die Website verlinkt auf vielen
+            Seiten wa.me/<Nummer> (FIRMA_WHATSAPP_LINK). Der Link selbst
+            überträgt nichts an WhatsApp – erst wenn der Besucher dort
+            schreibt. Das gehört trotzdem in die Erklärung.
+          {% endcomment %}
+          <h3 style="font-family:var(--rw-font-head);font-weight:800;font-size:1rem;color:var(--rw-text);margin:28px 0 12px;">Kontakt per WhatsApp</h3>
+          <p>
+            Auf unserer Website können Sie uns über einen Link auch per <strong>WhatsApp</strong>
+            schreiben. Durch den Link selbst werden keine Daten an WhatsApp übertragen; er öffnet
+            lediglich die WhatsApp-App bzw. -Website. <strong>Erst wenn Sie uns dort eine Nachricht
+            schicken</strong>, erhalten wir Ihre Telefonnummer, Ihren WhatsApp-Profilnamen und den
+            Inhalt Ihrer Nachricht einschließlich mitgesendeter Fotos.
+          </p>
+          <p>
+            Anbieter ist die <strong>WhatsApp Ireland Limited</strong> (Merrion Road, Dublin 4,
+            D04 X2K5, Irland), ein Unternehmen der Meta-Gruppe. WhatsApp verarbeitet dabei in
+            eigener Verantwortung auch Metadaten (etwa den Zeitpunkt der Nachricht und Ihre
+            Kennung); eine Übermittlung an die Meta Platforms, Inc. in den USA ist nicht
+            auszuschließen. Meta Platforms, Inc. ist nach dem EU-US Data Privacy Framework
+            zertifiziert. Rechtsgrundlage für unsere Verarbeitung ist Art. 6 Abs. 1 lit. b DSGVO
+            (Bearbeitung Ihrer Anfrage) bzw. Art. 6 Abs. 1 lit. f DSGVO (der von Ihnen gewählte
+            Kontaktweg). Die Nutzung ist freiwillig – Sie erreichen uns ebenso per Telefon,
+            E-Mail oder Formular. Weitere Informationen:
+            <a href="https://www.whatsapp.com/legal/privacy-policy-eea" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://www.whatsapp.com/legal/privacy-policy-eea</a>
+          </p>
+
+          {% comment %}
+            Nachbesserung 01.10.2026 (EIG383): Terminbuchung seit 28.09.2026 live.
+            Felder = Model Besichtigungstermin (+ Zeitpunkt, Status); Empfänger wie
+            in views.termin(): Mail an ADMIN_EMAILS, Telegram mit Name, Telefon,
+            PLZ/Ort, Objektart, Wunschtermin; Kopie siehe oben. Keine
+            Kalender-Drittdienste im Code. Frist = leads_aufraeumen.BESICHTIGUNG_TAGE (730),
+            ein Test hält beide Zahlen zusammen.
+          {% endcomment %}
+          <h3 id="terminbuchung" style="font-family:var(--rw-font-head);font-weight:800;font-size:1rem;color:var(--rw-text);margin:28px 0 12px;">Online-Terminbuchung</h3>
+          <p>
+            Über die Terminbuchung können Sie eine kostenlose Besichtigung vor Ort anfragen. Dabei
+            speichern wir:
+          </p>
+          <ul class="rw-legal-list">
+            <li>den gewählten Termin (Beginn und Dauer) sowie den Bearbeitungsstand der Anfrage</li>
+            <li>die Art der Besichtigung (vor Ort oder per WhatsApp-Video)</li>
+            <li>die Objektart</li>
+            <li>die Adresse des Objekts</li>
+            <li>Ihren Namen</li>
+            <li>Ihre Telefonnummer und/oder E-Mail-Adresse (mindestens eine der beiden; bei einer Video-Besichtigung ist die Telefonnummer erforderlich)</li>
+            <li>einen Hinweis im Freitext (freiwillig)</li>
+          </ul>
+          <p>
+            Zweck ist die Vereinbarung und Durchführung der Besichtigung. Rechtsgrundlage ist
+            Art. 6 Abs. 1 lit. b DSGVO (Durchführung vorvertraglicher Maßnahmen auf Ihre Anfrage
+            hin). Empfänger sind die in diesem Abschnitt genannten Dienstleister: Die Anfrage wird
+            wie jede andere Anfrage per E-Mail an unser Betriebspostfach gemeldet (E-Mail-Dienst von
+            {% if mail_resend %}Resend{% else %}IONOS{% endif %}, siehe oben)
+            und löst eine Telegram-Nachricht an unseren Inhaber aus. Diese enthält Ihren Namen, Ihre
+            Telefonnummer, Postleitzahl und Ort, die Objektart, die Art der Besichtigung und den gewählten Termin – nicht
+            Ihre Straße, Ihre E-Mail-Adresse und Ihren Hinweis. Einen Kalender- oder Buchungsdienst
+            eines Dritten setzen wir dafür nicht ein; die Termine werden in der Datenbank dieser
+            Website geführt. Die Daten werden gelöscht, sobald sie für den Zweck nicht mehr
+            erforderlich sind, spätestens jedoch nach <strong>2 Jahren</strong>.
+          </p>
+
+          {% comment %}
+            Ergänzt am 01.10.2026: Besichtigung per WhatsApp-Videoanruf
+            (Feld Besichtigungstermin.besichtigungsart, Migration 0024). Keine technische
+            Einbindung auf der Website - der Anruf läuft in der WhatsApp-App von Oliver Pohl
+            an die vom Kunden angegebene Telefonnummer.
+          {% endcomment %}
+          <h3 id="besichtigung-video" style="font-family:var(--rw-font-head);font-weight:800;font-size:1rem;color:var(--rw-text);margin:28px 0 12px;">Online-Besichtigung per WhatsApp-Videoanruf</h3>
+          <p>
+            Statt einer Besichtigung vor Ort können Sie bei der Terminbuchung eine Besichtigung per
+            <strong>WhatsApp-Videoanruf</strong> wählen. Zum gebuchten Termin rufen wir Sie auf der von
+            Ihnen angegebenen Telefonnummer über WhatsApp an; Sie zeigen uns die Räume mit der
+            Kamera Ihres Handys. Zweck ist die Besichtigung zur Erstellung unseres Angebots.
+            Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Durchführung vorvertraglicher Maßnahmen
+            auf Ihre Anfrage hin).
+          </p>
+          <p>
+            Anbieter von WhatsApp ist die <strong>WhatsApp Ireland Limited</strong> (Merrion Road,
+            Dublin 4, D04 X2K5, Irland), ein Unternehmen der Meta-Gruppe. Der Videoanruf ist
+            Ende-zu-Ende-verschlüsselt; <strong>wir zeichnen ihn nicht auf</strong> und machen keine
+            Screenshots oder Bildaufnahmen, es sei denn, Sie willigen vorher ausdrücklich ein.
+            WhatsApp verarbeitet in eigener Verantwortung Metadaten (etwa den Zeitpunkt und die
+            Dauer des Anrufs sowie Ihre Kennung); eine Übermittlung an die Meta Platforms, Inc. in
+            den USA ist nicht auszuschließen. Meta Platforms, Inc. ist nach dem EU-US Data Privacy
+            Framework zertifiziert. Weitere Informationen:
+            <a href="https://www.whatsapp.com/legal/privacy-policy-eea" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://www.whatsapp.com/legal/privacy-policy-eea</a>
+          </p>
+          <p>
+            Bei uns gespeichert werden Ihre Telefonnummer und der Termin wie bei jeder
+            Terminbuchung (siehe oben, Frist: spätestens 2 Jahre). Für den Videoanruf verwenden
+            wir die von Ihnen angegebene Telefonnummer in WhatsApp: Sie wird dazu als Kontakt im
+            Firmen-WhatsApp gespeichert, und WhatsApp gleicht Kontakte mit seinen Nutzerdaten ab.
+            Wir löschen den Kontakt nach Abschluss der Anfrage, soweit keine gesetzliche
+            Aufbewahrungspflicht besteht. Die Video-Besichtigung ist freiwillig: Sie können
+            jederzeit stattdessen eine Besichtigung vor Ort wählen.
+          </p>
+        </div>
+
+        {% comment %}
+          Abschnitt 5 ergänzt am 06.09.2026 (P8, Befund A4). Es gibt drei
+          Stellenseiten mit Formular (/jobs/…), die Name, E-Mail, Telefon und
+          einen Freitext erheben – und diese Erklärung enthielt bis dahin null
+          Treffer für „Bewerb". Bewerberdaten sind nach § 26 BDSG eine eigene
+          Kategorie mit eigener Rechtsgrundlage und eigener Frist.
+
+          Die sechs Monate stehen hier, weil § 15 AGG eine Klagefrist von zwei
+          Monaten nach Zugang der Ablehnung kennt und die übliche Aufbewahrung
+          diese Frist mit Sicherheitsabstand abdeckt.
+        {% endcomment %}
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">5. Bewerbungen</h2>
+          <p>
+            Auf unseren Stellenseiten können Sie sich über ein Formular bei uns bewerben.
+            Dabei erheben wir:
+          </p>
+          <ul class="rw-legal-list">
+            <li>Name</li>
+            <li>E-Mail-Adresse</li>
+            <li>Telefonnummer</li>
+            <li>Ihre Nachricht an uns (Freitext)</li>
+            <li>die Stelle, auf die Sie sich beziehen</li>
+          </ul>
+          <p>
+            Wir verarbeiten diese Daten ausschließlich zur Durchführung des Bewerbungsverfahrens.
+            Rechtsgrundlage ist <strong>§ 26 Abs. 1 BDSG</strong> in Verbindung mit
+            Art. 6 Abs. 1 lit. b DSGVO (Entscheidung über die Begründung eines
+            Beschäftigungsverhältnisses).
+          </p>
+          <p>
+            Ihre Bewerbung geht an die verantwortlichen Personen in unserem Betrieb; sie wird nur
+            an die in dieser Datenschutzerklärung genannten Dienstleister weitergegeben. Für
+            Speicherung, E-Mail-Versand, die Benachrichtigung per Telegram
+            gilt dasselbe wie bei Anfragen über das Kontaktformular (siehe Abschnitt 4).
+          </p>
+          <p>
+            Kommt kein Beschäftigungsverhältnis zustande, löschen wir Ihre Bewerbungsdaten
+            <strong>sechs Monate nach Abschluss des Verfahrens</strong>. Diese Frist berücksichtigt
+            mögliche Ansprüche nach dem Allgemeinen Gleichbehandlungsgesetz (AGG). Möchten Sie,
+            dass wir Ihre Unterlagen für künftige Stellen aufbewahren, sagen Sie uns kurz Bescheid –
+            das geschieht nur mit Ihrer ausdrücklichen Einwilligung.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">6. Schriftarten</h2>
+          <p>
+            Die auf dieser Website verwendeten Schriftarten (Newsreader und Hanken Grotesk) werden
+            <strong>von unserem eigenen Server ausgeliefert</strong> und sind fest in die
+            Website eingebunden. Beim Aufruf einer Seite wird deshalb
+            <strong>keine Verbindung zu Servern von Google aufgebaut</strong> und
+            <strong>keine IP-Adresse an Google übertragen</strong>.
+          </p>
+          {% comment %}
+            Satz ergänzt am 06.09.2026 (P8, Befund A1). Bis dahin galt die
+            Zusage oben für 82 öffentliche Seiten – aber nicht für die 404- und
+            die 500-Seite: die erweiterten base.html, und static/css/base.css
+            holte Inter per @import von Google. Ausgerechnet die Seite, die ein
+            Besucher über einen veralteten Link erreicht, hat also die IP
+            übertragen. Beide Seiten laufen seitdem über denselben Stack wie
+            der Rest der Website; der Satz hier macht das nachprüfbar.
+          {% endcomment %}
+          <p>
+            Das gilt <strong>auch für Fehlerseiten</strong> – etwa wenn Sie über einen
+            veralteten Link auf eine Seite stoßen, die es nicht mehr gibt.
+          </p>
+          <p>
+            Der passwortgeschützte interne Verwaltungsbereich dieser Website lädt weiterhin
+            Schriftarten von Google Fonts (Google Ireland Limited, Gordon House, Barrow Street,
+            Dublin 4, Irland). Dieser Bereich ist ausschließlich für Mitarbeitende zugänglich
+            und für Besucherinnen und Besucher der Website ohne Bedeutung. Weitere
+            Informationen zu Google Fonts finden Sie unter
+            <a href="https://developers.google.com/fonts/faq" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://developers.google.com/fonts/faq</a>
+            und in der Datenschutzerklärung von Google:
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://policies.google.com/privacy</a>
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">7. Cookies &amp; Einwilligung</h2>
+          <p>
+            Wir verwenden Cookies und vergleichbare Technologien. <strong>Technisch notwendige Cookies</strong>
+            sind für den Betrieb der Website erforderlich (insbesondere CSRF-Schutz des Kontaktformulars und
+            Sitzungsverwaltung) und werden ohne Einwilligung gesetzt (Art. 6 Abs. 1 lit. f DSGVO i. V. m.
+            § 25 Abs. 2 TDDDG).
+          </p>
+          <p>
+            <strong>Cookies für Statistik und Werbemessung</strong> setzen wir ausschließlich mit Ihrer
+            Einwilligung ein (Art. 6 Abs. 1 lit. a DSGVO i. V. m. § 25 Abs. 1 TDDDG). Die Auswahl
+            „Statistik &amp; Werbemessung" im Banner umfasst beide Zwecke gemeinsam:
+          </p>
+          <ul class="rw-legal-list">
+            <li><strong>Notwendig:</strong> CSRF-Token und Sitzungs-Cookie – immer aktiv.</li>
+            <li><strong>Statistik:</strong> „rwsid" (Besucherstatistik, Laufzeit 30 Minuten)
+              sowie Google Analytics (siehe Punkt 8) – nur nach Einwilligung. Zu „rwsid" speichern
+              wir je Tag die zufällige Sitzungskennung, Ihre gekürzte IP-Adresse (siehe Abschnitt 3),
+              Beginn und Ende des Besuchs und die Zahl der aufgerufenen Seiten. Diese Einträge
+              werden <strong>nach 90 Tagen gelöscht</strong>; übrig bleiben nur Tagessummen ohne
+              Personenbezug.</li>
+            <li><strong>Werbemessung:</strong> Conversion-Tracking von Google Ads (siehe Punkt 9)
+              und von ChatGPT Ads inklusive des Cookies „__oppref" (siehe Punkt 10) –
+              nur nach Einwilligung.</li>
+          </ul>
+          <p>
+            Beim ersten Besuch erscheint ein <strong>Cookie-Banner</strong>, über den Sie Ihre Auswahl
+            treffen. Sie können Ihre Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen oder
+            anpassen – über den Link <strong>„Cookie-Einstellungen"</strong> im Footer jeder Seite.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">8. Google Analytics</h2>
+          <p>
+            Diese Website nutzt – <strong>nur nach Ihrer Einwilligung</strong> – Google Analytics, einen
+            Webanalysedienst der Google Ireland Limited (Gordon House, Barrow Street, Dublin 4, Irland).
+            Google Analytics verwendet Cookies, die eine Analyse der Nutzung der Website ermöglichen.
+          </p>
+          <p>
+            Wir haben die <strong>IP-Anonymisierung</strong> aktiviert, sodass Ihre IP-Adresse von Google
+            innerhalb der EU bzw. des EWR vor der Übermittlung gekürzt wird. Eine Übermittlung in die USA
+            kann nicht vollständig ausgeschlossen werden; Google LLC ist nach dem EU-US Data Privacy
+            Framework zertifiziert.
+          </p>
+          <p>
+            Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO i. V. m. § 25 Abs. 1 TDDDG).
+            Das Analyse-Tool wird technisch erst <strong>nach Ihrer Zustimmung</strong> im Cookie-Banner
+            geladen (Google Consent Mode). Sie können die Einwilligung jederzeit über „Cookie-Einstellungen"
+            im Footer widerrufen. Weitere Informationen:
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://policies.google.com/privacy</a>
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">9. Google Ads Conversion-Tracking</h2>
+          <p>
+            Diese Website nutzt – <strong>nur nach Ihrer Einwilligung</strong> – das Conversion-Tracking
+            von Google Ads, einem Dienst der Google Ireland Limited (Gordon House, Barrow Street,
+            Dublin 4, Irland). Damit messen wir, ob ein Besuch über eine unserer Anzeigen zu einer
+            Kontaktaufnahme geführt hat.
+          </p>
+          <p>
+            Gemeldet werden ausschließlich <strong>fünf Ereignisse</strong>: das Absenden des
+            Anfrageformulars, das Anfordern eines Angebots über den Preisrechner, ein Klick auf eine
+            unserer Telefonnummern, ein Klick auf den WhatsApp-Kontakt und das Buchen eines
+            Besichtigungstermins über die Online-Terminbuchung. Übertragen wird dabei, dass
+            das jeweilige Ereignis stattgefunden hat – <strong>nicht</strong> die Inhalte Ihrer Anfrage,
+            nicht Ihr Name und nicht Ihre Telefonnummer.
+          </p>
+          <p>
+            <strong>Erweiterte Conversions.</strong> Zusätzlich übermitteln wir – ebenfalls nur nach
+            Ihrer Einwilligung und nur bei den beiden Ereignissen „Anfrage abgesendet" und „Angebot
+            über den Preisrechner" – Ihre <strong>E-Mail-Adresse in verschlüsselter Form</strong>
+            (SHA-256-Hashwert). Ein solcher Hashwert ist eine nicht rückrechenbare Zeichenfolge; Ihre
+            Adresse im Klartext verlässt unseren Server nicht und steht auch nicht im Quelltext der
+            Seite. Google gleicht diesen Wert mit den ebenso verschlüsselten Adressen angemeldeter
+            Google-Konten ab, um eine Anfrage der zugehörigen Anzeige zuordnen zu können. Der Zweck
+            ist ausschließlich die <strong>Messung</strong> – wir erhalten dadurch keine Daten über
+            Sie, sondern nur eine genauere Zählung, welche Anzeige zu einer Anfrage geführt hat.
+          </p>
+          <p>
+            Weil ein Hashwert einer Person zugeordnet werden kann, ist er ein personenbezogenes Datum.
+            <strong>Rechtsgrundlage ist auch hier ausschließlich Ihre Einwilligung</strong>
+            (Art. 6 Abs. 1 lit. a DSGVO). Ohne Einwilligung wird nichts übermittelt – weder das
+            Ereignis noch der Hashwert –, und ein Widerruf über „Cookie-Einstellungen" im Footer wirkt
+            für die Zukunft ebenso auf diese Übermittlung. Google verarbeitet diese Daten als
+            Auftragsverarbeiter auf Grundlage des Zusatzes zur Verarbeitung von Kundendaten
+            („Customer Data Terms").
+          </p>
+          <p>
+            Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO i. V. m. § 25 Abs. 1
+            TDDDG). Das Tracking wird technisch erst <strong>nach Ihrer Zustimmung</strong> im
+            Cookie-Banner geladen (Google Consent Mode); ohne Einwilligung findet weder ein Zugriff auf
+            Ihr Endgerät noch eine Übermittlung statt. Sie können die Einwilligung jederzeit über
+            „Cookie-Einstellungen" im Footer widerrufen. Eine Übermittlung in die USA kann nicht
+            vollständig ausgeschlossen werden; Google LLC ist nach dem EU-US Data Privacy Framework
+            zertifiziert. Weitere Informationen:
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://policies.google.com/privacy</a>
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">10. ChatGPT Ads Conversion-Tracking (OpenAI)</h2>
+          <p>
+            Diese Website nutzt – <strong>nur nach Ihrer Einwilligung</strong> – den
+            Measurement Pixel von <strong>ChatGPT Ads</strong>, einem Dienst der
+            OpenAI Ireland Ltd. (1st Floor, The Liffey Trust Centre, 117–126 Sheriff Street Upper,
+            Dublin 1, D01 YC43, Irland). Wir schalten Anzeigen innerhalb von ChatGPT und messen
+            damit, ob ein Besuch über eine dieser Anzeigen zu einer Kontaktaufnahme geführt hat.
+          </p>
+          <p>
+            Gemeldet werden dieselben <strong>fünf Ereignisse</strong> wie unter Punkt 9: das
+            Absenden des Anfrageformulars, das Anfordern eines Angebots über den Preisrechner,
+            ein Klick auf eine unserer Telefonnummern, ein Klick auf den WhatsApp-Kontakt und das
+            Buchen eines Besichtigungstermins. Übertragen wird, dass das jeweilige Ereignis
+            stattgefunden hat, dazu – außer bei der Terminbuchung – der geschätzte
+            Auftragswert; <strong>nicht</strong> übertragen werden die Inhalte Ihrer Anfrage,
+            Ihr Name und Ihre Telefonnummer.
+          </p>
+          <p>
+            <strong>Cookie und Zuordnung.</strong> Kommen Sie über eine Anzeige in ChatGPT auf
+            diese Seite, enthält der Aufruf eine von OpenAI vergebene Kennung
+            (<code>oppref</code>). Der Pixel speichert sie in einem Cookie unserer eigenen Domain
+            (<code>__oppref</code>), damit auch eine spätere Seite desselben Besuchs der Anzeige
+            zugeordnet werden kann. Die Kennung bezeichnet den Anzeigenklick, nicht Sie als Person.
+          </p>
+          <p>
+            <strong>Verschlüsselte Zuordnungsmerkmale.</strong> Der Pixel kann Angaben, die Sie in
+            ein Formular eintragen – insbesondere Ihre E-Mail-Adresse –, bereits
+            <strong>im Browser verschlüsseln</strong> (SHA-256-Hashwert) und diesen Wert
+            mitschicken; Ihre Angaben im Klartext werden dabei nicht an OpenAI übertragen. Weil
+            ein solcher Hashwert einer Person zugeordnet werden kann, ist er ein
+            personenbezogenes Datum. <strong>Rechtsgrundlage ist auch hier ausschließlich Ihre
+            Einwilligung</strong> (Art. 6 Abs. 1 lit. a DSGVO).
+          </p>
+          <p>
+            Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO i. V. m. § 25 Abs. 1
+            TDDDG). Das Messskript wird <strong>erst nach Ihrer Zustimmung</strong> im
+            Cookie-Banner von einem Server des Anbieters nachgeladen
+            (<code>bzrcdn.openai.com</code>); ohne Einwilligung findet weder ein Zugriff auf Ihr
+            Endgerät noch eine Übermittlung statt. Sie können die Einwilligung jederzeit über
+            „Cookie-Einstellungen" im Footer widerrufen. Eine Übermittlung in die USA
+            (OpenAI OpCo, LLC) kann nicht ausgeschlossen werden. Weitere Informationen:
+            <a href="https://openai.com/policies/privacy-policy/" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://openai.com/policies/privacy-policy/</a>
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">11. Bewertungswidget (TrustLocal)</h2>
+          <p>
+            Auf der Seite <a href="/ueber-uns/" style="color:var(--rw-orange);">Über uns</a>
+            binden wir ein Bewertungswidget des Anbieters <strong>TrustLocal</strong>
+            (Trustoo B.V., Niederlande) ein. Es zeigt Bewertungen, die wir von Kundinnen und
+            Kunden erhalten haben. Auf unseren Leistungsseiten (zum Beispiel
+            <a href="/haushaltsaufloesung/" style="color:var(--rw-orange);">Haushaltsauflösung</a>)
+            und den zugehörigen Stadtseiten zeigt eine kleinere Kachel desselben Anbieters
+            unseren aktuellen Bewertungsstand.
+          </p>
+          <p>
+            Beim Aufruf dieser Seite wird das Widget <strong>von einem Server des Anbieters
+            geladen</strong> (<code>static.trustlocal.de</code>) und ruft die Bewertungen
+            von <code>trustlocal.de</code> ab. Dabei wird Ihre
+            <strong>IP-Adresse an den Anbieter übertragen</strong> – technisch anders lässt
+            sich der Inhalt nicht ausliefern. Nach unserer Prüfung setzt das Widget
+            <strong>keine Cookies</strong> und speichert nichts in Ihrem Browser.
+          </p>
+          <p>
+            <strong>Rechtsgrundlage</strong> ist unser berechtigtes Interesse an der
+            transparenten Darstellung echter Kundenbewertungen
+            (Art. 6 Abs. 1 lit. f DSGVO). Die Verarbeitung findet
+            <strong>ausschließlich auf den genannten Seiten</strong> statt; auf allen anderen
+            Seiten dieser Website wird der Anbieter nicht kontaktiert.
+          </p>
+          <p>
+            Weitere Informationen finden Sie in der Datenschutzerklärung des Anbieters:
+            <a href="https://trustlocal.de/datenschutz" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://trustlocal.de/datenschutz</a>
+          </p>
+        </div>
+
+        {% comment %}
+          Abschnitte 11 und 12 ergänzt am 06.09.2026 (P8, Befund A5). Gezählt
+          wurde in dieser Datei: TrustLocal 5 Nennungen, Google 7 – und
+          OpenStreetMap, Cloudinary und Resend zusammen null, obwohl alle drei
+          tatsächlich Daten bekommen.
+
+          Bei OpenStreetMap ist zugleich die Technik geändert worden: Die vier
+          Karten auf /standorte/ laden seitdem erst auf Klick (Zwei-Klick-
+          Lösung, static/js/rw_karte.js). Der Satz unten beschreibt genau das –
+          wer das Skript wieder ausbaut, macht diesen Absatz zur Unwahrheit.
+        {% endcomment %}
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">12. Kartendarstellung (OpenStreetMap)</h2>
+          <p>
+            Auf der Seite <a href="/standorte/" style="color:var(--rw-orange);">Standorte</a>
+            zeigen wir zu jedem Standort eine Karte von <strong>OpenStreetMap</strong>
+            (OpenStreetMap Foundation, Vereinigtes Königreich).
+          </p>
+          <p>
+            <strong>Die Karten laden nicht von selbst.</strong> Zunächst sehen Sie nur einen
+            Platzhalter mit einem Hinweis. Erst wenn Sie ihn anklicken, wird die Karte
+            nachgeladen – und <strong>erst dann wird Ihre IP-Adresse an OpenStreetMap
+            übertragen</strong>. Solange Sie nicht klicken, findet keine Verbindung zu dem
+            Anbieter statt. Ihre Auswahl gilt nur für den jeweiligen Seitenaufruf; es wird dafür
+            nichts in Ihrem Browser gespeichert.
+          </p>
+          <p>
+            Rechtsgrundlage für das Laden nach Ihrem Klick ist Ihre Einwilligung
+            (Art. 6 Abs. 1 lit. a DSGVO), die Sie mit dem Klick auf den Platzhalter erteilen.
+            Die Seite ist auch ohne geladene Karte vollständig nutzbar: Neben jedem Platzhalter
+            steht ein Link, der die Karte bei Bedarf direkt bei OpenStreetMap öffnet. Weitere
+            Informationen:
+            <a href="https://osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://osmfoundation.org/wiki/Privacy_Policy</a>
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">13. Bildauslieferung (Cloudinary)</h2>
+          <p>
+            Die Fotos in unserer <a href="/galerie/" style="color:var(--rw-orange);">Galerie</a>
+            und unter <a href="/aktuelles/" style="color:var(--rw-orange);">Aktuelles</a> liegen
+            beim Bilddienst <strong>Cloudinary (Cloudinary Ltd.)</strong> und werden von dessen
+            Servern ausgeliefert. Dabei wird Ihre <strong>IP-Adresse an den Anbieter
+            übertragen</strong> – technisch anders lässt sich ein Bild nicht ausliefern.
+          </p>
+          <p>
+            Zweck ist die schnelle Auslieferung in der Größe, die Ihr Gerät wirklich braucht;
+            ein Foto, das auf dem Handy in voller Auflösung geladen wird, kostet Ladezeit und
+            Datenvolumen ohne Gegenwert. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO
+            (berechtigtes Interesse an einer schnellen und ressourcenschonenden Darstellung).
+            Der Anbieter betreibt ein weltweites Auslieferungsnetz; eine Verarbeitung außerhalb
+            der EU ist dabei nicht auszuschließen. Weitere Informationen:
+            <a href="https://cloudinary.com/privacy" target="_blank" rel="noopener" style="color:var(--rw-orange);">https://cloudinary.com/privacy</a>
+          </p>
+          <p>
+            Alle übrigen Bilder dieser Website – Logo, Fahrzeuge, Hintergründe – liegen auf
+            unserem eigenen Server; dabei wird kein Dritter kontaktiert.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">14. Ihre Rechte als betroffene Person</h2>
+          <p>Sie haben gegenüber uns folgende Rechte hinsichtlich der Sie betreffenden personenbezogenen Daten:</p>
+          <ul class="rw-legal-list">
+            <li><strong>Auskunftsrecht</strong> (Art. 15 DSGVO)</li>
+            <li><strong>Recht auf Berichtigung</strong> unrichtiger Daten (Art. 16 DSGVO)</li>
+            <li><strong>Recht auf Löschung</strong> ("Recht auf Vergessenwerden", Art. 17 DSGVO)</li>
+            <li><strong>Recht auf Einschränkung</strong> der Verarbeitung (Art. 18 DSGVO)</li>
+            <li><strong>Recht auf Datenübertragbarkeit</strong> (Art. 20 DSGVO)</li>
+            <li><strong>Widerspruchsrecht</strong> gegen die Verarbeitung (Art. 21 DSGVO)</li>
+            <li><strong>Recht auf Widerruf</strong> einer erteilten Einwilligung (Art. 7 Abs. 3 DSGVO)</li>
+          </ul>
+          <p>
+            Zur Ausübung Ihrer Rechte wenden Sie sich bitte an:
+            <a href="mailto:{{ CONTACT_EMAIL }}" style="color:var(--rw-orange);">{{ CONTACT_EMAIL }}</a>
+          </p>
+          <p>
+            Sie haben außerdem das Recht, sich bei der zuständigen Datenschutz-Aufsichtsbehörde
+            zu beschweren. Die zuständige Behörde richtet sich nach Ihrem Bundesland.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">15. Datensicherheit</h2>
+          <p>
+            Diese Seite nutzt aus Sicherheitsgründen eine SSL- bzw. TLS-Verschlüsselung
+            (erkennbar am Schloss-Symbol in der Browserzeile). Dadurch sind Daten, die Sie an uns
+            übermitteln, für Dritte nicht mitlesbar.
+          </p>
+        </div>
+
+        <div class="rw-legal-block">
+          <h2 class="rw-legal-h2">16. Aktualität dieser Datenschutzerklärung</h2>
+          <p>
+            Diese Datenschutzerklärung ist aktuell gültig und hat den Stand: <strong>2. Oktober 2026</strong>.
+            Durch die Weiterentwicklung unserer Website oder aufgrund geänderter gesetzlicher
+            Vorgaben kann es notwendig werden, diese Datenschutzerklärung anzupassen.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>
+

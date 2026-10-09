@@ -1,0 +1,80 @@
+{% load static %}{# audit-ok V07: Altbestand nur für accounts/, dashboard/ und errors/ - nicht öffentlich, soll weder canonical noch Schema tragen #}
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="{% block meta_description %}{{ SITE_NAME }} – Professionelle Lösungen{% endblock %}">
+  <meta name="robots" content="{% block meta_robots %}noindex, nofollow{% endblock %}">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{% block og_title %}{{ SITE_NAME }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{% endblock %}">
+  <meta property="og:type" content="website">
+
+  <title>{% block title %}{{ SITE_NAME }}{% endblock %} {% block title_suffix %}| {{ SITE_NAME }}{% endblock %}</title>
+
+  {% comment %}
+    Hier standen bis zum 06.09.2026 zwei <link rel="preconnect"> auf
+    die beiden Google-Fonts-Hosts (Befund A1). Sie gehoerten zum
+    @import in static/css/base.css, der Inter von Google holte - und damit die
+    IP jedes Besuchers dorthin schickte, auch auf der 404- und der 500-Seite.
+    Beides ist entfallen; die Begruendung steht ausfuehrlich im Kopf von
+    static/css/base.css.
+
+    base.html bedient seit demselben Tag nur noch /accounts/ und /dashboard/:
+    die Fehlerseiten unter templates/errors/404.html und 500.html haben einen
+    eigenen <head> und den modernen Stack der oeffentlichen Website bekommen.
+    Uebrig bleibt errors/lockout.html (die Sperrseite von django-axes).
+  {% endcomment %}
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+  <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+  <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+  <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+  {% block extra_css %}{% endblock %}
+
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+</head>
+<body class="page-enter">
+
+  <!-- Background Decorators -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-mesh" aria-hidden="true"></div>
+
+  <!-- Page Loader -->
+  <div id="page-loader" role="progressbar" aria-label="Seite lädt...">
+    <div class="loader-logo-mark">{{ SITE_NAME|first|upper }}</div>
+    <div class="loader-bar">
+      <div class="loader-bar-fill"></div>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  {% include 'components/navbar.html' %}
+
+  <!-- Messages -->
+  {% include 'components/messages.html' %}
+
+  <!-- Main Content -->
+  <main id="main-content" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  {% block footer %}
+    {% include 'components/footer.html' %}
+  {% endblock %}
+
+  <!-- Scripts -->
+  <script src="{% static 'js/main.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+
+</body>
+</html>

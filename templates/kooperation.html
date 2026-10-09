@@ -1,0 +1,364 @@
+{% load static rw_antispam %}{# audit-ok V07: JSON-LD kommt über components/rw_seo.html (Tag rw_head_schema) - die Seite liefert genau einen ld+json-Block, check_seo prüft ihn #}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Feste Ansprechpartner und dokumentierte Übergaben für Hausverwaltungen, Makler und Nachlassverwalter. Jetzt Kontakt aufnehmen.">
+  <title>Kooperationspartner für Entrümpelung, Festpreis | Rümpelwerk</title>
+  {% include 'components/rw_head_fonts.html' %}
+  <link rel="icon" href="/favicon.ico" type="image/png" sizes="48x48">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {# LCP-Bild vorziehen: ohne Preload startet der Download erst, wenn #}
+  {# der Parser das Hero-Element im Body erreicht - also nach dem CSS. #}
+  <link rel="preload" as="image" href="{% static 'images/sprinter1.webp' %}" fetchpriority="high">
+  {% include 'components/rw_seo.html' with seo_title="Kooperationspartner für Entrümpelung, Festpreis | Rümpelwerk" seo_description="Feste Ansprechpartner und dokumentierte Übergaben für Hausverwaltungen, Makler und Nachlassverwalter. Jetzt Kontakt aufnehmen." seo_path="/kooperationspartner/" seo_breadcrumb_name="Kooperationspartner" seo_keywords="Kooperationspartner Entrümpelung, Subunternehmer Rümpelwerk, Handwerker Partner, Immobilienverwaltung Kooperation" seo_speakable="h1,.rw-antwort-text" %}
+  {% include 'components/rw_css.html' with crit_page='kooperation.html' %}
+</head>
+<body class="rw-page">
+
+  {% include 'components/rw_nav.html' %}
+
+  <main id="inhalt" class="rw-formseite">
+
+  {# ════════ PAGE HERO ════════ #}
+  <div class="rw-leistungen-hero rw-leistungen-hero--media">
+    <div class="rw-hero-media-bg"><img src="{% static 'images/sprinter1.webp' %}" alt="" width="900" height="675" fetchpriority="high"></div>
+    <div class="rw-hero-media-overlay"></div>
+    <div class="rw-container">
+      <div class="rw-leistungen-hero-inner">
+        <div class="rw-breadcrumb">
+          <a href="/">Startseite</a>
+          <span class="rw-breadcrumb-sep">›</span>
+          <span>Kooperationspartner</span>
+        </div>
+        <div class="rw-section-badge" style="margin-bottom:16px;">Partnerschaft auf Augenhöhe</div>
+        <h1 class="rw-section-title" style="text-align:left;font-size:clamp(2rem,4vw,3rem);margin-bottom:14px;">
+          Kooperationspartner <em>werden</em>
+        </h1>
+        <p style="font-size:1rem;color:var(--rw-text-2);max-width:600px;line-height:1.8;margin-bottom:12px;font-weight:700;">
+          Gemeinsam mehr erreichen – regional, zuverlässig und unkompliziert.
+        </p>
+        <p data-rw-readmore style="font-size:1rem;color:var(--rw-text-2);max-width:620px;line-height:1.8;margin-bottom:28px;">
+          Sie haben regelmäßig Kontakt zu Haushaltsauflösungen, Immobilienübergaben, Renovierungen oder Räumungsprojekten?
+          Dann werden Sie Kooperationspartner von uns.
+        </p>
+        <div class="rw-promise-strip">
+          <span class="rw-promise-badge"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-3-3.87M9 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3"/><circle cx="16" cy="8" r="2.5"/></svg> Tippgeber-Provision</span>
+          <span class="rw-promise-badge green"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Leipzig · Halle · Umgebung</span>
+          <span class="rw-promise-badge"><svg class="rw-ico rw-ico--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg> {{ ZUSAGE_ANTWORT }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'components/rw_antwort.html' with antwort_frage=antwort_frage antwort_text=antwort_text %}
+
+  {# ════════ FÜR WEN ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg-2);">
+    <div class="rw-container">
+      <div class="rw-section-header" data-rw-reveal style="margin-bottom:40px;">
+        <div class="rw-section-badge">Für wen ist eine Kooperation interessant?</div>
+        <h2 class="rw-section-title">Unsere <em>Partner</em></h2>
+        <p class="rw-section-sub">
+          Wir sind regional in Leipzig, Halle und Umgebung aktiv und unterstützen Privat- sowie Geschäftskunden
+          bei Entrümpelungen, Haushaltsauflösungen, Nachlassräumungen und besenreinen Objektübergaben.
+        </p>
+      </div>
+      <div class="rw-koop-partner" data-rw-reveal>
+        <div class="rw-koop-partner-eintrag">
+          <div class="rw-koop-partner-ico"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 6h2M13 6h2M9 10h2M13 10h2M9 14h2M13 14h2M10 22v-4h4v4"/></svg></div>
+          <div class="rw-koop-partner-name">Hausverwaltungen</div>
+        </div>
+        <div class="rw-koop-partner-eintrag">
+          <div class="rw-koop-partner-ico"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></div>
+          <div class="rw-koop-partner-name">Immobilienmakler</div>
+        </div>
+        <div class="rw-koop-partner-eintrag">
+          <div class="rw-koop-partner-ico"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></div>
+          <div class="rw-koop-partner-name">Nachlasspfleger</div>
+        </div>
+        <div class="rw-koop-partner-eintrag">
+          <div class="rw-koop-partner-ico"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-3-3.87M9 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3"/><circle cx="16" cy="8" r="2.5"/></svg></div>
+          <div class="rw-koop-partner-name">Betreuer & soziale Einrichtungen</div>
+        </div>
+        <div class="rw-koop-partner-eintrag">
+          <div class="rw-koop-partner-ico"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-2.4 2.6-2.6z"/></svg></div>
+          <div class="rw-koop-partner-name">Handwerksbetriebe</div>
+        </div>
+        <div class="rw-koop-partner-eintrag">
+          <div class="rw-koop-partner-ico"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17h4V5H2v12h3"/><path d="M15 8h4l3 3v6h-3"/><circle cx="7.5" cy="17.5" r="2"/><circle cx="17.5" cy="17.5" r="2"/></svg></div>
+          <div class="rw-koop-partner-name">Umzugsunternehmen</div>
+        </div>
+        <div class="rw-koop-partner-eintrag">
+          <div class="rw-koop-partner-ico"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-.95-.5-1.3-.3-.35-.5-.8-.5-1.2 0-1.1.9-2 2-2h2.5A4.5 4.5 0 0 0 22 11 10 10 0 0 0 12 2z"/><circle cx="7.5" cy="11.5" r="1.2"/><circle cx="9.5" cy="7.5" r="1.2"/><circle cx="14.5" cy="7.5" r="1.2"/><circle cx="16.5" cy="11.5" r="1.2"/></svg></div>
+          <div class="rw-koop-partner-name">Maler- und Sanierungsfirmen</div>
+        </div>
+        <div class="rw-koop-partner-eintrag">
+          <div class="rw-koop-partner-ico"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.5 12.5 21 2M16 7l3 3M14 9l2 2"/></svg></div>
+          <div class="rw-koop-partner-name">Hausmeisterservices</div>
+        </div>
+        <div class="rw-koop-partner-eintrag">
+          <div class="rw-koop-partner-ico"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <div class="rw-koop-partner-name">Privatpersonen mit Empfehlungen</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# ════════ TIPPGEBER-PROVISION ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      <div class="rw-section-header" data-rw-reveal style="margin-bottom:40px;">
+        <div class="rw-section-badge">Provision sichern</div>
+        <h2 class="rw-section-title">Tippgeber-Provision <em>sichern</em></h2>
+        <p class="rw-section-sub">Empfehlen Sie uns weiter – wir übernehmen den Rest. Für erfolgreich vermittelte Aufträge erhalten unsere Kooperationspartner eine attraktive Provision. Einfach, transparent und zuverlässig.</p>
+      </div>
+
+      {# 3 Schritte #}
+      <div class="rw-koop-schritte" data-rw-reveal>
+        <div class="rw-koop-schritt">
+          <div class="rw-koop-schritt-nr">1</div>
+          <div class="rw-koop-schritt-titel">Kontakt herstellen</div>
+          <p style="font-size:0.88rem;color:var(--rw-text-2);line-height:1.7;margin:0;">
+            Sie empfehlen uns an Ihren Kunden weiter oder senden uns die Anfrage direkt.
+          </p>
+        </div>
+        <div class="rw-koop-schritt">
+          <div class="rw-koop-schritt-nr">2</div>
+          <div class="rw-koop-schritt-titel">Wir übernehmen</div>
+          <p style="font-size:0.88rem;color:var(--rw-text-2);line-height:1.7;margin:0;">
+            Besichtigung, Angebot, Durchführung und komplette Abwicklung erfolgen durch unser Team.
+          </p>
+        </div>
+        <div class="rw-koop-schritt">
+          <div class="rw-koop-schritt-nr">3</div>
+          <div class="rw-koop-schritt-titel">Provision erhalten</div>
+          <p style="font-size:0.88rem;color:var(--rw-text-2);line-height:1.7;margin:0;">
+            Kommt der Auftrag zustande, erhalten Sie Ihre vereinbarte Tippgeber-Provision.
+          </p>
+        </div>
+      </div>
+
+      {# Vorteile #}
+      <div class="rw-koop-vorteile" data-rw-reveal>
+        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--rw-orange);font-weight:800;margin-bottom:20px;">Ihre Vorteile auf einen Blick</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span style="color:var(--rw-orange);font-weight:900;font-size:1rem;flex-shrink:0;margin-top:2px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="rw-koop-vorteile-text" style="line-height:1.6;">Attraktive Provision pro vermitteltem Auftrag</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span style="color:var(--rw-orange);font-weight:900;font-size:1rem;flex-shrink:0;margin-top:2px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="rw-koop-vorteile-text" style="line-height:1.6;">Fester regionaler Ansprechpartner</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span style="color:var(--rw-orange);font-weight:900;font-size:1rem;flex-shrink:0;margin-top:2px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="rw-koop-vorteile-text" style="line-height:1.6;">{{ ZUSAGE_ANTWORT }} bei Anfragen</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span style="color:var(--rw-orange);font-weight:900;font-size:1rem;flex-shrink:0;margin-top:2px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="rw-koop-vorteile-text" style="line-height:1.6;">Zuverlässige und saubere Durchführung</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span style="color:var(--rw-orange);font-weight:900;font-size:1rem;flex-shrink:0;margin-top:2px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="rw-koop-vorteile-text" style="line-height:1.6;">Professioneller Außenauftritt gegenüber Ihren Kunden</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span style="color:var(--rw-orange);font-weight:900;font-size:1rem;flex-shrink:0;margin-top:2px;"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="rw-koop-vorteile-text" style="line-height:1.6;">Unkomplizierte Zusammenarbeit ohne Aufwand für Sie</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  {# ════════ FORMULAR ════════ #}
+  <section class="rw-section" style="background:var(--rw-bg);">
+    <div class="rw-container">
+      <div class="rw-anfrage-wrap">
+
+        <div class="rw-form-card" data-rw-reveal>
+
+          {% if messages %}
+            {% for message in messages %}
+              <div class="{% if message.level_tag == 'error' %}rw-alert-error{% else %}rw-alert-success{% endif %}"{% if message.level_tag == 'error' %} role="alert"{% endif %}>
+                <span>{% if message.level_tag == 'error' %}<svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg>{% else %}<svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>{% endif %}</span>
+                <span>{{ message }}</span>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <h2 class="rw-form-headline">Interesse an einer Zusammenarbeit?</h2>
+          <p class="rw-form-subline">Jetzt anfragen – wir melden uns zurück. Alle mit <span style="color:var(--rw-orange);">*</span> markierten Felder sind Pflichtfelder.</p>
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+            {# Honeypot, Zeitmessung und JavaScript-Nachweis - s. apps/core/antispam.py #}
+            {% rw_antispam %}
+
+            {# Art der Kooperation #}
+            <p class="rw-form-section-title" id="gruppe-art">Art der Kooperation <span style="color:var(--rw-orange);">*</span></p>
+            {# BF24: Fehlertext mit Kennung, Gruppe per aria-describedby daran gebunden - er steht sonst nur optisch daneben. #}
+            {% if errors.art %}<p class="rw-form-error" id="gruppe-art-fehler" role="alert">{{ errors.art }}</p>{% endif %}
+            <div class="rw-radio-grid" role="radiogroup" aria-labelledby="gruppe-art" aria-required="true"{% if errors.art %} aria-invalid="true" aria-describedby="gruppe-art-fehler"{% endif %} style="margin-bottom:32px;">
+              <div class="rw-radio-card">
+                <input type="radio" name="art" id="art-sub" value="subunternehmer"
+                  {% if post.art == 'subunternehmer' %}checked{% endif %} required>
+                <label for="art-sub" class="rw-radio-label">
+                  <span class="rw-radio-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 22V8l8-5 8 5v14"/><path d="M4 22h16M9 22v-6h6v6M9 11h.01M15 11h.01"/></svg></span>
+                  <div>
+                    <div class="rw-radio-text-title">Subunternehmer</div>
+                    <div class="rw-radio-text-sub">Entrümpelung & Transport</div>
+                  </div>
+                </label>
+              </div>
+              <div class="rw-radio-card">
+                <input type="radio" name="art" id="art-hand" value="handwerker"
+                  {% if post.art == 'handwerker' %}checked{% endif %}>
+                <label for="art-hand" class="rw-radio-label">
+                  <span class="rw-radio-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-2.4 2.6-2.6z"/></svg></span>
+                  <div>
+                    <div class="rw-radio-text-title">Handwerker-Partner</div>
+                    <div class="rw-radio-text-sub">Sanierung, Reparaturen</div>
+                  </div>
+                </label>
+              </div>
+              <div class="rw-radio-card">
+                <input type="radio" name="art" id="art-immo" value="immobilien"
+                  {% if post.art == 'immobilien' %}checked{% endif %}>
+                <label for="art-immo" class="rw-radio-label">
+                  <span class="rw-radio-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 6h2M13 6h2M9 10h2M13 10h2M9 14h2M13 14h2M10 22v-4h4v4"/></svg></span>
+                  <div>
+                    <div class="rw-radio-text-title">Immobilienverwaltung</div>
+                    <div class="rw-radio-text-sub">Verwalter, Hausverwaltungen</div>
+                  </div>
+                </label>
+              </div>
+              <div class="rw-radio-card">
+                <input type="radio" name="art" id="art-makler" value="makler"
+                  {% if post.art == 'makler' %}checked{% endif %}>
+                <label for="art-makler" class="rw-radio-label">
+                  <span class="rw-radio-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span>
+                  <div>
+                    <div class="rw-radio-text-title">Makler</div>
+                    <div class="rw-radio-text-sub">Immobilienmakler</div>
+                  </div>
+                </label>
+              </div>
+              <div class="rw-radio-card">
+                <input type="radio" name="art" id="art-sonst" value="sonstiges"
+                  {% if post.art == 'sonstiges' %}checked{% endif %}>
+                <label for="art-sonst" class="rw-radio-label">
+                  <span class="rw-radio-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/></svg></span>
+                  <div>
+                    <div class="rw-radio-text-title">Sonstiges</div>
+                    <div class="rw-radio-text-sub">Andere Kooperation</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="rw-form-divider"></div>
+
+            {# Kontaktdaten #}
+            <p class="rw-form-section-title" style="margin-bottom:20px;">Ihre Kontaktdaten</p>
+
+            <div class="rw-form-grid">
+              <div class="rw-form-group">
+                <label for="f-name" class="rw-form-label">Name <span style="color:var(--rw-orange);">*</span></label>
+                {% if errors.name %}<p class="rw-form-error" id="f-name-fehler" role="alert">{{ errors.name }}</p>{% endif %}
+                <input type="text" id="f-name" name="name" maxlength="200" autocomplete="name"
+                  class="rw-form-input{% if errors.name %} rw-form-input--error{% endif %}"
+                  {% if errors.name %}aria-invalid="true" aria-describedby="f-name-fehler"{% endif %}
+                  placeholder="Vor- und Nachname" value="{{ post.name|default:'' }}" required>
+              </div>
+              <div class="rw-form-group">
+                <label for="f-firma" class="rw-form-label">Firmenname <span style="color:var(--rw-orange);">*</span></label>
+                {% if errors.firma %}<p class="rw-form-error" id="f-firma-fehler" role="alert">{{ errors.firma }}</p>{% endif %}
+                <input type="text" id="f-firma" name="firma" maxlength="200" autocomplete="organization"
+                  class="rw-form-input{% if errors.firma %} rw-form-input--error{% endif %}"
+                  {% if errors.firma %}aria-invalid="true" aria-describedby="f-firma-fehler"{% endif %}
+                  placeholder="Ihre Firma GmbH" value="{{ post.firma|default:'' }}" required>
+              </div>
+              <div class="rw-form-group">
+                <label for="f-email" class="rw-form-label">E-Mail <span style="color:var(--rw-orange);">*</span></label>
+                {% if errors.email %}<p class="rw-form-error" id="f-email-fehler" role="alert">{{ errors.email }}</p>{% endif %}
+                <input type="email" id="f-email" name="email" maxlength="200" autocomplete="email"
+                  class="rw-form-input{% if errors.email %} rw-form-input--error{% endif %}"
+                  {% if errors.email %}aria-invalid="true" aria-describedby="f-email-fehler"{% endif %}
+                  placeholder="ihre@email.de" value="{{ post.email|default:'' }}" required>
+              </div>
+              <div class="rw-form-group">
+                <label for="f-telefon" class="rw-form-label">Telefonnummer (optional)</label>
+                <input type="tel" id="f-telefon" name="telefon" class="rw-form-input" maxlength="50" autocomplete="tel"
+                  placeholder="+49 ..." value="{{ post.telefon|default:'' }}">
+              </div>
+            </div>
+
+            {# Nachricht #}
+            <div class="rw-form-group" style="margin-bottom:32px;">
+              <label for="f-nachricht" class="rw-form-label">Kurze Beschreibung (optional)</label>
+              <textarea id="f-nachricht" name="nachricht" class="rw-form-textarea" maxlength="2000"
+                placeholder="Beschreiben Sie kurz Ihre Firma und wie Sie sich eine Zusammenarbeit vorstellen ...">{{ post.nachricht|default:'' }}</textarea>
+            </div>
+
+            <button type="submit" class="rw-btn-primary rw-form-submit">
+              Anfrage absenden →
+            </button>
+
+            <div class="rw-anfrage-promise">
+              <span class="rw-anfrage-promise-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+              <span>Wir melden uns <strong>in Kürze</strong> bei Ihnen zurück.</span>
+            </div>
+
+            <p style="font-size:0.78rem;color:var(--rw-text-3);text-align:center;margin-top:12px;">
+              Wir verwenden Ihre Angaben, um Ihre Anfrage zu bearbeiten, und geben sie nur an die in der Datenschutzerklärung genannten Dienstleister weiter.
+              <a href="/datenschutz/" style="color:var(--rw-text-3);">Datenschutz</a>
+            </p>
+          </form>
+        </div>
+
+        {# Sidebar #}
+        <div class="rw-anfrage-sidebar">
+          <div class="rw-anfrage-info-card" data-rw-reveal>
+            {# IS25: alt="" – der Name steht als Text direkt darunter. #}
+            <img width="256" height="258" src="{% static 'images/ruempelwerk_logo_sm.webp' %}" srcset="{% static 'images/ruempelwerk_logo_xs.webp' %} 132w, {% static 'images/ruempelwerk_logo_sm.webp' %} 256w" sizes="110px" alt="" class="rw-anfrage-logo" loading="lazy">
+            <div class="rw-anfrage-info-name">Rümpelwerk Mitteldeutschland</div>
+            <div class="rw-anfrage-info-role">Inh. Oliver Pohl · Teamleiter</div>
+            <div class="rw-anfrage-info-promise"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-3-3.87M9 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3"/><circle cx="16" cy="8" r="2.5"/></svg> Partnerschaft auf Augenhöhe</div>
+          </div>
+          <div class="rw-anfrage-contact-links" data-rw-reveal data-rw-delay="1">
+            <a href="mailto:{{ CONTACT_EMAIL }}" class="rw-kontakt-card">
+              <div class="rw-kontakt-card-icon"><svg class="rw-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></div>
+              <div>
+                <div class="rw-kontakt-card-label">Direkt per E-Mail</div>
+                <div class="rw-kontakt-card-value">{{ CONTACT_EMAIL }}</div>
+              </div>
+            </a>
+          </div>
+          <div class="rw-info-box" data-rw-reveal data-rw-delay="2" style="margin-top:20px;">
+            <p class="rw-info-box-title">So einfach geht's</p>
+            <ul style="padding-left:1.2rem;color:var(--rw-text-2);font-size:0.9rem;line-height:1.9;margin:0;">
+              <li>Anfrage absenden</li>
+              <li>{{ ZUSAGE_ANTWORT }}</li>
+              <li>Konditionen gemeinsam besprechen</li>
+              <li>Erste Empfehlung weitergeben</li>
+              <li>Provision kassieren</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  {% include 'components/rw_footer.html' %}
+  {% include 'components/rw_js.html' %}
+
+</body>
+</html>

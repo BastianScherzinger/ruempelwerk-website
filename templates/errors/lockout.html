@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{# audit-ok V06: Sperrseite von django-axes, eingetragen als AXES_LOCKOUT_TEMPLATE in config/settings.py #}
+{% block title %}Zugang gesperrt{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div style="min-height:calc(100vh - 72px);display:flex;align-items:center;justify-content:center;text-align:center;padding:var(--space-8);">
+  <div style="max-width:480px;">
+    <div style="font-size:5rem;margin-bottom:var(--space-4);">🔒</div>
+    <h1 style="font-size:var(--text-2xl);margin-bottom:var(--space-4);">Zugang temporär gesperrt</h1>
+    <p style="color:var(--text-muted);margin-bottom:var(--space-4);">
+      Zu viele fehlgeschlagene Anmeldeversuche. Bitte versuche es in 1 Stunde erneut.
+    </p>
+    <div class="alert alert-warning" style="text-align:left;">
+      <span>⚠</span>
+      <span>Aus Sicherheitsgründen wurde dein Zugang vorübergehend gesperrt.</span>
+    </div>
+    <a href="/" class="btn btn-outline" style="margin-top:var(--space-6);">← Zur Startseite</a>
+  </div>
+</div>
+{% endblock %}

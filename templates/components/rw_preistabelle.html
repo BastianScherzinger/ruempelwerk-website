@@ -1,0 +1,60 @@
+{% comment %}
+  Preistabelle (F4). Alle Zahlen kommen aus dem Context-Processor `preise`,
+  also aus apps/core/data/pricing.py — hier steht bewusst keine einzige.
+
+  Warum eine echte <table> und kein Fließtext: Für Nutzer ist die Staffel so am
+  schnellsten zu erfassen, und generative Suchmaschinen gewichten Tabellen
+  deutlich höher als dieselbe Information in Prosa, weil die Zuordnung
+  Zeile↔Wert eindeutig ist. Das ist der billigste GEO-Punkt im Plan.
+
+  Optionale Variable: ueberschrift (Standard: "Was kostet eine Entrümpelung?")
+{% endcomment %}
+<div class="rw-preistabelle">
+  <h2 class="rw-preistabelle-titel">
+    {% if ueberschrift %}{{ ueberschrift }}{% else %}Was kostet eine Entrümpelung?{% endif %}
+  </h2>
+  <p class="rw-preistabelle-intro">
+    Der Preis ergibt sich aus Objektart und Fläche: Richtwert je m², mindestens
+    der genannte Mindestpreis. Die Beispielspalte rechnet mit normal befülltem
+    Objekt im Erdgeschoss ohne Sonderabfall. Preisstand: {{ PREISSTAND }}.
+  </p>
+
+  <div class="rw-preistabelle-scroll" tabindex="0" role="region"
+       aria-label="Preisübersicht nach Objektart">
+    <table>
+      <caption>Richtpreise nach Objektart — Stand {{ PREISSTAND }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">Objektart</th>
+          <th scope="col">ab</th>
+          <th scope="col">Richtwert</th>
+          <th scope="col">typische Größe</th>
+          <th scope="col">Beispiel<span class="rw-preistabelle-zusatz">normal befüllt</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in PREISE_LISTE %}
+        <tr>
+          <th scope="row">{{ p.label }}</th>
+          <td class="rw-preistabelle-zahl">{{ p.min_txt }}&nbsp;€</td>
+          <td class="rw-preistabelle-zahl">{{ p.rate_txt }}</td>
+          <td class="rw-preistabelle-zahl">{{ p.qm_typisch }}&nbsp;m²</td>
+          <td class="rw-preistabelle-zahl rw-preistabelle-beispiel">{{ p.beispiel_txt }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <p class="rw-preistabelle-fuss">
+    Auf diesen Grundpreis wirken drei Zuschläge: der Füllgrad
+    (leicht bis Messie, Faktor 1,0 bis {{ PREIS_MODIFIKATOREN.fuellgrad.messi|floatformat:2 }}),
+    das Stockwerk ohne Aufzug (bis
+    {{ PREIS_MODIFIKATOREN.stockwerk.4og }}&nbsp;€) und Sonderabfall
+    (bis {{ PREIS_MODIFIKATOREN.sonderabfall.viele }}&nbsp;€). Malerarbeiten kosten
+    {{ PREIS_MODIFIKATOREN.maler_rate }}&nbsp;€/m², mindestens
+    {{ PREIS_MODIFIKATOREN.maler_min }}&nbsp;€. Im Servicegebiet gibt es
+    {{ PREIS_MODIFIKATOREN.rabatt_prozent }}&nbsp;% Nachlass.
+    {% if l %}<a href="#rechner">Preis in {{ ZUSAGE_RECHNER }} berechnen →</a>{% else %}<a href="/entruempelung-kosten/#rechner">Entrümpelung Kosten berechnen →</a>{% endif %}
+  </p>
+</div>

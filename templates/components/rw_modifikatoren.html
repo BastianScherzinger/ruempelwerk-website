@@ -1,0 +1,86 @@
+{% comment %}
+  Zuschlagstabelle für /entruempelung-kosten/ (A12).
+
+  Der Grundpreis steht in rw_preistabelle.html; hier steht, was ihn verändert.
+  Drei Tabellen statt einer, weil die drei Größen verschieden wirken: Der
+  Füllgrad ist ein Faktor, Stockwerk und Sonderabfall sind Beträge. In einer
+  gemeinsamen Spalte stünde ein Multiplikator neben einem Eurobetrag — das
+  liest niemand als eine Skala.
+
+  Alle Werte kommen aus PREIS_MOD_LISTE (apps/core/data/pricing.py) — Zahl und
+  Beschriftung aus derselben Quelle, damit nicht eine von beiden altert.
+
+  Der Faktor steht hier mit Dezimal**komma**: Das ist sichtbarer Text, kein
+  JSON-LD. In einem Schema-Block wäre dasselbe Komma ungültiges JSON.
+{% endcomment %}
+<div class="rw-mod-tabellen" id="zuschlagstabelle">
+  <h2 class="rw-preistabelle-titel">Die drei Zuschläge — mit Betrag</h2>
+  <p class="rw-preistabelle-intro">
+    Mehr als diese drei gibt es nicht. Was hier nicht steht, steht auch nicht
+    auf der Rechnung. Reihenfolge der Anwendung: erst Stockwerk, dann Füllgrad
+    (multiplikativ), dann Sonderabfall. Preisstand: {{ PREISSTAND }}.
+  </p>
+
+  <div class="rw-mod-grid">
+
+    <div class="rw-mod-karte">
+      <h3 class="rw-mod-titel">Füllgrad</h3>
+      <p class="rw-mod-sub">Wirkt als Faktor auf den Grundpreis — der stärkste Hebel.</p>
+      <div class="rw-preistabelle-scroll" tabindex="0" role="region" aria-label="Zuschlag nach Füllgrad">
+        <table>
+          <thead><tr><th scope="col">Füllgrad</th><th scope="col">Faktor</th></tr></thead>
+          <tbody>
+            {% for f in PREIS_MOD_LISTE.fuellgrad %}
+            <tr><th scope="row">{{ f.label }}</th>
+                <td class="rw-preistabelle-zahl">× {{ f.faktor_txt }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="rw-mod-karte">
+      <h3 class="rw-mod-titel">Stockwerk ohne Aufzug</h3>
+      <p class="rw-mod-sub">Nur für Wohnung und Keller. Mit benutzbarem Aufzug entfällt der Zuschlag ganz.</p>
+      <div class="rw-preistabelle-scroll" tabindex="0" role="region" aria-label="Zuschlag nach Stockwerk">
+        <table>
+          <thead><tr><th scope="col">Etage</th><th scope="col">Aufpreis</th></tr></thead>
+          <tbody>
+            {% for s in PREIS_MOD_LISTE.stockwerk %}
+            <tr><th scope="row">{{ s.label }}</th>
+                <td class="rw-preistabelle-zahl">{{ s.aufpreis_txt }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="rw-mod-karte">
+      <h3 class="rw-mod-titel">Sonderabfall</h3>
+      <p class="rw-mod-sub">Farben, Lacke, Lösemittel, Batterien, Leuchtstoffröhren, Altöl — getrennt gesammelt und getrennt entsorgt.</p>
+      <div class="rw-preistabelle-scroll" tabindex="0" role="region" aria-label="Zuschlag für Sonderabfall">
+        <table>
+          <thead><tr><th scope="col">Menge</th><th scope="col">Aufpreis</th></tr></thead>
+          <tbody>
+            {% for s in PREIS_MOD_LISTE.sonderabfall %}
+            <tr><th scope="row">{{ s.label }}</th>
+                <td class="rw-preistabelle-zahl">{{ s.aufpreis_txt }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="rw-preistabelle-fuss">
+    Dazu kommen zwei Posten, die nicht auf den Grundpreis wirken, sondern eigene
+    Leistungen: <strong>Malerarbeiten</strong> mit
+    {{ PREIS_MODIFIKATOREN.maler_rate }}&nbsp;€/m² ab
+    {{ PREIS_MODIFIKATOREN.maler_min }}&nbsp;€ und
+    <strong>Kleinreparaturen</strong> zum Festpreis je Position — beides auf
+    <a href="/sanierung-renovierung/">Sanierung und Renovierung</a>. In die
+    andere Richtung wirkt der Standort: Im Servicegebiet ziehen wir
+    {{ PREIS_MODIFIKATOREN.rabatt_prozent }}&nbsp;% ab.
+  </p>
+</div>
